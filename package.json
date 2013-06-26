@@ -15,7 +15,7 @@
     "url": "https://github.com/StanfordHCI/SpatioTemporalNarrative.git"
   },
   "scripts": {
-    "start": "node src/app.js"
+    "start": "node src/server.js"
   },
   "dependencies": {
     "dirty":"0.x.x",
