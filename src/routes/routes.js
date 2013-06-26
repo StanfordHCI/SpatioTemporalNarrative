@@ -4,7 +4,7 @@
 
 
 var data = function(req, res){
-  res.json({name:"hello"});
+  res.json({name:req.params.id});
 };
 
 
@@ -13,6 +13,6 @@ var data = function(req, res){
  */
 exports.init = function(app) {
 
-  app.get('/data', data);
+  app.get('/data/:id', data);
   
 }

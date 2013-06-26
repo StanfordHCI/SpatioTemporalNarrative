@@ -20,10 +20,24 @@
   <h1>SpatioTemporal Narratives</h1>
   <p>An express app.</p>
 
+  <input type="button" id="buttonAwesome"/>
 
   <div id="serverData1">Waiting for ajax result...</div>
 
 </div>
 </body>
 <script src="/js/client.js" type="text/javascript" charset="utf-8"></script>
+<script>
+  
+  $("#buttonAwesome").click(function() {
+
+    $.ajax("/data/44", {
+      success: function(data,status,xhr) {
+        $("#serverData1").html("AJAX request result: " + JSON.stringify(data));
+      }
+    })
+  
+  });
+
+</script>
 </html>
