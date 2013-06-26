@@ -8,24 +8,34 @@ var express = require('express'),
     http = require('http'),
     path = require('path');
 
-
 var app = express();
 
 // all environments
-app.set('port', process.env.PORT || 3000);
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(app.router);
-app.use(require('less-middleware')({ src: __dirname + '/public' }));
-app.use(express.static(path.join(__dirname, 'public')));
+// See connect.js and express.js, all the middleware of that is available:
+// http://www.senchalabs.org/connect/
+// http://expressjs.com/api.html
 
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}
+app.configure(function() {
 
+  app.set('port', process.env.PORT || 3000);
+  app.use(express.favicon());
+  app.use(express.logger('dev'));
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);
+  app.use(require('less-middleware')({ src: __dirname + '/public' }));
+  app.use(express.static(path.join(__dirname, 'public')));
+
+  // development only
+  if ('development' == app.get('env')) {
+    app.use(express.errorHandler());
+  }
+
+});
+
+
+// Here we set up the dynamic routes supported on the server.
+// See 
 
 app.get('/data', routes.data);
 
