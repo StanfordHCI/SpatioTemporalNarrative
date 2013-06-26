@@ -1,1 +1,271 @@
-{}
+{
+  "title": "A jaunt through New York's Cocktail Scene",
+  "events": [
+    
+    {
+      "title": "Monday",
+      "time" : "2013-05-13",
+      "events": [
+        {
+          "title": "The McKittrick Hotel",
+          "time":"Tue, 14 May 13 03:22:42 +0000",
+          "participants": ["Niels", "Gleb", "Ashley", "Marcello", "Yizhuo"],
+          "spatial":1,
+          "meta": [{
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/the-mckittrick-hotelsleep-no-more/4cdeb1d2c4f6a35de46bcb6c"
+          }],
+          "narrative": [{"type":"text", "value":"A slow, thick britsh accent: \" Ah, I've had too much gin.... it happens to the best of us, you know. Those with a Jack, if you have a Jack. Your time has come, your ship is about to sail. Please, follow me.\"  "}]
+        },
+
+        {
+          "title": "Gallow Green",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+        }
+      ]
+    },
+
+    {
+      "title": "Tuesday",
+      "time" : "2013-05-14",
+      "events": [
+        {
+          "title": "Amor Y Amargo",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "Please Don't Tell",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "International Bar",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        }
+      ]
+    },
+    {
+      "title": "Wednesday",
+      "time" : "2013-05-15",
+      "events": [
+        {
+          "title": "Roeblings Tea Room",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "Miller's Tavern",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "Caracas Arepa Bar",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "McSorley's Old Ale House",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "Angel's Share",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "Lovers of Today",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        }
+      ]
+    },
+    {
+      "title": "Thursday",
+      "time" : "2013-05-16",
+      "events": [
+        {
+          "title": "Maison Premiere",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "Employees Only",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "Washington Commons",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        }
+
+      ]
+    },
+    {
+      "title": "Friday",
+      "time" : "2013-05-17",
+      "events": [
+        {
+          "title": "Little Branch",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "Raines Law Room",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        }
+      ]
+    },
+    {
+      "title": "Saturday",
+      "time" : "2013-05-18",
+      "events": [
+        {
+          "title": "Gran Electrica",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        },
+        {
+          "title": "Washington Commons",
+          "time":"",
+          "participants":[],
+          "spatial":1,
+          "meta": [{
+
+          }],
+          "narrative": [{}]
+
+        }
+      ]
+    },
+    {
+      "title": "Sunday",
+      "time" : "2013-05-19",
+      "narrative": [{}]
+    },    
+  ],
+  "map": {
+    "type": "google",
+    "poi" : [
+      { "type": "address", "name":"The McKittrick Hotel",     "value": "530 W 27th St, New York, NY 10001" },
+      { "type": "address", "name":"Gallow Green",             "value": "542 W 27th St, New York, NY 10001"},
+      { "type": "address", "name":"Amor Y Amargo",            "value": "443 E 6th St, New York, NY 10009"},
+      { "type": "address", "name":"Please Don't Tell",        "value": "113 St Marks Pl, New York, NY 10009"},
+      { "type": "address", "name":"International Bar",        "value": "120-1/2 1st Ave New York, NY 10009"},
+      { "type": "address", "name":"Roeblings Tea Room",       "value": "143 Roebling St, Brooklyn, NY 11211"},
+      { "type": "address", "name":"Miller's Tavern",          "value": "2 Hope St, Brooklyn, NY 11211"},
+      { "type": "address", "name":"Caracas Arepa Bar",        "value": "93 1/2 E 7th St, New York, NY 10003"},
+      { "type": "address", "name":"McSorley's Old Ale House", "value": "15 E 7th St, New York, NY"},
+      { "type": "address", "name":"Angel's Share",            "value": "8 Stuyvesant St, Manhattan, NY"},
+      { "type": "address", "name":"Lovers of Today",          "value": "132 1/2 E 7th St, New York, NY 10009"},
+      { "type": "address", "name":"Maison Premiere",          "value": "298 Bedford Ave, Brooklyn, NY 11211"},
+      { "type": "address", "name":"Employees Only",           "value": "510 Hudson St, New York, NY 10014"},
+      { "type": "address", "name":"Washington Commons",       "value": "748 Washington Ave, New York, NY 11238"},
+      { "type": "address", "name":"Little Branch",            "value": "20 7th Ave S, New York, NY 10011"},
+      { "type": "address", "name":"Raines Law Room",          "value": "48 W 17th St, Manhattan, NY 10011"},
+      { "type": "address", "name":"Gran Electrica",           "value": "5 Front St, Brooklyn, NY 11201"},
+      { "type": "address", "name":"Washington Commons",       "value": "748 Washington Ave, New York, NY 11238"},
+      { "type": "point",   "name":"Newark International Airport", "lat":40.690718, "lon":-74.180374}
+    ]
+  }
+}
