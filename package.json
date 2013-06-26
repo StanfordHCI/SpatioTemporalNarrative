@@ -1,0 +1,21 @@
+{
+  "name": "SpatioTemporalNarrative",
+  "version": "0.1.0",
+  "main": "index",
+  "description": "Exploring stories based around movement through space and time.",
+  "keywords": ["narrative"],
+  "author": "Niels Joubert <njoubert@gmail.com> (http://njoubert.com/)",
+  "contributors": [
+    {"name":"Stu Card"},
+    {"name":"Harrison Hwray"},
+    {"name":"Anh Truong"}
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/StanfordHCI/SpatioTemporalNarrative.git"
+  },
+  "dependencies": {
+    "connect":"2.x.x"
+  }
+
+}
