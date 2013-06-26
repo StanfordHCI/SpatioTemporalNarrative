@@ -15,7 +15,7 @@
     "url": "https://github.com/StanfordHCI/SpatioTemporalNarrative.git"
   },
   "dependencies": {
-    "connect":"2.x.x"
+    "connect":"2.x.x",
+    "dirty":"0.x.x"
   }
-
 }
