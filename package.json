@@ -14,8 +14,12 @@
     "type": "git",
     "url": "https://github.com/StanfordHCI/SpatioTemporalNarrative.git"
   },
+  "scripts": {
+    "start": "node src/app.js"
+  },
   "dependencies": {
-    "connect":"2.x.x",
-    "dirty":"0.x.x"
+    "dirty":"0.x.x",
+    "express":"3.2.6",
+    "less-middleware": "*"
   }
 }
