@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-  <title>Spatio-Temporal Narrative</title>
+  <title>The Edge</title>
  
   <meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no" />
   <meta name="apple-touch-fullscreen" content="YES">
@@ -24,30 +24,34 @@
       padding-bottom: 0px;
     }
 
+    .section {
+      overflow:hidden;
+    }
     .title {
-      height: 768px;
       background: black;
-      padding: 50px;
+      padding: 160px 180px 160px 50px;
     }
     .title h1 {
       display:block;
       padding-top: 300px;
     }
     .text {
-      padding: 160px 180px 160px 50px;
+      padding: 0px 180px 320px 50px;
       
     }
+    .image {
+      height: 700px;
+      padding: 160px 0px 160px 0px;
+    }
     #debug {
+      z-index: 100;
       position: fixed;
       top: 0;
-      left: 0;
-      height: 100px;
-      width: 500px;
-      background: black;
+      right: 0;
+      height: 30px;
+      width: 300px;
       font-size: 12px;
-      color: lightgray;
-      overflow: hidden;
-
+      color: white;
     }
   </style>
 </head>
@@ -78,49 +82,32 @@ So it was always at night, like a werewolf, that I would take the thing out for 
 There was no helmet on those nights, no speed limit, and no cooling it down on the curves. The momentary freedom of the park was like the one unlucky drink that shoves a wavering alcoholic off the wagon. I would come out of the park near the soccer field and pause for a moment at the stop sign, wondering if I knew anyone parked out there on the midnight humping strip.
   </div>
 
-  <div class="section image">
-
-  </div>
 
   <div class="section text">
 Then into first gear, forgetting the cars and letting the beast wind out…thirty-five, forty-five…then into second and wailing through the light at Lincoln Way, not worried about green or red signals, but only some other werewolf loony who might be pulling out, too slowly, to start his own run. Not many of these, and with three lanes on a wide curve, a bike coming hard has plenty of room to get around almost anything…then into third, the boomer gear, pushing seventy-five and the beginning of a windscram in the ears, a pressure on the eyeballs like diving into water off a high board.
   </div>
 
-  <div class="section image">
 
-  </div>
 
   <div class="section text">
 Bent forward, far back on the seat, and a rigid grip on the handlebars as the bike starts jumping and wavering in the wind. Taillights far up ahead coming closer, faster, and suddenly–zaaappp–going past and leaning down for a curve near the zoo, where the road swings out to sea.
   </div>
 
-  <div class="section image">
-
-  </div>
 
   <div class="section text">
 The dunes are flatter here, and on windy days sand blows across the highway, piling up in thick drifts as deadly as any oil-slick–instant loss of control, a crashing, cartwheeeling slide and maybe one of those two-inch notices in the paper the next day: “An unidentified motorcyclist was killed last night when he failed to negotiate a turn on Highway 1.”
   </div>
 
-  <div class="section image">
-
-  </div>
 
   <div class="section text">
 Indeed…but no sand this time, so the lever goes up into fourth, and now there’s no sound except wind. Screw it all the way over, reach through the handlebars to raise the headlight beam, the needles leans down on a hundred and wind-burned eyeballs strain to see down the centerline, trying to provide a margin for reflexes.
   </div>
 
-  <div class="section image">
-
-  </div>
 
   <div class="section text">
 But with the throttle screwed on there is only the barest margin, and nor room at all for mistakes. It has to be done right…and that’s when the strange music starts, when you stretch your luck so far that fear becomes exhilaration and vibrates along your arms. You can barely see at a hundred; the tears blow back so fast that they vaporize before they get to your ears. The only sounds are wind a dull roar floating back from the mufflers. You watch the white line and try to lean with it…huwling through a turn to the right, then to the left and down the long hill to Pacifica…letting off now, watching for cops, but only until the next dark stretch and another few seconds on the edge…
   </div>
 
-  <div class="section image">
-
-  </div>
 
   <div class="section text">
 The Edge…There is no honest way to explain it because the only people who really know where it is are ones who have gone over. The others–the living–are those who who pushed their control as far as they felt they could handle it, and then pulled back, or slowed down, or did whatever they had to when it came time to choose between Now and Later.
@@ -133,11 +120,13 @@ The Edge…There is no honest way to explain it because the only people who real
   
 var debug_el = document.getElementById("debug");
 function debug() {
+  /*
   var str = "";
   for (var i in arguments) {
     str += JSON.stringify(arguments[i]) + " ";
   }
-  debug_el.innerHTML = str + "<br\>" + debug_el.innerHTML
+  debug_el.innerHTML = str + "<br\>" + debug_el.innerHTML;
+  // */
 }
 
 function createScroller(el, scrollInterceptor) {
@@ -151,6 +140,7 @@ function createScroller(el, scrollInterceptor) {
   var maxY = el.scrollHeight;
 
   var scrollFn = function(offsetX, offsetY, isDone) {
+
     var newY = currentY + offsetY;
     if (newY > 0)
       newY = 0;
@@ -159,6 +149,7 @@ function createScroller(el, scrollInterceptor) {
 
     if (isDone)
         currentY = newY;
+
     if (scrollInterceptor)
       newY = -scrollInterceptor(-newY);  
     $(el).css('-webkit-transform', 'translate(0, ' + newY + 'px)');
@@ -174,6 +165,7 @@ function createScroller(el, scrollInterceptor) {
   };
 
   var moveOrEnd = function(e, isDone) {
+
     e.preventDefault();
     var touches = e.changedTouches;
     if (touches.length > 0) {
@@ -212,22 +204,103 @@ function createScroller(el, scrollInterceptor) {
   }
 }
 
+//Conceptually:
+// We want to define a series of markers that signify an attack, sustain and decay period of
+// every visual effect.
+// [start:x, sustain:x, decay:x, end:x]
+// And connected to each of these ranges we can have elements that respond to that.
+// For the moment we assume this is one linear list but potentially it can be many more.
+
 var container_el = document.getElementById("container");
 function makeScrollInterceptor(container_el) {
 
-  var children = function() {
+  var currentEl = 0;
+  var currentElStart = 0;
+  var currentElStop = 0;
+
+
+  var effects = (function() {
     var result = [];
+
+
+    var amountVisible = screen.width;
+    debug("Amount visible: ", amountVisible);
 
     var children_els = container_el.children;
     for (var i = 0; i < children_els.length; i++) {
       var child = $(children_els[i]);
-      result.push({offsetTop:child.offset().top, el:child});
-    }
 
+      var startOnPage = child.offset().top;
+      var height = child.outerHeight();
+
+      debug("Start on page:", startOnPage, ", height:", height);
+
+      //start fading in when it becomes visible
+      var start = startOnPage - amountVisible*3/4;
+      // sustain when it is fully visible
+      var sustain = startOnPage;
+      // decay when it's halfway out
+      var decay = startOnPage + height/2;
+      // done when it's all the way out
+      var done = startOnPage + height*3/4;
+
+      result.push({
+        progression: [start, sustain, decay, done],
+        el: children_els[i]
+      });
+      debug(result[result.length-1].progression)
+    }
+    
     return result;
-  };
+  })();
+
+
+  // var effects = [
+  //   { progression: [200,800,1000,1650],
+  //     el:        document.getElementById("img1")
+  //   }
+  // ];
 
   return function(currentTop) {
+
+    debug("SCROLLINTERCEPT:", currentTop)
+
+    for (var i = 0; i < effects.length; i++) {
+      var p = effects[i].progression;
+
+      if (currentTop < p[0]) {
+
+        effects[i].el.style.opacity = 0;
+
+      } else if (currentTop > p[0] && currentTop < p[p.length-1]) {
+
+        //How far along are we?
+        var j = 1;
+        for (; j < p.length; j++) {
+          if (currentTop < p[j])
+            break;
+        }
+        j -= 1;
+
+        if (j == 0) {        //Fading in:
+          var amt = (currentTop - p[0]) / (p[1] - p[0]);
+          effects[i].el.style.opacity = amt;
+
+        } else if (j == 1) {  //Sustaining
+          effects[i].el.style.opacity = amt;
+
+        } else if (j == 2) {  //decaying
+          var amt = (p[3] - currentTop) / (p[3] - p[2]);
+          effects[i].el.style.opacity = amt;
+        }
+
+      
+      } else {
+
+        effects[i].el.style.opacity = 0;
+      
+      }
+    }
 
     return currentTop;
   }
