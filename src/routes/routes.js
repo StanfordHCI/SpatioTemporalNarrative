@@ -2,13 +2,25 @@ var RawArticleProvider = require('./../providers/RawArticleProvider.js');
 
 var articleProvider = new RawArticleProvider();
 
-var list_articles = function(req, res) {
-  res.json({name:"huh"});
-  
+var list_articles = function(req, res, next) {
+  articleProvider.getTitles(function(err,data) {
+    res.json(data);    
+  })
 };
 
-var get_article = function(req, res) {
-  res.json({name:req.params.id});
+var get_article = function(req, res, next) {
+  var id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    next();
+  } else {
+    articleProvider.findById(req.params.id, function(err,data) {
+      if (err) {
+        next();
+      } else {
+        res.json(data);
+      }
+    });
+  }
 }
 
 /*

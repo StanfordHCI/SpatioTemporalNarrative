@@ -13,7 +13,7 @@ function RawArticleProvider() {
  * Find an article by its id in the array
  */
 RawArticleProvider.prototype.findById = function(id, callback) {
-  if (this.articles.length < id) {
+  if (id < this.articles.length) {
     callback(null, this.articles[id]);
   } else {
     callback(new Error("id out of range"), null);

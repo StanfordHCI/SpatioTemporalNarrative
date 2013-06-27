@@ -30,9 +30,10 @@ app.configure(function() {
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.directory(path.join(__dirname, 'public')));
 
+  app.use(express.errorHandler());
   // development only
   if ('development' == app.get('env')) {
-    app.use(express.errorHandler());
+    
   }
 
 });
