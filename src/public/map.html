@@ -35,6 +35,7 @@
       <input type="button" id="submitCoords" value="Show me on the map"/>
       <input type="button" id="streetViewButton" value="Take me to the streets"/>
       <input type="button" id="showArea" value="Show me the area"/>
+      <input type="button" id="showDirections" value="Show me a route"/>
       <div id="streetViewDiv">
       </div>
     </div>
@@ -64,27 +65,20 @@
     });
   }; 
 
+
+  var streetDiv = document.getElementById("streetViewDiv");  
+  var panorama = new google.maps.StreetViewPanorama(streetDiv); 
+
   var streetButton = document.getElementById("streetViewButton"); 
   streetButton.ontouchend = streetButton.onclick = function(event) {
     latitude = document.getElementById("lat").value; 
     longitude = document.getElementById("long").value;
-
     var streetLocation = new google.maps.LatLng(latitude, longitude); 
-    var panoramaOptions = {
-      visible: true, 
-      position: streetLocation, 
-      pov: {
-        heading: 10, 
-        pitch: 10, 
-        zoom: 1
-      }
-    };
-
-    var streetDiv = document.getElementById("streetViewDiv");  
-    var panorama = new google.maps.StreetViewPanorama(streetDiv, panoramaOptions); 
+    //panorama.setPosition(streetLocation); 
+    //map.panTo(streetLocation); 
     map.setStreetView(panorama); 
-    console.log("Loaded street view for locaton " + latitude + ", " + longitude); 
   }
+
 
   var areaButton = document.getElementById("showArea"); 
   areaButton.ontouchend = areaButton.onclick = function(event) {
@@ -103,6 +97,26 @@
         strokeColor: 'ff0000',
         strokeWeight: 3.0, 
         scale: 20 
+      }
+    });
+  }
+
+
+  var directionsButton = document.getElementById("showDirections"); 
+  directionsButton.ontouchend = directionsButton.onclick = function(event) {
+    var directionsService = new google.maps.DirectionsService(); 
+    var directionsDisplay = new google.maps.DirectionsRenderer(); 
+    directionsDisplay.setMap(map); 
+    var start = new google.maps.LatLng(latitude, longitude); 
+    var end = new google.maps.LatLng(document.getElementById("lat").value, document.getElementById("long").value); 
+    var request = {
+      origin: start,
+      destination: end,
+      travelMode: google.maps.DirectionsTravelMode.DRIVING
+    };
+    directionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        directionsDisplay.setDirections(response);
       }
     });
   }
