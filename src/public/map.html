@@ -34,6 +34,7 @@
       <input type="text" id="long"/> 
       <input type="button" id="submitCoords" value="Show me on the map"/>
       <input type="button" id="streetViewButton" value="Take me to the streets"/>
+      <input type="button" id="showArea" value="Show me the area"/>
       <div id="streetViewDiv">
       </div>
     </div>
@@ -49,7 +50,8 @@
   var submit = document.getElementById("submitCoords"); 
   var longitude = 0.0; 
   var latitude = 0.0;
-  submit.onclick = function(event) {
+
+  submit.ontouchend = submit.onclick = function(event) {
     latitude = document.getElementById("lat").value; 
     longitude = document.getElementById("long").value; 
     var newCenter = new google.maps.LatLng(latitude, longitude); 
@@ -63,24 +65,46 @@
   }; 
 
   var streetButton = document.getElementById("streetViewButton"); 
-  streetButton.onclick = function(event) {
+  streetButton.ontouchend = streetButton.onclick = function(event) {
     latitude = document.getElementById("lat").value; 
     longitude = document.getElementById("long").value;
-    var streetDiv = document.getElementById("streetViewDiv");  
 
-    var streetPosition = new google.maps.LatLng(latitude, longitude); 
+    var streetLocation = new google.maps.LatLng(latitude, longitude); 
     var panoramaOptions = {
       visible: true, 
-      position: streetPosition, 
+      position: streetLocation, 
       pov: {
-        heading: 140, 
-        pitch: +5, 
-        zoom: 2
+        heading: 10, 
+        pitch: 10, 
+        zoom: 1
       }
     };
-    var panorama = new google.maps.StreetViewPanorama(streetDiv, panoramaOptions);
-    panorama.setPosition(streetPosition); 
-    console.log("Loaded street view at lat-long: " + latitude + ", " + longitude); 
+
+    var streetDiv = document.getElementById("streetViewDiv");  
+    var panorama = new google.maps.StreetViewPanorama(streetDiv, panoramaOptions); 
+    map.setStreetView(panorama); 
+    console.log("Loaded street view for locaton " + latitude + ", " + longitude); 
+  }
+
+  var areaButton = document.getElementById("showArea"); 
+  areaButton.ontouchend = areaButton.onclick = function(event) {
+    latitude = document.getElementById("lat").value; 
+    longitude = document.getElementById("long").value;
+    position = new google.maps.LatLng(latitude, longitude); 
+
+    var marker = new google.maps.Marker({
+      position: position,
+      map: map,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        fillOpacity: 0.5,
+        fillColor: 'ff0000',
+        strokeOpacity: 1.0,
+        strokeColor: 'ff0000',
+        strokeWeight: 3.0, 
+        scale: 20 
+      }
+    });
   }
 
 </script>
