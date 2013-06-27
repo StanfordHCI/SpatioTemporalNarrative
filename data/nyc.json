@@ -1,5 +1,38 @@
 {
   "title": "A jaunt through New York's Cocktail Scene",
+  "participants": {
+    "Niels": {
+      "default":true
+    },
+    "Gleb": {
+
+    },
+    "Ashley": {
+
+    },
+    "Marcello": {
+
+    },
+    "Yizhuo": {
+
+    },
+    "Liz": {
+
+    },
+    "Mike": {
+
+    },
+    "Hesper": {
+
+    },
+    "Oliver": {
+
+    },
+    "Izzy": {
+
+    },
+
+  },
   "events": [
     
     {
@@ -15,18 +48,26 @@
             "type":"foursquare",
             "url":"https://foursquare.com/v/the-mckittrick-hotelsleep-no-more/4cdeb1d2c4f6a35de46bcb6c"
           }],
-          "narrative": [{"type":"text", "value":"A slow, thick britsh accent: \" Ah, I've had too much gin.... it happens to the best of us, you know. Those with a Jack, if you have a Jack. Your time has come, your ship is about to sail. Please, follow me.\"  "}]
+          "narrative": [{"type":"text", "value":"A slow, thick britsh accent: \" Ah, I've had too much gin.... it happens to the best of us, you know. Those with a Jack, if you have a Jack... Your time has come, your ship is about to sail. Please, follow me.\"  The cocktails were decent, but given the atmosphere (women in period-perfect costumes handing you absinthe cordials) it was delightful. The play itself, it it can be called that, is beyond amazing. I had a decent Sazerac, which I was enjoying at the bar until I had to settle up... $15 for a cocktail?? Damn NYC!"}]
         },
 
         {
           "title": "Gallow Green",
-          "time":"",
-          "participants":[],
+          "time":"Tue, 14 May 13 03:38:10 +0000",
+          "participants":["Niels", "Gleb", "Ashley", "Marcello", "Yizhuo"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/gallow-green-rooftop-garden-bar-at-the-mckittrick-hotel/4ff260e7e4b020c287b83193"
           }],
-          "narrative": [{}]
+          "narrative": [{"type":"text", "value":"We met four of the cast members and followed them up to the rooftop garden bar at the McKittrick Hotel. We demanded Mezcal cocktails and we weren't disappointed!"}]
+        },
+        {
+          "title": "Stuck on the Subway",
+          "time":"",
+          "participants":["Niels"],
+          "spatial":2,
+          "narrative": [{"type":"fullimage", "value":{"img":"subway1.jpg", "text":"Slow progress on the subway"}}]
         }
       ]
     },
@@ -37,35 +78,38 @@
       "events": [
         {
           "title": "Amor Y Amargo",
-          "time":"",
-          "participants":[],
+          "time":"Wed, 15 May 13 02:00:18 +0000",
+          "participants":["Niels", "Gleb", "Ashley"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/amor-y-amargo/4d842fd95091370466867a5b"
           }],
-          "narrative": [{}]
+          "narrative": [{"type":"text","value":"They made me an 8 Amari Cocktail I couldn't resist."}]
 
         },
         {
           "title": "Please Don't Tell",
           "time":"",
-          "participants":[],
+          "participants":["Niels", "Gleb", "Ashley"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/pdt/4656e1ebf964a52007471fe3"
           }],
-          "narrative": [{}]
+          "narrative": [{"type": "text", "value": "This is a defining moment in my cocktail journey: finally drinking the Mezcal Mule from the creator, Jim Meehan at Please Don't Tell. It has a taste of strong ginger and spicy chili, with the cucumber playing second fiddle as the backup, and a slight smokiness of the mezcal. Very different from mine, this is a total trip!"},{"type":"img", "value":"mezcal_mule.jpg"},{"type":"img","value":"mezcal_mule_menu.jpg"}]
 
         },
         {
           "title": "International Bar",
-          "time":"",
-          "participants":[],
+          "time":"Wed, 15 May 13 05:46:02 +0000",
+          "participants":["Niels", "Gleb", "Ashley"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/international-bar/3fd66200f964a52026eb1ee3"
           }],
-          "narrative": [{}]
+          "narrative": [{"type":"text","value":"I wish I could remember more, but alas!"}]
 
         }
       ]
@@ -76,67 +120,70 @@
       "events": [
         {
           "title": "Roeblings Tea Room",
-          "time":"",
-          "participants":[],
+          "time":"Wed, 15 May 13 22:19:03 +0000",
+          "participants":["Niels", "Hesper", "Gleb", "Ashley", "Izzy"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/roebling-tea-room/44abe943f964a52008351fe3"
           }],
           "narrative": [{}]
 
         },
         {
           "title": "Miller's Tavern",
-          "time":"",
-          "participants":[],
+          "time":"Wed, 15 May 13 22:47:27 +0000",
+          "participants":["Niels", "Hesper", "Gleb", "Ashley", "Izzy", "Sher"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/millers-tavern/4c020c87fd082d7f1aed0785"
           }],
-          "narrative": [{}]
+          "narrative": [{"type":"img","value":"millers_tavern_gleb.jpg"},{"type":"img","value":"millers_tavern_sher.jpg"}]
 
         },
         {
           "title": "Caracas Arepa Bar",
-          "time":"",
-          "participants":[],
+          "time":"Wed, 15 May 13 23:54:47 +0000",
+          "participants":["Niels", "Hesper", "Gleb", "Ashley", "Izzy", "Sher"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/caracas-arepa-bar/49bb36fcf964a520dc531fe3"
           }],
           "narrative": [{}]
 
         },
         {
           "title": "McSorley's Old Ale House",
-          "time":"",
-          "participants":[],
+          "time":"Thu, 16 May 13 02:35:59 +0000",
+          "participants":["Niels", "Hesper", "Gleb", "Ashley", "Izzy", "Sher", "Oliver"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/mcsorleys-old-ale-house/3fd66200f964a52058e41ee3"
           }],
           "narrative": [{}]
 
         },
         {
           "title": "Angel's Share",
-          "time":"",
-          "participants":[],
+          "time":"Thu, 16 May 13 03:22:05 +0000",
+          "participants":["Niels", "Hesper", "Gleb", "Ashley", "Oliver"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/angels-share/3fd66200f964a520caea1ee3"
           }],
           "narrative": [{}]
 
         },
         {
           "title": "Lovers of Today",
-          "time":"",
-          "participants":[],
+          "time":"Thu, 16 May 13 04:14:01 +0000",
+          "participants":["Niels", "Gleb", "Ashley", "Oliver"],
           "spatial":1,
-          "meta": [{
-
-          }],
+          "meta": [],
           "narrative": [{}]
 
         }
@@ -148,33 +195,33 @@
       "events": [
         {
           "title": "Maison Premiere",
-          "time":"",
-          "participants":[],
+          "time":"Thu, 16 May 13 22:21:05 +0000",
+          "participants":["Niels", "Mike"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/maison-premiere/4d34a091c6cba35dec2f357a"
           }],
           "narrative": [{}]
 
         },
         {
           "title": "Employees Only",
-          "time":"",
-          "participants":[],
+          "time":"Fri, 17 May 13 00:56:19 +0000",
+          "participants":["Niels","Liz"],
           "spatial":1,
-          "meta": [{
-
-          }],
+          "meta": [],
           "narrative": [{}]
 
         },
         {
           "title": "Washington Commons",
-          "time":"",
-          "participants":[],
+          "time":"Fri, 17 May 13 03:56:19 +0000",
+          "participants":["Niels", "Liz"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/washington-commons/49e1f68df964a520ea611fe3"
           }],
           "narrative": [{}]
 
@@ -188,24 +235,26 @@
       "events": [
         {
           "title": "Little Branch",
-          "time":"",
-          "participants":[],
+          "time":"Sat, 18 May 13 04:47:55 +0000",
+          "participants":["Niels", "Sher", "Marcello", "Yizhuo"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/little-branch/43db9775f964a520922e1fe3"
           }],
-          "narrative": [{}]
+          "narrative": [{"type":"img","value":"little_branch1.jpg"},{"type":"img","value":"little_branch2.jpg"}]
 
         },
         {
           "title": "Raines Law Room",
-          "time":"",
-          "participants":[],
+          "time":"Sat, 18 May 13 06:31:03 +0000",
+          "participants":["Niels", "Sher", "Marcello", "Yizhuo"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/the-raines-law-room/49ad6634f964a520b2521fe3"
           }],
-          "narrative": [{}]
+          "narrative": [{"type":"img","value":"raines_law_room1.jpg"},{"type":"img","value":"raines_law_room2.jpg"},{"type":"img","value":"raines_law_room3.jpg"}]
 
         }
       ]
@@ -216,11 +265,12 @@
       "events": [
         {
           "title": "Gran Electrica",
-          "time":"",
-          "participants":[],
+          "time":"Sun, 19 May 13 01:13:03 +0000",
+          "participants":["Niels", "Sher", "Hesper"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/gran-el%C3%A9ctrica/4f69f2b76d86f87117bb13ab"
           }],
           "narrative": [{}]
 
@@ -228,21 +278,23 @@
         {
           "title": "Washington Commons",
           "time":"",
-          "participants":[],
+          "participants":["Niels", "Sher", "Liz"],
           "spatial":1,
           "meta": [{
-
+            "type":"foursquare",
+            "url":"https://foursquare.com/v/washington-commons/49e1f68df964a520ea611fe3"
           }],
           "narrative": [{}]
-
         }
       ]
     },
     {
       "title": "Sunday",
       "time" : "2013-05-19",
+      "spatial":"Newark International Airport",
+      "participants": ["Niels"],
       "narrative": [{}]
-    },    
+    }
   ],
   "map": {
     "type": "google",
