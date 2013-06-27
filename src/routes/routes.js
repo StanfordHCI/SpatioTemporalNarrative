@@ -5,21 +5,25 @@ var articleProvider = new RawArticleProvider();
 var list_articles = function(req, res, next) {
   articleProvider.getTitles(function(err,data) {
     res.json(data);    
-  })
+  });
 };
 
 var get_article = function(req, res, next) {
   var id = parseInt(req.params.id);
   if (isNaN(id)) {
-    next();
+  
+    next(new Error("ID is incorrect format"));
+  
   } else {
+
     articleProvider.findById(req.params.id, function(err,data) {
       if (err) {
-        next();
+        next(err);
       } else {
         res.json(data);
       }
     });
+  
   }
 }
 
