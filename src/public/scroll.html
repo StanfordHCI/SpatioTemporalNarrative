@@ -15,6 +15,13 @@
       background: black;
       color: white;
       font: 28px "Lucida Grande", Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    #container {
+      display:block;
+      padding-bottom: 0px;
     }
 
     .title {
@@ -23,17 +30,34 @@
       padding: 50px;
     }
     .title h1 {
+      display:block;
       padding-top: 300px;
     }
     .text {
       padding: 160px 180px 160px 50px;
       
     }
+    #debug {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100px;
+      width: 500px;
+      background: black;
+      font-size: 12px;
+      color: lightgray;
+      overflow: hidden;
+
+    }
   </style>
 </head>
 <script src="/js/lib/jquery-2.0.2.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="/js/lib/underscore-min.js" type="text/javascript" charset="utf-8"></script>
 <body>
+
+<div id="debug">
+
+</div>
   
 <div id="container">
   <div class="section title">
@@ -107,7 +131,118 @@ The Edge…There is no honest way to explain it because the only people who real
 
 <script>
   
+var debug_el = document.getElementById("debug");
+function debug() {
+  var str = "";
+  for (var i in arguments) {
+    str += JSON.stringify(arguments[i]) + " ";
+  }
+  debug_el.innerHTML = str + "<br\>" + debug_el.innerHTML
+}
 
+function createScroller(el, scrollInterceptor) {
+
+  var startX = 0;
+  var startY = 0;  
+
+  var currentX = 0;
+  var currentY = 0;
+
+  var maxY = el.scrollHeight;
+
+  var scrollFn = function(offsetX, offsetY, isDone) {
+    var newY = currentY + offsetY;
+    if (newY > 0)
+      newY = 0;
+    if (newY < -maxY + screen.width)
+      newY = -maxY + screen.width;
+
+    if (isDone)
+        currentY = newY;
+    if (scrollInterceptor)
+      newY = -scrollInterceptor(-newY);  
+    $(el).css('-webkit-transform', 'translate(0, ' + newY + 'px)');
+    
+  }
+
+  var handleStart  = function(e) {
+    var touches = e.changedTouches;
+    if (touches.length > 0) {
+      startX = touches[0].pageX;
+      startY = touches[0].pageY;
+    }
+  };
+
+  var moveOrEnd = function(e, isDone) {
+    e.preventDefault();
+    var touches = e.changedTouches;
+    if (touches.length > 0) {
+      var newX = touches[0].pageX;
+      var newY = touches[0].pageY;
+      var offsetX = newX - startX;
+      var offsetY = newY - startY;
+      scrollFn(offsetX, offsetY, isDone);
+    }
+  }
+
+  var handleMove   = function(e) {
+    moveOrEnd(e);
+  };
+
+  var handleEnd    = function(e) {
+    moveOrEnd(e, true);
+  };
+
+  var handleLeave  = function(e) {
+    moveOrEnd(e, true);
+  };
+
+  var handleCancel = function(e) {
+    debug("CANCEL touch");
+  };
+
+  el.addEventListener("touchstart",  handleStart,  false);
+  el.addEventListener("touchmove",   handleMove,   false);
+  el.addEventListener("touchend",    handleEnd,    false);
+  el.addEventListener("touchleave",  handleLeave,  false);
+  el.addEventListener("touchcancel", handleCancel, false);
+
+  return {
+
+  }
+}
+
+var container_el = document.getElementById("container");
+function makeScrollInterceptor(container_el) {
+
+  var children = function() {
+    var result = [];
+
+    var children_els = container_el.children;
+    for (var i = 0; i < children_els.length; i++) {
+      var child = $(children_els[i]);
+      result.push({offsetTop:child.offset().top, el:child});
+    }
+
+    return result;
+  };
+
+  return function(currentTop) {
+
+    return currentTop;
+  }
+
+}
+
+var scroller = createScroller(container_el, makeScrollInterceptor(container_el));
+
+
+
+
+
+document.ontouchstart = function(e) {
+  e.preventDefault();
+};
 
 
 
