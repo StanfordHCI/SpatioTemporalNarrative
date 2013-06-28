@@ -14,7 +14,7 @@
     body {
       background: black;
       color: white;
-      font: 28px "Lucida Grande", Helvetica, Arial, sans-serif;
+      font: 34px "Baskerville", Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 0;
     }
@@ -32,6 +32,8 @@
       padding: 160px 180px 160px 50px;
     }
     .title h1 {
+      font: "Lucida Grande", Helvetica, Arial, sans-serif;
+
       display:block;
       padding-top: 300px;
     }
@@ -214,10 +216,6 @@ function createScroller(el, scrollInterceptor) {
 var container_el = document.getElementById("container");
 function makeScrollInterceptor(container_el) {
 
-  var currentEl = 0;
-  var currentElStart = 0;
-  var currentElStop = 0;
-
 
   var effects = (function() {
     var result = [];
@@ -231,18 +229,19 @@ function makeScrollInterceptor(container_el) {
       var child = $(children_els[i]);
 
       var startOnPage = child.offset().top;
-      var height = child.outerHeight();
+      var outerHeight = child.outerHeight();
+      var innerHeight = child.height();
 
-      debug("Start on page:", startOnPage, ", height:", height);
+      debug("Start on page:", startOnPage, ", height:", outerHeight);
 
       //start fading in when it becomes visible
       var start = startOnPage - amountVisible*3/4;
       // sustain when it is fully visible
       var sustain = startOnPage;
       // decay when it's halfway out
-      var decay = startOnPage + height/2;
+      var decay = startOnPage + innerHeight/2;
       // done when it's all the way out
-      var done = startOnPage + height*3/4;
+      var done = startOnPage + outerHeight*3/4;
 
       result.push({
         progression: [start, sustain, decay, done],
