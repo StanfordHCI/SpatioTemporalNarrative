@@ -50,6 +50,19 @@ RawArticleProvider.prototype.getTitles = function(callback) {
   callback(null, result);
 }
 
+Array.prototype.removeRepeats = function() {
+  this.sort();
+  var prev = this[0];
+  var i = 1;
+  while (this[i]) {
+    if (this[i] == this[i - 1]) {
+      this.splice(i, 1);
+    } else {
+      i++;
+    }
+  }
+}
+
 /*
  * This loads a directory full of json files,
  * discarding those that doesn't conform to our format,
@@ -61,14 +74,78 @@ RawArticleProvider.prototype.getTitles = function(callback) {
 RawArticleProvider.prototype.loadDir = function(dirname) {
   console.log("Loading articles from", dirname);
 
+  var self = this;
+
   function loadFile(err,data) {
     //Here we parse the json
+    if (err) {
+      console.log("Error Loading File");
+      console.log(data);
+    } else {
+      var file = JSON.parse(data);
+
+      //checks to see if the file is an narrative file
+      if (file.title != null && file.map != null && file.events != null && file.participants != null) {
+
+        var convertToDate = function(timeArr) {
+          if (timeArr) {
+            var dateObjs = [];
+            for(var t = 0; t < timeArr.length; t++) {
+              dateObjs.push(new Date(timeArr[t]));
+            }
+            return dateObjs;
+          }
+        }
+
+
+        //*
+        for (var i = 0; i < file.events.length; i++) {
+          if (file.events[i].events) {
+
+            var subevents = file.events[i].events;
+
+            if (!file.events[i].participants) {
+              file.events[i].participants = [];
+              for (var j = 0; j < file.events[i].events.length; j++) {
+                if (file.events[i].events[j].participants){
+                  file.events[i].participants = file.events[i].participants.concat(file.events[i].events[j].participants);
+                }
+              }
+              file.events[i].participants.removeRepeats();
+            }
+
+            for (var j = 0; j < subevents.length; j++) {
+              if (subevents[j].time) {
+                file.events[i].events[j].time = convertToDate(subevents[j].time);
+
+                
+              }
+            } 
+          }
+
+          if (!file.events[i].time && file.events[i].events) {
+              var subevents = file.events[i].events
+              file.events[i].time = [];
+              file.events[i].time.push(subevents[0].time[0]);
+              var last_subevent = subevents[subevents.length - 1];
+              file.events[i].time.push(last_subevent.time[last_subevent.time.length -1]);
+            } else {
+              file.events[i].time = convertToDate(file.events[i].time);
+            }
+        }
+      }
+
+      self.articles.push(file);
+    }
+    
   }
+  
 
   fs.readdir(dirname, function(err, files) {
 
     for (i in files) {
       if (path.extname(files[i]) == '.json') {
+        console.log(files[i]);
         fs.readFile(path.join(dirname, files[i]), loadFile);
       }
     }
