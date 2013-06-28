@@ -1,7 +1,22 @@
+html,
 body {
-  padding: 50px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 a {
   color: #00B7FF;
+}
+#narrative_container {
+  width: 50%;
+  float: left;
+  background: red;
+}
+#map_container {
+  width: 50%;
+  float: right;
+  background: green;
 }
