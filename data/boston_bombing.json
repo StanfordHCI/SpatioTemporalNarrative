@@ -1,117 +1,284 @@
-{ 
-  "title": "The Hunt for the Boston Bombing Suspects",
-
-  "participants": {
-  	"Dzhokhar A. Tsarnaev": {
-  	  "default":true
-  	},
-  	"Tamerlan Tsarnaev": {
-  	
-  	},
-  	"Danny": {
-
-  	},
-  	"Police Force":  {
-
-  	}
-  },
-
-  "events" : [
-	  {
-	 	"title":"Campus Police Officer Shot",
-	 	"time":"Thurs, 18 April 13 22:30:00 +0000", 
-	 	"participants": ["Sean Collier", "Dzhokhar A. Tsarnaev", "Tamerlan Tsarnaev"],
-	 	"spatial":"Stata Center, MIT",
-	 	"narrative":  [
-	 	  {"type":"text", "value":"two men approach a campus police officer from behind and shoot him to death. The officer is found with multiple gunshot wounds and is taken to Massachusetts General Hospital in Boston, where he is pronounced dead. Police believe the officer was killed after a failed attempt by the suspects to steal his gun."}, 
-	 	  {"type":"fullimage","value":{"img":"mit.jpg", "text":"The scene near the M.I.T. campus"}}
-	 	]
-	  },
- 	  {
- 	  	"title":"Armed Carjacking",
- 	  	"time":"Thurs, 18 April 13 22:45:00 +0000", 
- 	  	"participants":["Dzhokhar A. Tsarnaev", "Tamerlan Tsarnaev", "Danny"],
- 	  	"spatial":"Allston",
- 	  	"narrative":  [
- 	  	  {"type":"text", "value":"A short time later, a man who officials believe was Tamerlan Tsarnaev approaches a parked Mercedes-Benz S.U.V., climbs in and points a gun at the driver, stating, \"Did you hear about the Boston explosion?\" and \"I did that,\" according to a criminal complaint filed April 22. The gunman forces the victim to drive to another location, where they pick up another man, who officials believe was Dzhokhar Tsarnaev."}
- 	  	]
- 	  }
- 	  {
- 	  	"title":"Carjacking Victim Escapes",
- 	  	"time":"Thurs, 18 April 13 23:45:00 +0000", 
- 	  	"participants":["Dzhokhar A. Tsarnaev", "Tamerlan Tsarnaev", "Danny"],
- 	  	"spatial":"Memorial Drive Shell",
- 	  	"narrative":  [
- 	  	  {"type":"text", "value":"The two men and the victim drive to a Shell gas station on Memorial Drive in Cambridge. The two men get out of the car, and the victim manages to escape."}
- 	  	  {"type":"fullimage", "value":"shellsuspect.jpg"}
- 	  	]
- 	  }
- 	  {
- 	  	"title":"Car Chase",
- 	  	"time":"Fri, 19 April 13 00:05:00 +0000", 
- 	  	"participants":["Dzhokhar A. Tsarnaev", "Tamerlan Tsarnaev", "Police Force"],
- 	  	"spatial":"Car Chase Area",
- 	  	"narrative":  [
- 	  	  {"type":"text", "value":"The police immediately begin to search for the Mercedes, pursuing it into Watertown. During the chase, explosives are thrown from the vehicle."}
- 	  	]
- 	  }
- 	  {
- 	  	"title":"Situation Escalates After Pursuit",
- 	  	"time":"", 
- 	  	"participants":["Dzhokhar A. Tsarnaev", "Tamerlan Tsarnaev", "Police Force"],
- 	  	"spatial":"Cordoned area of Watertown",
- 	  	"narrative":  [
- 	  	  {"type":"text", "value":"Police follow the the Mercedes into Watertown"},
- 	  	],
- 	  	"events":  [
- 	  	  {
- 	  	  	"title":"Shooting and Killing of One Suspect",
- 	  		"time":"Fri, 19 April 13 00:50:00 +0000", 
-	 	  	"participants":["Dzhokhar A. Tsarnaev", "Tamerlan Tsarnaev", "Police Force"],
-	 	  	"spatial":"Dexter St Residential Area, Watertown",
-	 	  	"narrative":  [
-	 	  	  {"type":"text", "value":"Suspects and the police exchange gunfire. A Watertown resident, Andrew Kitzenberg, 29, said he saw two men engaged in \"constant gunfire\" with police officers. A police S.U.V. \"drove towards the shooters,\" he said, and was shot at until it was severely damaged. Mr. Kitzenberg said he saw the shooters throw a bomb at the police, but it \"went 20 yards at most.\" One of the suspects, Tamerlan Tsarnaev, is tackled by the police and critically injured. He is pronounced dead at a hospital at 1:35 a.m. His brother, Dzhokhar A. Tsarnaev, gets back into the S.U.V. and drives at the officers, breaking through them."},
-	 	  	  {"type":"image", "value":"shootout.jpg"}
-	 	  	],
- 	  	  },
- 	  	  {
- 	  	  	"title":"Manhunt Continues For Second Suspect",
- 	  		"time":"", 
-	 	  	"participants":["Dzhokhar A. Tsarnaev", "Tamerlan Tsarnaev", "Police Force"],
-	 	  	"spatial":"Cordoned area of Watertown",
-	 	  	"narrative":  [
-	 	  	  {"type":"text", "value":"The police begin a door to door search for Dzhokhar Tsarnaev. At a press conference about 12:30 p.m., Massachusetts State Police says that they have completed over “60 to 70 percent of what we want to cover.”"},
-	 	  	],
- 	  	  }
- 	  	]
-
- 	  }
- 	  {
- 	  	"title":"Suspect Taken Into Custody",
- 	  	"time":"Fri, 19 April 13 20:45:00 +0000", 
- 	  	"participants":["Dzhokhar A. Tsarnaev", "Police Force"],
- 	  	"spatial":"Tsarnaev Found",
- 	  	"narrative":  [
- 	  	  {"type":"text", "value":"Friday evening, Dzhokhar Tsarnaev was taken into custody after a standoff with authorities in a residential area. Following a day of door-to-door searches, officers had swooped down on a residential block, focusing their attention on the backyard of a home there. Several blasts were heard around 7:50 p.m."},
- 	  	  {"type":"image", "value":"final.jpg"}
- 	  	],
- 	  }
-   ],
-
-   "map":  {
-   	  "type":"google",
-   	  "poi": [
-   	    {"type":"address",	"name":"Stata Center, MIT", 					"value":"32 Vassar St Cambridge, MA 02139‎"},
-   	    {"type":"address", 	"name":"Allston", 								"value":"Allston, Boston, MA 02134"},
-   	    {"type":"address", 	"name":"Memorial Shell Drive", 					"value":"820 Memorial Drive, Cambridge, MA 02139"},
-   	    {"type":"area", 	"name":"Car Chase Area", 						"value":[{"type":"address", "value":"820 Memorial Drive, Cambridge, MA 02139"}, {"type":"address", "value":"Laurel St, Watertown, MA 02472"}, {"type":"address", "value":"Dexter St, Watertown, MA 02472"}]}
-   	    {"type":"address", 	"name":"Dexter St Residential Area, Watertown", "value":"Dexter St, Watertown, MA 02472"}
-   	    {"type":"address",	"name":"Tsarnaev Found", 						"value":"67 Franklin St, Watertown, MA 02472"}
-   	    {"type":"area", 	"name":"Watertown",								"value":[{"type":"point", "lat":42.370398, "long":-71.158962},{"type":"point", "lat":42.365388, "long":-71.159906},{"type":"point", "lat":42.364976, "long":-71.161752},{"type":"point", "lat":42.365007, "long":-71.164069},{"type":"point", "lat":42.363898, "long":-71.165271},{"type":"point", "lat":42.364088, "long":-71.167417},{"type":"point", "lat":42.365229, "long":-71.166601},{"type":"point", "lat":42.365356, "long":-71.168704},{"type":"point", "lat":42.366815, "long":-71.171021},{"type":"point", "lat":42.369859, "long":-71.171751},{"type":"point", "lat":42.370081, "long":-71.166773},{"type":"point", "lat":42.370905, "long":-71.16394},{"type":"point", "lat":42.371222, "long":-71.162353},{"type":"point", "lat":42.371285, "long":-71.160464}]}
-
-
-   	  ]
-   }
+{
+    "title": "The Hunt for the Boston Bombing Suspects",
+    "participants": {
+        "Dzhokhar A. Tsarnaev": {
+            "default": true
+        },
+        "Tamerlan Tsarnaev": {},
+        "Danny": {},
+        "Police Force": {}
+    },
+    "events": [
+        {
+            "title": "Campus Police Officer Shot",
+            "time": ["Thurs, 18 April 13 22:30:00 -0400"],
+            "participants": [
+                "Sean Collier",
+                "Dzhokhar A. Tsarnaev",
+                "Tamerlan Tsarnaev"
+            ],
+            "spatial": "Stata Center, MIT",
+            "narrative": [
+                {
+                    "type": "text",
+                    "value": "two men approach a campus police officer from behind and shoot him to death. The officer is found with multiple gunshot wounds and is taken to Massachusetts General Hospital in Boston, where he is pronounced dead. Police believe the officer was killed after a failed attempt by the suspects to steal his gun."
+                },
+                {
+                    "type": "fullimage",
+                    "value": {
+                        "img": "mit.jpg",
+                        "text": "The scene near the M.I.T. campus"
+                    }
+                }
+            ]
+        },
+        {
+            "title": "Armed Carjacking",
+            "time": ["Thurs, 18 April 13 22:45:00 -0400"],
+            "participants": [
+                "Dzhokhar A. Tsarnaev",
+                "Tamerlan Tsarnaev",
+                "Danny"
+            ],
+            "spatial": "Allston",
+            "narrative": [
+                {
+                    "type": "text",
+                    "value": "A short time later, a man who officials believe was Tamerlan Tsarnaev approaches a parked Mercedes-Benz S.U.V., climbs in and points a gun at the driver, stating, \"Did you hear about the Boston explosion?\" and \"I did that,\" according to a criminal complaint filed April 22. The gunman forces the victim to drive to another location, where they pick up another man, who officials believe was Dzhokhar Tsarnaev."
+                }
+            ]
+        },
+        {
+            "title": "Carjacking Victim Escapes",
+            "time": ["Thurs, 18 April 13 23:45:00 -0400"],
+            "participants": [
+                "Dzhokhar A. Tsarnaev",
+                "Tamerlan Tsarnaev",
+                "Danny"
+            ],
+            "spatial": "Memorial Drive Shell",
+            "narrative": [
+                {
+                    "type": "text",
+                    "value": "The two men and the victim drive to a Shell gas station on Memorial Drive in Cambridge. The two men get out of the car, and the victim manages to escape."
+                },
+                {
+                    "type": "fullimage",
+                    "value": "shellsuspect.jpg"
+                }
+            ]
+        },
+        {
+            "title": "Car Chase",
+            "time": ["Fri, 19 April 13 00:05:00 -0400"],
+            "participants": [
+                "Dzhokhar A. Tsarnaev",
+                "Tamerlan Tsarnaev",
+                "Police Force"
+            ],
+            "spatial": "Car Chase Area",
+            "narrative": [
+                {
+                    "type": "text",
+                    "value": "The police immediately begin to search for the Mercedes, pursuing it into Watertown. During the chase, explosives are thrown from the vehicle."
+                }
+            ]
+        },
+        {
+            "title": "Situation Escalates After Pursuit",
+            "participants": [
+                "Dzhokhar A. Tsarnaev",
+                "Tamerlan Tsarnaev",
+                "Police Force"
+            ],
+            "spatial": "Cordoned area of Watertown",
+            "narrative": [
+                {
+                    "type": "text",
+                    "value": "Police follow the the Mercedes into Watertown"
+                }
+            ],
+            "events": [
+                {
+                    "title": "Shooting and Killing of One Suspect",
+                    "time": ["Fri, 19 April 13 00:50:00 -0400"],
+                    "participants": [
+                        "Dzhokhar A. Tsarnaev",
+                        "Tamerlan Tsarnaev",
+                        "Police Force"
+                    ],
+                    "spatial": "Dexter St Residential Area, Watertown",
+                    "narrative": [
+                        {
+                            "type": "text",
+                            "value": "Suspects and the police exchange gunfire. A Watertown resident, Andrew Kitzenberg, 29, said he saw two men engaged in \"constant gunfire\" with police officers. A police S.U.V. \"drove towards the shooters,\" he said, and was shot at until it was severely damaged. Mr. Kitzenberg said he saw the shooters throw a bomb at the police, but it \"went 20 yards at most.\" One of the suspects, Tamerlan Tsarnaev, is tackled by the police and critically injured. He is pronounced dead at a hospital at 1:35 a.m. His brother, Dzhokhar A. Tsarnaev, gets back into the S.U.V. and drives at the officers, breaking through them."
+                        },
+                        {
+                            "type": "image",
+                            "value": "shootout.jpg"
+                        }
+                    ]
+                },
+                {
+                    "title": "Manhunt Continues For Second Suspect",
+                    "time": [""],
+                    "participants": [
+                        "Dzhokhar A. Tsarnaev",
+                        "Tamerlan Tsarnaev",
+                        "Police Force"
+                    ],
+                    "spatial": "Cordoned area of Watertown",
+                    "narrative": [
+                        {
+                            "type": "text",
+                            "value": "The police begin a door to door search for Dzhokhar Tsarnaev. At a press conference about 12:30 p.m., Massachusetts State Police says that they have completed over “60 to 70 percent of what we want to cover.”"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "Suspect Taken Into Custody",
+            "time": ["Fri, 19 April 13 20:45:00 -0400"],
+            "participants": [
+                "Dzhokhar A. Tsarnaev",
+                "Police Force"
+            ],
+            "spatial": "Tsarnaev Found",
+            "narrative": [
+                {
+                    "type": "text",
+                    "value": "Friday evening, Dzhokhar Tsarnaev was taken into custody after a standoff with authorities in a residential area. Following a day of door-to-door searches, officers had swooped down on a residential block, focusing their attention on the backyard of a home there. Several blasts were heard around 7:50 p.m."
+                },
+                {
+                    "type": "image",
+                    "value": "final.jpg"
+                }
+            ]
+        }
+    ],
+    "map": {
+        "type": "google",
+        "poi": [
+            {
+                "type": "address",
+                "name": "Stata Center, MIT",
+                "value": "32 Vassar St Cambridge, MA 02139‎"
+            },
+            {
+                "type": "address",
+                "name": "Allston",
+                "value": "Allston, Boston, MA 02134"
+            },
+            {
+                "type": "address",
+                "name": "Memorial Shell Drive",
+                "value": "820 Memorial Drive, Cambridge, MA 02139"
+            },
+            {
+                "type": "area",
+                "name": "Car Chase Area",
+                "value": [
+                    {
+                        "type": "address",
+                        "value": "820 Memorial Drive, Cambridge, MA 02139"
+                    },
+                    {
+                        "type": "address",
+                        "value": "Laurel St, Watertown, MA 02472"
+                    },
+                    {
+                        "type": "address",
+                        "value": "Dexter St, Watertown, MA 02472"
+                    }
+                ]
+            },
+            {
+                "type": "address",
+                "name": "Dexter St Residential Area, Watertown",
+                "value": "Dexter St, Watertown, MA 02472"
+            },
+            {
+                "type": "address",
+                "name": "Tsarnaev Found",
+                "value": "67 Franklin St, Watertown, MA 02472"
+            },
+            {
+                "type": "area",
+                "name": "Watertown",
+                "value": [
+                    {
+                        "type": "point",
+                        "lat": 42.370398,
+                        "long": -71.158962
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.365388,
+                        "long": -71.159906
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.364976,
+                        "long": -71.161752
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.365007,
+                        "long": -71.164069
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.363898,
+                        "long": -71.165271
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.364088,
+                        "long": -71.167417
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.365229,
+                        "long": -71.166601
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.365356,
+                        "long": -71.168704
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.366815,
+                        "long": -71.171021
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.369859,
+                        "long": -71.171751
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.370081,
+                        "long": -71.166773
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.370905,
+                        "long": -71.16394
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.371222,
+                        "long": -71.162353
+                    },
+                    {
+                        "type": "point",
+                        "lat": 42.371285,
+                        "long": -71.160464
+                    }
+                ]
+            }
+        ]
+    }
 }
-
-{}
