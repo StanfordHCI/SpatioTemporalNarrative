@@ -140,10 +140,15 @@ requireCss('/stylesheets/style.css');
 //Libaries
 requireScript('/js/lib/underscore-min.js',     false);
 requireScript("/js/lib/jquery-2.0.2.min.js"  , false);
-
+requireScript('/js/lib/backbone-min.js',     false);
 
 //Internal Libraries
+
 requireScript('/js/Events.js');
+
+requireScript('/js/GlobalState.js');
+requireScript('/js/Views.js');
+requireScript('/js/Models.js');
 requireScript('/js/iPadScroller.js');
 
 requireScript('/js/initialize.js');
