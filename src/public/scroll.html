@@ -131,7 +131,7 @@ function debug() {
   // */
 }
 
-function createScroller(el, scrollInterceptor) {
+function createScroller(el, delegate) {
 
   var startX = 0;
   var startY = 0;  
@@ -152,8 +152,8 @@ function createScroller(el, scrollInterceptor) {
     if (isDone)
         currentY = newY;
 
-    if (scrollInterceptor)
-      newY = -scrollInterceptor(-newY);  
+    if (delegate)
+      newY = -delegate(-newY);  
     $(el).css('-webkit-transform', 'translate(0, ' + newY + 'px)');
     
   }
@@ -214,7 +214,7 @@ function createScroller(el, scrollInterceptor) {
 // For the moment we assume this is one linear list but potentially it can be many more.
 
 var container_el = document.getElementById("container");
-function makeScrollInterceptor(container_el) {
+function makeScrollDelegate(container_el) {
 
 
   var effects = (function() {
@@ -262,7 +262,7 @@ function makeScrollInterceptor(container_el) {
 
   return function(currentTop) {
 
-    debug("SCROLLINTERCEPT:", currentTop)
+    debug("SCROLLER DELEGATE:", currentTop)
 
     for (var i = 0; i < effects.length; i++) {
       var p = effects[i].progression;
@@ -306,7 +306,7 @@ function makeScrollInterceptor(container_el) {
 
 }
 
-var scroller = createScroller(container_el, makeScrollInterceptor(container_el));
+var scroller = createScroller(container_el, makeScrollDelegate(container_el));
 
 
 
