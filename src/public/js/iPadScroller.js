@@ -20,7 +20,7 @@ iPadScroller = (function() {
    *  @scrollInterceptor - fn(int) - a hook to interrupt scrolling and capture scroll progress
    * 
    */
-  function createScroller(listenEl, scrollEl, scrollInterceptor) {
+  function createScroller(listenEl, scrollEl, delegate) {
 
     var startX = 0;
     var startY = 0;  
@@ -41,8 +41,8 @@ iPadScroller = (function() {
       if (isDone)
           currentY = newY;
 
-      if (scrollInterceptor)
-        newY = -scrollInterceptor(-newY);  
+      if (delegate)
+        newY = -delegate(-newY);  
       $(scrollEl).css('-webkit-transform', 'translate(0, ' + newY + 'px)');
       
     }
