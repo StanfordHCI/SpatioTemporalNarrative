@@ -35,7 +35,25 @@ Models = (function() {
 
       });
 
+    },
 
+    forAllEvents: function(func) {
+      //Call func for every event with func(event);
+
+    },
+
+    //Return an event or subevent based on its unique id
+    getEventById: function(id) {
+      idList = id.split(".");
+      var evt = this.data.events[idList[0]];
+      for (var i = 1; i < idList.length; i++) {
+        evt = evt.events[idList[i]];
+      }
+      return evt;
+    },
+
+    getEventParent: function(id) {
+      //If id is a nested event, get its parent
     }
 
   })
@@ -66,7 +84,6 @@ Models = (function() {
       })
 
     }
-
 
   })
 

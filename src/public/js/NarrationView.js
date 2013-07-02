@@ -25,6 +25,9 @@ NarrationView = (function() {
 
     renderFromScratch: function() {
       
+      if (this.options.scroller)
+        this.options.scroller.destroy();
+
       var events = this.model.get("events");
       var shortName = this.model.get("shortName");
 
@@ -45,9 +48,10 @@ NarrationView = (function() {
       ts += '</div>';
       ts += '<% }); %>';
 
-      this.$el.html(_.template(ts, {events: events, root:shortName}));
 
-      iPadScroller.createScroller(document, this.$el.get(0), makeScrollDelegate(this.$el.get(0), this.modelView));
+      this.el.innerHTML = _.template(ts, {events: events, root:shortName});
+
+      this.options.scroller = iPadScroller.createScroller(document, this.el, makeScrollDelegate(this.el, this.modelView));
 
       return this;
     }, 

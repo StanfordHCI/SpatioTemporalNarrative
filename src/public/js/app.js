@@ -40,7 +40,8 @@ $(document).ready(function(event) {
     el: $("#article_container")
   });
 
-
+  window.articleModel = articleModel;
+  
   //We are focusing on using events, including for initialization.
   //That way we simply bind responders to the initialization event.
   var AppRouter = Backbone.Router.extend({
@@ -48,7 +49,6 @@ $(document).ready(function(event) {
     routes: {
       "article/:id": "article",
       "*default": "index",
-
     },
 
     index: function() {
