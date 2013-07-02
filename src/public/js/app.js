@@ -12,10 +12,14 @@ $(document).ready(function(event) {
   });
 
 
+  //*****************************************************
+  // Setting up the index models and views
+  //*****************************************************
 
 
   var articleIndexModel = new Models.ArticleIndexModel();
-  var articleIndexView = new Views.ArticleIndexView({ 
+
+  var articleIndexView = new ArticleIndexView({ 
     el: $("#index_container"), 
     model: articleIndexModel,
   });
@@ -24,6 +28,17 @@ $(document).ready(function(event) {
     router.navigate("article/"+id, { trigger:true });
   });
 
+
+  //*****************************************************
+  // Setting up the article models and views
+  //*****************************************************
+
+  var articleModel = new Models.ArticleModel();
+
+  var articleViewModel = new ArticleViewModel({
+    model: articleModel,
+    el: $("#article_container")
+  });
 
 
   //We are focusing on using events, including for initialization.
@@ -44,12 +59,10 @@ $(document).ready(function(event) {
 
     article: function(id) {
 
-      console.log("ARTICLE")
-
-      var articleModel = new Models.ArticleModel();
       
       articleModel.fetchById(id);
-      window.articleModel = articleModel;
+
+
 
       // //Internally it registers to the Model's init event
       // var globalState = GlobalState.initialize(articleModel);
@@ -73,8 +86,11 @@ $(document).ready(function(event) {
   Backbone.history.start();
 
   router.on("route", function(name) {
+    console.log("Routing to " + name);
     if (name != "index")
       articleIndexView.clear();
+    else
+      articleViewModel.hide();
   });
 
 

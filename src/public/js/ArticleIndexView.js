@@ -1,4 +1,4 @@
-Views = (function() {
+ArticleIndexView = (function() {
 
 
   function ArticleIndexView(options) {
@@ -58,8 +58,6 @@ Views = (function() {
     template: _.template("<ul><% _.each(articles, function(article){ %> <li articleId=<%= article.id %>> <%= article.title %> </li> <% }) %> </ul>")
   });
 
-  return {
-    ArticleIndexView: ArticleIndexView
-  }
+  return ArticleIndexView;
 
 })();

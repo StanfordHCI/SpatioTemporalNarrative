@@ -146,8 +146,13 @@ requireScript('/js/lib/backbone-min.js',     false);
 
 requireScript('/js/Events.js');
 
-requireScript('/js/GlobalState.js');
-requireScript('/js/Views.js');
+requireScript('/js/ArticleViewModel.js');
+requireScript('/js/ArticleIndexView.js');
+
+requireScript('/js/MapView.js');
+requireScript('/js/NarrationView.js');
+requireScript('/js/TimelineView.js');
+
 requireScript('/js/Models.js');
 requireScript('/js/iPadScroller.js');
 
