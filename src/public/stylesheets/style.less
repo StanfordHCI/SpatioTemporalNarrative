@@ -15,28 +15,48 @@ a {
 }
 
 #container {
-  
+  background: black;
+}
+
+#index_container {
+  background: #eee;
 }
 
 #timeline_container {
   position: fixed;
   top: 15px;
-  left: 14px;
-  width: 150px;
-  background: yellow;
+  left: 10px;
+  width: 60px;
+  height: 100%;
+  background: #aaa;
   overflow: hidden;
+  z-index: 100;
 }
 
 #narrative_container {
-  width: 50%;
-  float: left;
-  background: red;
+  padding: 0px 20px 50px 80px;
+  width: 412px;
+  float:left;
+  background: #eee;
+  z-index: 1;
 }
 
 #map_container {
-  width: 50%;
-  float: right;
-  background: green;
+  width: 512px;
+  height: 768px;
+  margin-left: 512px;
+  background: #ddd;
+}
+
+#container:before {
+    content: " "; /* 1 */
+  display: table; /* 2 */
+}
+#container:after {
+  content: " "; /* 1 */
+  display: table; /* 2 */
+
+  clear: both;
 }
 
 .hover {

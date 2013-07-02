@@ -19,13 +19,22 @@ TimelineView = (function() {
     },
 
     initialize: function() {
+      var self = this;
       this.listenTo(this.modelView, "setup", _.bind(this.renderFromScratch, this)); 
+
+      this.modelView.on("scroll:at", function(id) {
+        self.renderScrolled(this.model.get("events")[id]);  
+      });
     },
 
     renderFromScratch: function() {
       this.$el.html("TimelineView for " + this.model.get("title"));
       return this;
     }, 
+
+    renderScrolled: function(event) {
+      this.$el.html(event.time)
+    },
     
     clear: function() {
 

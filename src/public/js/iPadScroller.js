@@ -28,22 +28,25 @@ iPadScroller = (function() {
     var currentX = 0;
     var currentY = 0;
 
-    var maxY = scrollEl.scrollHeight;
+    var $scrollEl = $(scrollEl);
 
+    var maxY = scrollEl.scrollHeight;
+   
     var scrollFn = function(offsetX, offsetY, isDone) {
 
       var newY = currentY + offsetY;
-      if (newY > 0)
-        newY = 0;
-      if (newY < -maxY + screen.width)
-        newY = -maxY + screen.width;
+      // BUG:
+      // if (newY > 0)
+      //   newY = 0;
+      // if (newY < -maxY + screen.width)
+      //   newY = -maxY + screen.width;
 
       if (isDone)
           currentY = newY;
 
       if (delegate)
         newY = -delegate(-newY);  
-      $(scrollEl).css('-webkit-transform', 'translate(0, ' + newY + 'px)');
+      $scrollEl.css('-webkit-transform', 'translate(0, ' + newY + 'px)');
       
     }
 
@@ -88,6 +91,9 @@ iPadScroller = (function() {
     listenEl.addEventListener("touchend",    handleEnd,    false);
     listenEl.addEventListener("touchleave",  handleLeave,  false);
     listenEl.addEventListener("touchcancel", handleCancel, false);
+
+    if (delegate)
+      delegate(0);
 
     return {
       destroy: function() {
