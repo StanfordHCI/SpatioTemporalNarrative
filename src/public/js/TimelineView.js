@@ -34,7 +34,7 @@ TimelineView = (function() {
       circle.attr("fill", "#f00");
       circle.attr("stroke", "#fff");
       circle.touchmove(function(evt) {
-        circle.
+        
       })
 
       return this;

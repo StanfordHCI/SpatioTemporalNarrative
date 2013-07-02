@@ -245,6 +245,7 @@ var data = {
 
 // var data = JSON.parse(text);
 
+/*
 function afterInit() {
 
 var geocoder = new google.maps.Geocoder(); 
@@ -297,6 +298,7 @@ function callbackDrawPath(result, status) {
   console.log("Saved previous point: " + prevPoi); 
 }
 */
+/*
 var directionsService = new google.maps.DirectionsService(); 
 
 var bounds = new google.maps.LatLngBounds(); 
@@ -305,7 +307,7 @@ for (i in data.map.poi) {
   if (poi.type == "address") {
     addressToCoordinates(poi.value, fitMarkedCoordinates); 
   } else if (poi.type == "area") {
-    /*var locations = poi.value;
+    var locations = poi.value;
     var prevPoi = null; 
     for (j in locations) {
       var subPoi = locations[j]; 
@@ -335,7 +337,7 @@ for (i in data.map.poi) {
       } else if (subPoi.type == "point") {
 
       }
-    }*/
+    }
   } else if (poi.type == "point") {
 
   }
@@ -343,7 +345,7 @@ for (i in data.map.poi) {
 map.fitBounds(bounds);
 
 }
-
+*/
 // Function to display/center on a given point, along with an array of points to keep visible 
 // Barycentric coordinates
 // focus on 2 points only for now

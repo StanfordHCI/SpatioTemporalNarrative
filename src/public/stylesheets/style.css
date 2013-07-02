@@ -16,29 +16,6 @@ a {
 #index_container {
   background: #eee;
 }
-#timeline_container {
-  position: fixed;
-  top: 15px;
-  left: 10px;
-  width: 60px;
-  height: 100%;
-  background: #aaa;
-  overflow: hidden;
-  z-index: 100;
-}
-#narrative_container {
-  padding: 0px 20px 50px 80px;
-  width: 412px;
-  float: left;
-  background: #eee;
-  z-index: 1;
-}
-#map_container {
-  width: 512px;
-  height: 768px;
-  margin-left: 512px;
-  background: #ddd;
-}
 #container:before {
   content: " ";
   /* 1 */
@@ -58,4 +35,27 @@ a {
 }
 .hover {
   background-color: #ff0000;
+}
+#map_container {
+  width: 512px;
+  height: 768px;
+  margin-left: 512px;
+  background: #ddd;
+}
+#narrative_container {
+  padding: 0px 20px 50px 80px;
+  width: 412px;
+  float: left;
+  background: #eee;
+  z-index: 1;
+}
+#timeline_container {
+  position: fixed;
+  top: 15px;
+  left: 10px;
+  width: 60px;
+  height: 100%;
+  background: #aaa;
+  overflow: hidden;
+  z-index: 100;
 }
