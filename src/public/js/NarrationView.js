@@ -14,8 +14,8 @@ NarrationView = (function() {
     setElement: function(el) {
       if (!el)
         throw new Errpr("View requires a container element");
-      this.el = el;
-      this.$el = el instanceof $ ? el : $(element)
+      this.el = el instanceof $ ? el.get(0) : el;
+      this.$el = el instanceof $ ? el : $(el);
     },
 
     initialize: function() {
