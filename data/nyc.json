@@ -448,7 +448,7 @@
                 },
                 {
                     "title": "Washington Commons",
-                    "time": "Sun, 19 May 13 04:13:03 +0000",
+                    "time": ["Sun, 19 May 13 04:13:03 +0000"],
                     "participants": [
                         "Niels",
                         "Sher",
