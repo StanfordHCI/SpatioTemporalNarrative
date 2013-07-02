@@ -47,13 +47,8 @@ Models = (function() {
 
   _.extend(ArticleIndexModel.prototype, Backbone.Events, {
 
-    getAll: function() {
+    get: function() {
       return this.data;
-    },
-
-    append: function(id, title) {
-      this.data.push( { id:id, title:title } );
-      this.trigger('change', this);
     },
 
     fetch: function() {

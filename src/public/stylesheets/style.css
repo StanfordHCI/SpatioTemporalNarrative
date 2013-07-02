@@ -20,3 +20,6 @@ a {
   float: right;
   background: green;
 }
+.hover {
+  background-color: #ff0000;
+}

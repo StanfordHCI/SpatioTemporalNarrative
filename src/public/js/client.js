@@ -151,6 +151,6 @@ requireScript('/js/Views.js');
 requireScript('/js/Models.js');
 requireScript('/js/iPadScroller.js');
 
-requireScript('/js/initialize.js');
+requireScript('/js/app.js');
 
 loadAll();

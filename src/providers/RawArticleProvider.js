@@ -47,7 +47,7 @@ RawArticleProvider.prototype.getTitles = function(callback) {
   for (var i = 0; i < this.articles.length; i++) {
     result.push({id:i, title:this.articles[i].title});
   }
-  callback(null, result);
+  callback(null, {"articles":result});
 }
 
 Array.prototype.removeRepeats = function() {
