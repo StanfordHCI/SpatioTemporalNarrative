@@ -5,7 +5,7 @@ iPadScroller = (function() {
    * This stops the iPad from doing any scrolling
    */
   function disableDefaultScrolling() {
-    document.ontouchstart = function(e) {
+    document.ontouchmove = function(e) {
       e.preventDefault();
     };
   }
