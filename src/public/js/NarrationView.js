@@ -32,7 +32,7 @@ NarrationView = (function() {
       var shortName = this.model.get("shortName");
 
       var ts = "<% _.each(events, function(event, index) { %>";
-      ts += '<div class="main_event" data_id=<%=index%>>';
+      ts += '<div class="main_event" data_id=<%=event.id%>>';
       ts += '<h1><%= event.title %></h1>';
       ts += '<% _.each(event.narrative, function(item) { %>'
       ts += '<% if (item.type == "text") { %> <p><%= item.value %></p> <% } %>';
@@ -51,7 +51,7 @@ NarrationView = (function() {
 
       this.el.innerHTML = _.template(ts, {events: events, root:shortName});
 
-      this.options.scroller = iPadScroller.createScroller(document, this.el, makeScrollDelegate(this.el, this.modelView));
+      this.options.scroller = iPadScroller.createScroller(this.el, this.el, makeScrollDelegate(this.el, this.modelView));
 
       return this;
     }, 
