@@ -29,6 +29,13 @@ TimelineView = (function() {
 
     renderFromScratch: function() {
       
+      var paper = this.paper = Raphael(this.el, 60, 500);
+      var circle = paper.circle(20, 40, 10);
+      circle.attr("fill", "#f00");
+      circle.attr("stroke", "#fff");
+      circle.touchmove(function(evt) {
+        circle.
+      })
 
       return this;
     }, 
