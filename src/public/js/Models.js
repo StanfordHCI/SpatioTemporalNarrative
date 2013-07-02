@@ -39,6 +39,7 @@ Models = (function() {
 
     forAllEvents: function(func) {
       //Call func for every event with func(event);
+      
 
     },
 

@@ -28,12 +28,20 @@ MapView = (function() {
     },
 
     renderFromScratch: function() {
-      this.$el.html("MAPVIEW for " + this.model.get("title"));
+
+      var mapOptions = {
+          center: new google.maps.LatLng(-34.397, 150.644),
+          zoom: 12,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(this.el, mapOptions);
+        console.log(map)
+
       return this;
     },
 
     renderScrolled: function(event) {
-      this.$el.html("SCROLL AT " + event.spatial);
+      //this.$el.html("SCROLL AT " + event.spatial);
     },
     
     clear: function() {
