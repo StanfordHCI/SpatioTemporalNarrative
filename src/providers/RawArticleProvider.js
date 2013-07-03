@@ -84,20 +84,24 @@ RawArticleProvider.prototype.loadDir = function(dirname) {
     } else {
       var file = JSON.parse(data);
 
-      var stack = [];
-      for (var i = 0; i < file.events.length; i++) {
-        stack.push({id: i, evt: file.events[i]});
-      }
-
-      var ev;
-      while (ev = stack.pop()) {
-        ev.evt.id = ev.id;
-        if (ev.evt.events) {
-          for (var i = 0; i < ev.evt.events.length; i++) {
-            stack.push({id: ev.evt.id + "." + i, evt: ev.evt.events[i]});
-          }          
+      (function generateTreeIds() {
+        
+        var stack = [];
+        for (var i = 0; i < file.events.length; i++) {
+          stack.push({id: i, evt: file.events[i]});
         }
-      }
+
+        var ev;
+        while (ev = stack.pop()) {
+          ev.evt.id = ev.id;
+          if (ev.evt.events) {
+            for (var i = 0; i < ev.evt.events.length; i++) {
+              stack.push({id: ev.evt.id + "." + i, evt: ev.evt.events[i]});
+            }          
+          }
+        }
+
+      })();
 
 
       //checks to see if the file is an narrative file
