@@ -31,7 +31,7 @@ TimelineView = (function() {
 
       this.events=[];
 
-      var tlLen = 300;
+      var tlLen = 500;
       var xOffset = 40;
       var line_width = 1;
       var yOffset = 10;
@@ -48,6 +48,7 @@ TimelineView = (function() {
       var llen = 0;
 
       for (var i = 0; i < evts.length; i++) {
+        paper.setStart();
         var start_time = new Date(evts[i].time[0]);
         var offsetFromStart = scale(tlRange, tlLen, start_time, tlStart);
         console.log(offsetFromStart);
@@ -55,18 +56,25 @@ TimelineView = (function() {
         var circ = paper.circle(xOffset + line_width/2, yOffset + offsetFromStart, 5);
         circ.attr("fill", "#A0A0A0");
         circ.data("id", evts[i].id);
-        var id = evts[i].id;
-        console.log(id);
         var modelView = this.modelView
-        circ.click(function() {
+
+        if (evts[i].time.length > 1) {
+          var end_time = new Date(evts[i].time[evts[i].time.length - 1]);
+          var segmentLen = scale(tlRange, tlLen, end_time, start_time);
+          var pathStr = "M" + xOffset + " " + (yOffset + offsetFromStart) + "V" + (yOffset + offsetFromStart + segmentLen);
+          console.log(pathStr);
+          var path = paper.path(pathStr);
+        }
+
+        var markerSet = paper.setFinish();
+        markerSet.data("id", evts[i].id);
+        markerSet.click(function() {
           console.log(this.data("id"));
           modelView.scrollHasReached(this.data("id"));
-          //this.modelView.scrollHasReached(id);
-          
         });
-        var end_time = evts[i].time[evts[i].time.length - 1];
-        var pathStr = "M" + xOffset + " " + (yOffset + offsetFromStart) + "V";
-        this.events.push({id: evts[i].id, marker: circ});
+        console.log(markerSet);
+        this.events.push({id: evts[i].id, marker: markerSet});
+
         
         /*
         if (evts[i].events) {
@@ -97,8 +105,10 @@ TimelineView = (function() {
 
         if(event.id == evt.id) {
           evt.marker.attr("fill", "#fff");
+          evt.marker.attr("stroke", "red");
         } else {
           evt.marker.attr("fill", "#A0A0A0");
+          evt.marker.attr("stroke", "#000")
         }
       }
       //this.el.innerHTML = event.time;
@@ -122,38 +132,6 @@ TimelineView = (function() {
 
   function scale(tlRange, tlLen, point1, point2) {
     return (tlLen * (point2 - point1)/tlRange);
-  }
-
-  function drawTimeBlock(paper, tlRange, tlStart, tlLen, tlWidth, tlXOff, tlYOff, curStart, curEnd, type, model, evt) {
-    var start_time = new Date(curStart);
-    var end_time = new Date(curEnd);
-    var block_length = (tlLen * (end_time - start_time)/tlRange);
-    block_length == 0? block_length++ : block_length;
-    var block_offset = tlLen * (start_time - tlStart)/tlRange;
-    var block = paper.rect(tlXOff, tlYOff + block_offset, tlWidth, block_length);
-    block.attr("stroke", "#fff");
-    if (type == "main") {
-      var circ = paper.circle(tlXOff + tlWidth/2, tlYOff + block_offset, 5);
-      circ.attr("fill", "#A0A0A0");
-      circ.attr("stroke", "#fff");
-      circ.data("id", evt.id);
-      circ.click(function(){
-        eve("timeChange", evt.id);
-        //make this a different color
-        this.attr("fill", "Red");
-        model.scrollHasReached(evt.id);
-
-
-        return this;
-
-      });
-      return circ;
-    } else {
-      var pathStr = "M";
-      pathStr += tlXOff + " " + (tlYOff + block_offset) + "H" + (tlXOff + tlWidth); 
-      paper.path(pathStr).attr("stroke-width", ".5");
-    }
-    //var label = paper.text(10, tlYOff + block_offset, curStart);
   }
 
 
