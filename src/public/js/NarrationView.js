@@ -31,25 +31,7 @@ NarrationView = (function() {
       var events = this.model.get("events");
       var shortName = this.model.get("shortName");
 
-      var ts = "<% _.each(events, function(event, index) { %>";
-      ts += '<div class="main_event" data_id=<%=event.id%>>';
-      ts += '<h1><%= event.title %></h1>';
-      ts += '<% _.each(event.narrative, function(item) { %>'
-      ts += '<% if (item.type == "text") { %> <p><%= item.value %></p> <% } %>';
-      ts += '<% if (item.type == "img") { %> <img src="/content/<%= root + "/" + item.value %>" width=600px> <% } %>';
-      ts += '<% }); %>'
-      ts += '<% if (event.events) { _.each(event.events, function(event) { %>';
-      ts += '<h2><%= event.title %></h2>';
-      ts += '<% _.each(event.narrative, function(item) { %>'
-      ts += '<% if (item.type == "text") { %> <%= item.value %> <% } %>';
-      ts += '<% if (item.type == "img") { %> <img src="/content/<%= root + "/" + item.value %>" width=400px> <% } %>';
-      ts += '<% }); %>'
-      ts += '<% }); } %>';
-      ts += '</div>';
-      ts += '<% }); %>';
-
-
-      this.el.innerHTML = _.template(ts, {events: events, root:shortName});
+      this.el.innerHTML = this.template({events: events, root:shortName});
 
       this.options.scroller = iPadScroller.createScroller(this.el, this.el, makeScrollDelegate(this.el, this.modelView));
 
@@ -66,6 +48,8 @@ NarrationView = (function() {
       var self = this;
 
     },
+
+    template: _.template(document.getElementById('tmpl-event').innerHTML)
 
   });
 
