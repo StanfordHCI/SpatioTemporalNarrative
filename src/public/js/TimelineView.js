@@ -61,7 +61,7 @@ TimelineView = (function() {
         circ.click(function() {
           console.log(this.data("id"));
           modelView.scrollHasReached(this.data("id"));
-          //this.modelView.scrollHasReached(id);
+          this.modelView.scrollHasReached(id);
           
         });
         var end_time = evts[i].time[evts[i].time.length - 1];
