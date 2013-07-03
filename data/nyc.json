@@ -576,7 +576,7 @@
                 "type": "point",
                 "name": "Newark International Airport",
                 "lat": 40.690718,
-                "lon": -74.180374
+                "lng": -74.180374
             }
         ]
     }
