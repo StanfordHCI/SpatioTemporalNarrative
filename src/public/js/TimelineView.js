@@ -29,35 +29,40 @@ TimelineView = (function() {
 
     renderFromScratch: function() {
 
-      this.events=[];
+      var timeline = this.timeline = {};
+      timeline.events = [];
 
-      var tlLen = 500;
-      var xOffset = 40;
-      var line_width = 1;
-      var yOffset = 10;
+      timeline.absLen = 500;
+      timeline.xOffset = 40;
+      timeline.line_width = 1;
+      timeline.yOffset = 10;
 
       var paper = this.paper = Raphael(this.el, 60, 700);
-      var tl = paper.path("M" + xOffset + " " + yOffset + "V" + (yOffset + tlLen));
+      var tl = paper.path("M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + timeline.absLen));
 
       var evts = this.model.get("events");
+      /*
       var tlStart = new Date(evts[0].time[0]);
       var last_evt = evts[evts.length - 1];
       var tlEnd =  new Date(last_evt.time[last_evt.time.length - 1]);
       var tlRange = tlStart - tlEnd;
 
       var llen = 0;
-
+      //*/
       for (var i = 0; i < evts.length; i++) {
         paper.setStart();
         var start_time = new Date(evts[i].time[0]);
-        var offsetFromStart = scale(tlRange, tlLen, start_time, tlStart);
-        console.log(offsetFromStart);
+        //var offsetFromStart = scale(tlRange, tlLen, start_time, tlStart);
+        //console.log(offsetFromStart);
 
-        var circ = paper.circle(xOffset + line_width/2, yOffset + offsetFromStart, 5);
+        times = [];
+        times.push(start_time);
+        var circ = paper.circle(timeline.xOffset + timeline.line_width/2, timeline.yOffset, 5);
         circ.attr("fill", "#A0A0A0");
         circ.data("id", evts[i].id);
         var modelView = this.modelView
 
+        /*
         if (evts[i].time.length > 1) {
           var end_time = new Date(evts[i].time[evts[i].time.length - 1]);
           var segmentLen = scale(tlRange, tlLen, end_time, start_time);
@@ -65,7 +70,7 @@ TimelineView = (function() {
           console.log(pathStr);
           var path = paper.path(pathStr);
         }
-
+        //*/
         var markerSet = paper.setFinish();
         markerSet.data("id", evts[i].id);
         markerSet.click(function() {
@@ -73,29 +78,12 @@ TimelineView = (function() {
           modelView.scrollHasReached(this.data("id"));
         });
         console.log(markerSet);
-        this.events.push({id: evts[i].id, marker: markerSet});
-
-        
-        /*
-        if (evts[i].events) {
-          for (var j = 0; j < evts[i].events.length; j++) {
-            if (evts[i].events[j].time) {
-              var subStart = evts[i].events[j].time[0];
-              var subEnd = evts[i].events[j].time[evts[i].events[j].time.length - 1];
-              console.log(evts[i].events[j].title);
-              drawTimeBlock(this.paper, range, start_time, line_length, line_width, x_offset, y_offset, subStart, subEnd, "sub", this.modelView, evts[i].events[j]);
-            }
-
-          }
-          //*/
-        //}
+        timeline.events.push({id: evts[i].id, marker: markerSet, time: times});
       }
-      /*eve.on("timeChange", function(id) {
-        for (var i = 0; i< this.events.length; i++){
-        this.events[i].marker.data("id") == id ? this.events[i].marker.attr("fill", "blue") : this.events[i].marker.attr("fill", "#A0A0A0");}
-      });*/
+      linearTransform(timeline);
       return this;
     }, 
+
 
 
     renderScrolled: function(event) {
@@ -129,6 +117,35 @@ TimelineView = (function() {
   });
 
   return TimelineView;
+
+  /* Takes in the timeline object and returns it with an updated array of points that have been linearly transformed*/
+  function linearTransform(timeline) {
+    var events = timeline.events;
+
+    var tlStart = new Date(events[0].time[0]);
+    var last_evt = events[events.length -1];
+    var tlEnd = new Date(last_evt.time[last_evt.time.length - 1]);
+    var tlRange = tlEnd - tlStart;
+
+    for (var i = 0; i < events.length; i++) {
+      var currStart = events[i].time[0];
+      var offsetFromStart = scale(tlRange, timeline.absLen, tlStart, currStart);
+      console.log(offsetFromStart);
+      var properties = {
+        cx: timeline.xOffset,
+        cy: (timeline.yOffset + offsetFromStart)
+      }
+      events[i].marker.animate(properties, 3000, "linear");
+    }
+  }
+
+  /* 
+    Takes in the timeline object and returns it with an updated arrtay of points that have been transformed such that they
+    are equally spaced 
+  */
+  function nonlinearTransform(obj, events) {
+
+  }
 
   function scale(tlRange, tlLen, point1, point2) {
     return (tlLen * (point2 - point1)/tlRange);
