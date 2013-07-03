@@ -172,7 +172,7 @@
                 "value": "820 Memorial Drive, Cambridge, MA 02139"
             },
             {
-                "type": "area",
+                "type": "list",
                 "name": "Car Chase Area",
                 "value": [
                     {
