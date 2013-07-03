@@ -40,6 +40,18 @@ Models = (function() {
     forAllEvents: function(func) {
       //Call func for every event with func(event);
       
+      var events = this.data.events;
+
+      function callOnMeAndMyChildren(evt) {
+        func(evt);
+        if (evt.events)
+          for (var i = 0; i < evt.events.length; i++) {
+            callOnMeAndMyChildren(evt.events[i]);
+          }
+      }      
+      for (var i = 0; i < events.length; i++) {
+        callOnMeAndMyChildren(events[i]);
+      }
 
     },
 
