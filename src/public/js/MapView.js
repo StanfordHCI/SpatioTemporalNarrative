@@ -49,6 +49,26 @@ MapView = (function() {
           map.panTo(latlng); 
         }
 
+        function createLine(coords) {
+          var lineSymbol = {
+            path: 'M 0,-1 0,1',
+            strokeColor: '#FF0000',
+            strokeOpacity: 1,
+            scale: 4
+          };
+
+          var line = new google.maps.Polyline({
+            path: coords, 
+            strokeOpacity: 0,
+            icons: [{
+              icon: lineSymbol,
+              offset: '0',
+              repeat: '15px'
+            }],
+            map: map
+          });
+        }
+
         function createArea(coords) {
           var area = new google.maps.Polygon({
             paths: coords,
@@ -111,16 +131,32 @@ MapView = (function() {
                 }
               }
             }
-          } /*else if (location.type == "list") {
+          } else if (location.type == "list") {
+            var addressCoords = []; 
+            var pointCoords = []; 
             var subPoints = location.value; 
-            for (int i = 0; i < subPoints.length - 1; i++) {
+            var length = subPoints.length; 
+            for (var i = 0; i < length; i++) {
+              var subPoint = subPoints[i]; 
+
               if (subPoint.type == "address") {
+                addressToLatLng(subPoint.value, function(result, status) {
+                  addressCoords.push(result[0].geometry.location); 
+                  if (i == length - 1) {
+                    console.log("CALLING CREATELINE"); 
+                    createLine(addressCoords); 
+                  }
+                }); 
 
               } else if (subPoint.type == "point") {
-
+                var latlng = new google.maps.LatLng(subPoint.lat, subPoint.lng); 
+                pointCoords.push(latlng); 
+                if (i == length - 1) {
+                  createLine(pointCoords); 
+                }
               }
             }
-          }*/
+          }
         }
       }
       return this; 
