@@ -59,14 +59,17 @@ MapView = (function() {
             }
           }); 
         } else if (location.type == "point") {
+          var lat = location.lat; 
+          var lng = location.lng; 
+          var latlng = new google.maps.LatLng(lat, lng); 
           var marker = new google.maps.Marker({
-            position: result[0].geometry.location, 
+            position: latlng,
             map: map,
             animation: google.maps.Animation.DROP,
             title: ""
           });
 
-          map.panTo(result[0].geometry.location); 
+          map.panTo(latlng); 
         } else if (location.type == "area") {
           
         }
