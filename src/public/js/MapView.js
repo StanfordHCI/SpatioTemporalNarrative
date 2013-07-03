@@ -13,7 +13,7 @@ MapView = (function() {
 
     setElement: function(el) {
       if (!el)
-        throw new Errpr("View requires a container element");
+        throw new Error("View requires a container element");
       this.el = el instanceof $ ? el.get(0) : el;
       this.$el = el instanceof $ ? el : $(el);
     },
@@ -30,31 +30,45 @@ MapView = (function() {
     renderFromScratch: function() {
       var mapOptions = {
         center: new google.maps.LatLng(47.61, -122.33),
-        zoom: 10,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        zoom: 12,
+        mapTypeId: google.maps.MapTypeId.SATELLITE
       };
       map = new google.maps.Map(this.el, mapOptions);
 
-      var self = this; 
       var geocoder = new google.maps.Geocoder(); 
       var locations = this.model.get("map").poi; 
+
       for (i in locations) {
-        if (locations[i].type == "address") {
-          console.log(locations[i].name); 
+        var location = locations[i]; 
+        if (location.type == "address") {
           var request = {
-            address: locations[i].value
+            address: location.value
           }
+
           geocoder.geocode(request, function(result, status) {
             if (status == google.maps.GeocoderStatus.OK) {
+
               var marker = new google.maps.Marker({
                 position: result[0].geometry.location, 
-                map: self.map,
+                map: map,
                 animation: google.maps.Animation.DROP,
                 title: ""
               });
+
               map.panTo(result[0].geometry.location); 
             }
           }); 
+        } else if (location.type == "point") {
+          var marker = new google.maps.Marker({
+            position: result[0].geometry.location, 
+            map: map,
+            animation: google.maps.Animation.DROP,
+            title: ""
+          });
+
+          map.panTo(result[0].geometry.location); 
+        } else if (location.type == "area") {
+          
         }
       }
       return this; 
