@@ -28,17 +28,38 @@ MapView = (function() {
     },
 
     renderFromScratch: function() {
-
       var mapOptions = {
-          center: new google.maps.LatLng(-34.397, 150.644),
-          zoom: 12,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(this.el, mapOptions);
-        console.log(map)
+        center: new google.maps.LatLng(47.61, -122.33),
+        zoom: 10,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      map = new google.maps.Map(this.el, mapOptions);
 
-      return this;
+      var self = this; 
+      var geocoder = new google.maps.Geocoder(); 
+      var locations = this.model.get("map").poi; 
+      for (i in locations) {
+        if (locations[i].type == "address") {
+          console.log(locations[i].name); 
+          var request = {
+            address: locations[i].value
+          }
+          geocoder.geocode(request, function(result, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+              var marker = new google.maps.Marker({
+                position: result[0].geometry.location, 
+                map: self.map,
+                animation: google.maps.Animation.DROP,
+                title: ""
+              });
+              map.panTo(result[0].geometry.location); 
+            }
+          }); 
+        }
+      }
+      return this; 
     },
+
 
     renderScrolled: function(event) {
       //this.$el.html("SCROLL AT " + event.spatial);
@@ -58,8 +79,6 @@ MapView = (function() {
   });
 
   return MapView;
-
-
 
 })();
 
