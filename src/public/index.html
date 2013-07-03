@@ -14,6 +14,27 @@
 
 <script src="/js/client.js" type="text/javascript" charset="utf-8"></script>
 
+<script id='tmpl-event' type='text/template'>
+
+<% _.each(events, function(event, index) { %>
+  <div class="main_event" data_id=<%=event.id%>>
+  <h1><%= event.title %></h1>
+  <% _.each(event.narrative, function(item) { %>
+    <% if (item.type == "text") { %> <p><%= item.value %></p> <% } %>
+    <% if (item.type == "img") { %> <img src="/content/<%= root + "/" + item.value %>" width=600px> <% } %>
+  <% }); %>
+  <% if (event.events) { _.each(event.events, function(event) { %>
+    <h2><%= event.title %></h2>
+    <% _.each(event.narrative, function(item) { %>
+      <% if (item.type == "text") { %> <%= item.value %> <% } %>
+      <% if (item.type == "img") { %> <img src="/content/<%= root + "/" + item.value %>" width=400px> <% } %>
+    <% }); %>
+  <% }); } %>
+  </div>
+<% }); %>
+
+</script>
+
 <body>
 <div id="container">
   
