@@ -41,27 +41,18 @@ TimelineView = (function() {
       var tl = paper.path("M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + timeline.absLen));
 
       var evts = this.model.get("events");
-      /*
-      var tlStart = new Date(evts[0].time[0]);
-      var last_evt = evts[evts.length - 1];
-      var tlEnd =  new Date(last_evt.time[last_evt.time.length - 1]);
-      var tlRange = tlStart - tlEnd;
-
-      var llen = 0;
-      //*/
+ 
       for (var i = 0; i < evts.length; i++) {
         var start_time = new Date(evts[i].time[0]);
-        //var offsetFromStart = scale(tlRange, tlLen, start_time, tlStart);
-        //console.log(offsetFromStart);
 
-        times = [];
-        times.push(start_time);
+
+        times = evts[i].time;
         paper.setStart();
         var circ = paper.circle(timeline.xOffset + timeline.line_width/2, timeline.yOffset, 5);
         circ.attr("fill", "#A0A0A0");
         circ.data("id", evts[i].id);
-        var id = evts[i].id;
-        console.log(id);
+        //var id = evts[i].id;
+        //console.log(id);
         var modelView = this.modelView
 
         /*
@@ -73,6 +64,12 @@ TimelineView = (function() {
           var path = paper.path(pathStr);
         }
         //*/
+
+        if (evts[i].time.length > 1) {
+          var pathStr = "M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + 1);
+          var path = paper.path(pathStr)
+        }
+
         var markerSet = paper.setFinish();
         markerSet.data("id", evts[i].id);
         markerSet.click(function() {
@@ -97,8 +94,10 @@ TimelineView = (function() {
 
         if(event.id == evt.id) {
           evt.marker.attr("fill", "#fff");
+          evt.marker.attr("stroke", "red");
         } else {
           evt.marker.attr("fill", "#A0A0A0");
+          evt.marker.attr("stroke", "#000");
         }
       }
       //this.el.innerHTML = event.time;
@@ -137,6 +136,12 @@ TimelineView = (function() {
         cx: timeline.xOffset,
         cy: (timeline.yOffset + offsetFromStart)
       }
+      if (events[i].time.length > 1) {
+        console.log("hit");
+        var currEnd = events[i].time[events[i].time.length - 1];
+        var segmentLen = scale(tlRange, timeline.absLen, currStart, currEnd);
+        properties.path = "M" + timeline.xOffset + " " + (timeline.yOffset + offsetFromStart + 5) + "V" + (timeline.yOffset + offsetFromStart + segmentLen);
+      }
       events[i].marker.animate(properties, 3000, "linear");
     }
   }
@@ -156,13 +161,18 @@ TimelineView = (function() {
         cx: timeline.xOffset,
         cy: (timeline.yOffset + offsetFromStart)
       };
+      if (events[i].time.length > 1) {
+        properties.path = "M" + timeline.xOffset + " " + (properties.cy + 5 )+ "V" + (properties.cy + spacing);
+      }
       events[i].marker.animate(properties, 3000, "linear");
     }
 
   }
 
   function scale(tlRange, tlLen, point1, point2) {
-    return (tlLen * (point2 - point1)/tlRange);
+    date1 = new Date(point1);
+    date2 = new Date(point2);
+    return (tlLen * (date2 - date1)/tlRange);
   }
 
 
