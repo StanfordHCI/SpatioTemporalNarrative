@@ -32,12 +32,28 @@ TimelineView = (function() {
       var timeline = this.timeline = {};
       timeline.events = [];
 
-      timeline.absLen = 500;
-      timeline.xOffset = 40;
+      //console.log(Number(this.el.getAttribute("height")));
+
+      timeline.absLen = 685;
+      timeline.xOffset = 60;
       timeline.line_width = 1;
       timeline.yOffset = 10;
 
       var paper = this.paper = Raphael(this.el, 60, 700);
+      this.notCurrentSpacing = nonlinearTransform;
+      /*var toggleButton = paper.rect(10, 40, 30, 20).attr("fill", "white");
+      toggleButton.click(function() {
+        console.log(this.notCurrentSpacing);
+        this.notCurrentSpacing.call(null, timeline);
+        if (this.notCurrentSpacing == nonlinearTransform) {
+          this.notCurrentSpacing = linearTransform;
+        } else {
+          this.notCurrentSpacing = nonlinearTransform;
+        }
+
+
+      }, this);
+*/
       var tl = paper.path("M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + timeline.absLen));
 
       var evts = this.model.get("events");
@@ -48,22 +64,14 @@ TimelineView = (function() {
 
         times = evts[i].time;
         paper.setStart();
+        var rect = paper.rect(timeline.xOffset - 10, timeline.yOffset, 10, 2, 0);
+        rect.attr("fill", "#000");
+        /*
         var circ = paper.circle(timeline.xOffset + timeline.line_width/2, timeline.yOffset, 5);
         circ.attr("fill", "#A0A0A0");
         circ.data("id", evts[i].id);
-        //var id = evts[i].id;
-        //console.log(id);
-        var modelView = this.modelView
-
-        /*
-        if (evts[i].time.length > 1) {
-          var end_time = new Date(evts[i].time[evts[i].time.length - 1]);
-          var segmentLen = scale(tlRange, tlLen, end_time, start_time);
-          var pathStr = "M" + xOffset + " " + (yOffset + offsetFromStart) + "V" + (yOffset + offsetFromStart + segmentLen);
-          console.log(pathStr);
-          var path = paper.path(pathStr);
-        }
         //*/
+        var modelView = this.modelView
 
         if (evts[i].time.length > 1) {
           var pathStr = "M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + 1);
@@ -133,14 +141,14 @@ TimelineView = (function() {
       var offsetFromStart = scale(tlRange, timeline.absLen, tlStart, currStart);
       console.log(offsetFromStart);
       var properties = {
-        cx: timeline.xOffset,
-        cy: (timeline.yOffset + offsetFromStart)
+        x: (timeline.xOffset - 10),
+        y: (timeline.yOffset + offsetFromStart)
       }
       if (events[i].time.length > 1) {
         console.log("hit");
         var currEnd = events[i].time[events[i].time.length - 1];
         var segmentLen = scale(tlRange, timeline.absLen, currStart, currEnd);
-        properties.path = "M" + timeline.xOffset + " " + (timeline.yOffset + offsetFromStart + 5) + "V" + (timeline.yOffset + offsetFromStart + segmentLen);
+        properties.path = "M" + timeline.xOffset + " " + (timeline.yOffset + offsetFromStart) + "V" + (timeline.yOffset + offsetFromStart + segmentLen);
       }
       events[i].marker.animate(properties, 3000, "linear");
     }
@@ -158,11 +166,11 @@ TimelineView = (function() {
     for (var i = 0; i < events.length; i++) {
       var offsetFromStart = spacing * i;
       var properties = {
-        cx: timeline.xOffset,
-        cy: (timeline.yOffset + offsetFromStart)
+        x: (timeline.xOffset - 10),
+        y: (timeline.yOffset + offsetFromStart)
       };
       if (events[i].time.length > 1) {
-        properties.path = "M" + timeline.xOffset + " " + (properties.cy + 5 )+ "V" + (properties.cy + spacing);
+        properties.path = "M" + timeline.xOffset + " " + (timeline.yOffset + offsetFromStart)+ "V" + (timeline.yOffset + offsetFromStart + spacing);
       }
       events[i].marker.animate(properties, 3000, "linear");
     }
