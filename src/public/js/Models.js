@@ -65,8 +65,14 @@ Models = (function() {
       return evt;
     },
 
+    //If id is a nested event, get its parent
     getEventParent: function(id) {
-      //If id is a nested event, get its parent
+      var splits = id.split(".");
+      if (splits.length > 1) {
+        splits.splice(-1,1);
+        return this.getEventById(splits.join("."));
+      }
+      return undefined;
     }
 
   })
