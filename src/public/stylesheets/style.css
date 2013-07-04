@@ -86,10 +86,23 @@ a {
   margin-left: 512px;
 }
 #narrative_container {
-  padding: 0px 20px 50px 80px;
-  width: 466px;
+  padding: 0px 20px 50px 90px;
+  width: 456px;
   float: left;
   z-index: 1;
+  line-height: 1.4em;
+}
+#narrative_container p {
+  font-family: HelveticaNeue-Light, sans-serif;
+  color: #333;
+}
+.event {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 50px;
+}
+.event_1 {
+  margin-left: 30px;
 }
 #timeline_container {
   position: fixed;
