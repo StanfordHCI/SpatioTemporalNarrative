@@ -32,7 +32,7 @@
                         "Marcello",
                         "Yizhuo"
                     ],
-                    "spatial": 1,
+                    "spatial": "The McKittrick Hotel",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -56,7 +56,7 @@
                         "Marcello",
                         "Yizhuo"
                     ],
-                    "spatial": 1,
+                    "spatial": "Gallow Green",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -76,7 +76,7 @@
                     "participants": [
                         "Niels"
                     ],
-                    "spatial": 2,
+                    "spatial": "Stuck on the Subway",
                     "narrative": [
                         {
                             "type": "fullimage",
@@ -101,7 +101,7 @@
                         "Gleb",
                         "Ashley"
                     ],
-                    "spatial": 1,
+                    "spatial": "Amor Y Amargo",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -122,7 +122,7 @@
                         "Gleb",
                         "Ashley"
                     ],
-                    "spatial": 1,
+                    "spatial": "Please Don't Tell",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -152,7 +152,7 @@
                         "Gleb",
                         "Ashley"
                     ],
-                    "spatial": 1,
+                    "spatial": "International Bar",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -182,7 +182,7 @@
                         "Ashley",
                         "Izzy"
                     ],
-                    "spatial": 1,
+                    "spatial": "Roeblings Tea Room",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -204,7 +204,7 @@
                         "Izzy",
                         "Sher"
                     ],
-                    "spatial": 1,
+                    "spatial": "Miller's Tavern",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -233,7 +233,7 @@
                         "Izzy",
                         "Sher"
                     ],
-                    "spatial": 1,
+                    "spatial": "Caracas Arepa Bar",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -256,7 +256,7 @@
                         "Sher",
                         "Oliver"
                     ],
-                    "spatial": 1,
+                    "spatial": "McSorley's Old Ale House",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -277,7 +277,7 @@
                         "Ashley",
                         "Oliver"
                     ],
-                    "spatial": 1,
+                    "spatial": "Angel's Share",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -297,7 +297,7 @@
                         "Ashley",
                         "Oliver"
                     ],
-                    "spatial": 1,
+                    "spatial": "Lovers of Today",
                     "meta": [],
                     "narrative": [
                         {}
@@ -316,7 +316,7 @@
                         "Niels",
                         "Mike"
                     ],
-                    "spatial": 1,
+                    "spatial": "Maison Premiere",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -334,7 +334,7 @@
                         "Niels",
                         "Liz"
                     ],
-                    "spatial": 1,
+                    "spatial": "Employees Only",
                     "meta": [],
                     "narrative": [
                         {}
@@ -347,7 +347,7 @@
                         "Niels",
                         "Liz"
                     ],
-                    "spatial": 1,
+                    "spatial": "Washington Commons",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -373,7 +373,7 @@
                         "Marcello",
                         "Yizhuo"
                     ],
-                    "spatial": 1,
+                    "spatial": "Little Branch",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -400,7 +400,7 @@
                         "Marcello",
                         "Yizhuo"
                     ],
-                    "spatial": 1,
+                    "spatial": "Raines Law Room",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -436,7 +436,7 @@
                         "Sher",
                         "Hesper"
                     ],
-                    "spatial": 1,
+                    "spatial": "Gran Electrica",
                     "meta": [
                         {
                             "type": "foursquare",
@@ -455,7 +455,7 @@
                         "Sher",
                         "Liz"
                     ],
-                    "spatial": 1,
+                    "spatial": "Washington Commons",
                     "meta": [
                         {
                             "type": "foursquare",

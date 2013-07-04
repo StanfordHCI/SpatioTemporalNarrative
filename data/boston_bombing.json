@@ -88,7 +88,7 @@
         },
         {
             "title": "Situation Escalates After Pursuit",
-            "spatial": "Cordoned area of Watertown",
+            "spatial": "Watertown",
             "narrative": [
                 {
                     "type": "text",
@@ -124,7 +124,7 @@
                         "Tamerlan Tsarnaev",
                         "Police Force"
                     ],
-                    "spatial": "Cordoned area of Watertown",
+                    "spatial": "Watertown",
                     "narrative": [
                         {
                             "type": "text",
@@ -169,7 +169,7 @@
             },
             {
                 "type": "address",
-                "name": "Memorial Shell Drive",
+                "name": "Memorial Drive Shell",
                 "value": "820 Memorial Drive, Cambridge, MA 02139"
             },
             {

@@ -31,10 +31,11 @@ MapView = (function() {
       var mapOptions = {
         center: new google.maps.LatLng(47.61, -122.33),
         zoom: 12,
-        mapTypeId: google.maps.MapTypeId.SATELLITE
+        mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       map = new google.maps.Map(this.el, mapOptions);
       var self = this; 
+      eventLocations = {}; 
       addMarkers(); 
 
       function addMarkers() {
@@ -98,10 +99,12 @@ MapView = (function() {
           var location = locations[i]; 
 
           if (location.type == "address") {
-            addressToLatLng(location.value, function(result, status) {
-              createMarker(result[0].geometry.location); 
-            }); 
-
+            (function(location) {
+              addressToLatLng(location.value, function(result, status) {
+                eventLocations[location.name] = result[0].geometry.location; 
+                createMarker(result[0].geometry.location); 
+              }); 
+            })(location); 
           } else if (location.type == "point") {
             var latlng = new google.maps.LatLng(location.lat, location.lng); 
             eventLocations[location.name] = latlng; 
@@ -115,15 +118,18 @@ MapView = (function() {
             for (i in subPoints) {
               var subPoint = subPoints[i]; 
               if (subPoint.type == "address") {
-                addressToLatLng(subPoint.value, function(result, status) {
-                  addressCoords.push(result[0].geometry.location); 
-                  if (i == length - 1) {
-                    createArea(addressCoords); 
-                  }
-                }); 
-
+                (function(location) {
+                  addressToLatLng(subPoint.value, function(result, status) {
+                    eventLocations[location.name] = result[0].geometry.location; 
+                    addressCoords.push(result[0].geometry.location); 
+                    if (i == length - 1) {
+                      createArea(addressCoords); 
+                    }
+                  }); 
+                })(location); 
               } else if (subPoint.type == "point") {
                 var latlng = new google.maps.LatLng(subPoint.lat, subPoint.lng); 
+                eventLocations[location.name] = latlng; 
                 pointCoords.push(latlng); 
                 if (i == length - 1) {
                   createArea(pointCoords); 
@@ -139,15 +145,18 @@ MapView = (function() {
               var subPoint = subPoints[i]; 
 
               if (subPoint.type == "address") {
-                addressToLatLng(subPoint.value, function(result, status) {
-                  addressCoords.push(result[0].geometry.location); 
-                  if (i == length - 1) {
-                    createLine(addressCoords); 
-                  }
-                }); 
-
+                (function(location) {
+                  addressToLatLng(subPoint.value, function(result, status) {
+                    eventLocations[location.name] = result[0].geometry.location; 
+                    addressCoords.push(result[0].geometry.location); 
+                    if (i == length - 1) {
+                      createLine(addressCoords); 
+                    }
+                  }); 
+                })(location); 
               } else if (subPoint.type == "point") {
                 var latlng = new google.maps.LatLng(subPoint.lat, subPoint.lng); 
+                eventLocations[location.name] = latlng; 
                 pointCoords.push(latlng); 
                 if (i == length - 1) {
                   createLine(pointCoords); 
@@ -162,46 +171,9 @@ MapView = (function() {
 
     renderScrolled: function(eventName) {
       console.log(eventName); 
-      var locations = this.model.get("map").poi; 
-      for (i in locations) {
-        var location = locations[i]; 
-        if (location.name == eventName) {
-          if (location.type == "address") {
-            var geocoder = new google.maps.Geocoder(); 
-            var request = {
-              address: location.value
-            }
-            geocoder.geocode(request, function(result, status) {
-              if (status == google.maps.GeocoderStatus.OK) {
-                map.panTo(result[0].geometry.location); 
-              }
-            }); 
-            break; 
-          } else if (location.type == "point") {
-            var latlng = new google.maps.LatLng(location.lat, location.lng); 
-            map.panTo(latlng); 
-            break; 
-          } else if (location.type == "area" || location.type == "list") {
-            var start = location.value[0]; 
-            if (start.type == "address") {
-              var geocoder = new google.maps.Geocoder(); 
-              var request = {
-                address: start.value
-              }
-              geocoder.geocode(request, function(result, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                  map.panTo(result[0].geometry.location); 
-                }
-              }); 
-              break; 
-            } else if (start.type == "point") {
-              var latlng = new google.maps.LatLng(location.lat, location.lng); 
-              map.panTo(latlng); 
-              break;
-            }
-          }
-        }
-      }
+      console.log(eventLocations[eventName]); 
+      map.panTo(eventLocations[eventName]); 
+      map.setZoom(14); 
     },
     
     clear: function() {
