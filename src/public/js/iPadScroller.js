@@ -36,10 +36,10 @@ iPadScroller = (function() {
 
       var newY = currentY + offsetY;
       // BUG:
-      // if (newY > 0)
-      //   newY = 0;
-      // if (newY < -maxY + screen.width)
-      //   newY = -maxY + screen.width;
+      if (newY > 0)
+        newY = 0;
+      if (newY < -maxY + screen.width)
+        newY = -maxY + screen.width;
 
       if (isDone)
           currentY = newY;

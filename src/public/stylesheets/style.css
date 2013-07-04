@@ -39,6 +39,10 @@ a {
   background: #4479BA;
   color: #fff;
   margin: 10px 0px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 #index_container li:active {
   -webkit-transform: scale(0.9);
@@ -55,6 +59,7 @@ a {
   margin: 0;
   padding: 0;
   width: 1024px;
+  height: 748px;
   overflow: hidden;
   background: white;
 }
@@ -82,7 +87,7 @@ a {
   margin: 0;
   padding: 0;
   width: 458px;
-  height: 768px;
+  height: 748px;
   margin-left: 512px;
 }
 #narrative_container {
