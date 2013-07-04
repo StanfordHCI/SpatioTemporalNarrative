@@ -23,7 +23,7 @@ MapView = (function() {
 
       this.listenTo(this.modelView, "setup", _.bind(this.renderFromScratch, this)); 
       this.listenTo(this.modelView, "scroll:at", function(id) {
-        self.renderScrolled(this.model.get("events")[id]);  
+        self.renderScrolled(this.model.getEventById(id).spatial);  
       });
     },
 
@@ -93,9 +93,7 @@ MapView = (function() {
           }); 
         }
 
-        // var geocoder = new google.maps.Geocoder(); 
         var locations = self.model.get("map").poi; 
-
         for (i in locations) {
           var location = locations[i]; 
 
@@ -106,6 +104,7 @@ MapView = (function() {
 
           } else if (location.type == "point") {
             var latlng = new google.maps.LatLng(location.lat, location.lng); 
+            eventLocations[location.name] = latlng; 
             createMarker(latlng); 
 
           } else if (location.type == "area") {
@@ -136,14 +135,13 @@ MapView = (function() {
             var pointCoords = []; 
             var subPoints = location.value; 
             var length = subPoints.length; 
-            for (var i = 0; i < length; i++) {
+            for (i in subPoints) {
               var subPoint = subPoints[i]; 
 
               if (subPoint.type == "address") {
                 addressToLatLng(subPoint.value, function(result, status) {
                   addressCoords.push(result[0].geometry.location); 
                   if (i == length - 1) {
-                    console.log("CALLING CREATELINE"); 
                     createLine(addressCoords); 
                   }
                 }); 
@@ -162,9 +160,48 @@ MapView = (function() {
       return this; 
     },
 
-
-    renderScrolled: function(event) {
-      //this.$el.html("SCROLL AT " + event.spatial);
+    renderScrolled: function(eventName) {
+      console.log(eventName); 
+      var locations = this.model.get("map").poi; 
+      for (i in locations) {
+        var location = locations[i]; 
+        if (location.name == eventName) {
+          if (location.type == "address") {
+            var geocoder = new google.maps.Geocoder(); 
+            var request = {
+              address: location.value
+            }
+            geocoder.geocode(request, function(result, status) {
+              if (status == google.maps.GeocoderStatus.OK) {
+                map.panTo(result[0].geometry.location); 
+              }
+            }); 
+            break; 
+          } else if (location.type == "point") {
+            var latlng = new google.maps.LatLng(location.lat, location.lng); 
+            map.panTo(latlng); 
+            break; 
+          } else if (location.type == "area" || location.type == "list") {
+            var start = location.value[0]; 
+            if (start.type == "address") {
+              var geocoder = new google.maps.Geocoder(); 
+              var request = {
+                address: start.value
+              }
+              geocoder.geocode(request, function(result, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                  map.panTo(result[0].geometry.location); 
+                }
+              }); 
+              break; 
+            } else if (start.type == "point") {
+              var latlng = new google.maps.LatLng(location.lat, location.lng); 
+              map.panTo(latlng); 
+              break;
+            }
+          }
+        }
+      }
     },
     
     clear: function() {

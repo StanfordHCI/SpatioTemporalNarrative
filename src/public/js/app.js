@@ -41,6 +41,7 @@ $(document).ready(function(event) {
   });
 
   window.articleModel = articleModel;
+  window.articleViewModel = articleViewModel; 
   
   //We are focusing on using events, including for initialization.
   //That way we simply bind responders to the initialization event.
