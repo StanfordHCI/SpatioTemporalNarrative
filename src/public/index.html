@@ -16,30 +16,35 @@
 
 <script id='tmpl-event' type='text/template'>
 
-<% _.each(events, function(event, index) { %>
-  <div class="main_event" data_id=<%=event.id%>>
-  <h1><%= event.title %></h1>
+<% model.forAllEvents(function(event) { %>
+  <div class="event event_<%=event.depth%>" data_id=<%=event.id%>>
+  <h<%= event.depth+1%>><%= event.title %></h<%= event.depth+1%>>
   <% _.each(event.narrative, function(item) { %>
     <% if (item.type == "text") { %> <p><%= item.value %></p> <% } %>
     <% if (item.type == "img") { %> <img src="/content/<%= root + "/" + item.value %>" width=600px> <% } %>
   <% }); %>
-  <% if (event.events) { _.each(event.events, function(event) { %>
-    <h2><%= event.title %></h2>
-    <% _.each(event.narrative, function(item) { %>
-      <% if (item.type == "text") { %> <%= item.value %> <% } %>
-      <% if (item.type == "img") { %> <img src="/content/<%= root + "/" + item.value %>" width=400px> <% } %>
-    <% }); %>
-  <% }); } %>
   </div>
 <% }); %>
 
+</script>
+
+<script id='tmpl-articlelist' type='text/template'>
+<h1>Spatio-Temporal Narratives</h1>
+<p>An exploration of storytelling by Niels, Harrison & Anh</p>
+<h2>Articles</h2>
+<div id="articles_list_container">
+<ul>
+  <% _.each(articles, function(article) { %> 
+    <li articleId=<%= article.id %>> <%= article.title %> </li> 
+  <% }) %> 
+</ul>
+</div>
 </script>
 
 <body>
 <div id="container">
   
   <div id="index_container">
-
   </div>
   
   <div id="article_container">

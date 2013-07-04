@@ -55,7 +55,8 @@ ArticleIndexView = (function() {
     },
 
     //This stores the template HTML to render for the view
-    template: _.template("<ul><% _.each(articles, function(article){ %> <li articleId=<%= article.id %>> <%= article.title %> </li> <% }) %> </ul>")
+    template: _.template(document.getElementById('tmpl-articlelist').innerHTML)
+    
   });
 
   return ArticleIndexView;

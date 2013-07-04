@@ -45,16 +45,20 @@ ArticleViewModel = (function() {
     setup: function() {
       
       // RESET INTERNAL STATE HERE
-      
+
       this.show();
       this.trigger("setup", this);
     },
 
     show: function() {
+      if (this.model.get("style"))
+        this.$el.addClass("articlestyle_" + this.model.get("style"));
       this.$el.show();
     },
     
     hide: function() {
+      if (this.model.get("style"))
+        this.$el.removeClass("articlestyle_" + this.model.get("style"));
       this.$el.hide();
     } ,
 

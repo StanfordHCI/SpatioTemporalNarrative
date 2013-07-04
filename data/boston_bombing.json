@@ -1,6 +1,7 @@
 {
     "title": "The Hunt for the Boston Bombing Suspects",
     "shortName":"boston_bombing",
+    "style":"light",
     "participants": {
         "Dzhokhar A. Tsarnaev": {
             "default": true

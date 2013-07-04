@@ -88,15 +88,16 @@ RawArticleProvider.prototype.loadDir = function(dirname) {
         
         var stack = [];
         for (var i = 0; i < file.events.length; i++) {
-          stack.push({id: i, evt: file.events[i]});
+          stack.push({id: i, evt: file.events[i], depth: 0});
         }
 
         var ev;
         while (ev = stack.pop()) {
           ev.evt.id = ev.id;
+          ev.evt.depth = ev.depth;
           if (ev.evt.events) {
             for (var i = 0; i < ev.evt.events.length; i++) {
-              stack.push({id: ev.evt.id + "." + i, evt: ev.evt.events[i]});
+              stack.push({id: ev.evt.id + "." + i, evt: ev.evt.events[i], depth: ev.depth+1});
             }          
           }
         }

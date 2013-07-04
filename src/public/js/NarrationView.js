@@ -31,7 +31,7 @@ NarrationView = (function() {
       var events = this.model.get("events");
       var shortName = this.model.get("shortName");
 
-      this.el.innerHTML = this.template({events: events, root:shortName});
+      this.el.innerHTML = this.template({model: this.model, root:shortName});
 
       this.options.scroller = iPadScroller.createScroller(this.el, this.el, makeScrollDelegate(this.el, this.modelView));
 
