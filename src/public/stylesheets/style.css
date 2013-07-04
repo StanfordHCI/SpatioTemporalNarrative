@@ -17,11 +17,9 @@ body {
 a {
   color: #00B7FF;
 }
-#container {
-  background: white;
-}
 #index_container {
-  margin: 0px 20px 20px 50px;
+  margin: 0;
+  margin-left: 50px;
 }
 #index_container h1 {
   font-size: 48px;
@@ -53,6 +51,13 @@ a {
   -o-box-shadow: 0px 0px 20px #FFF;
   box-shadow: 0px 0px 20px #FFF;
 }
+#container {
+  margin: 0;
+  padding: 0;
+  width: 1024px;
+  overflow: hidden;
+  background: white;
+}
 #container:before {
   content: " ";
   /* 1 */
@@ -74,15 +79,30 @@ a {
   background-color: #ff0000;
 }
 #map_container {
-  width: 512px;
+  margin: 0;
+  padding: 0;
+  width: 458px;
   height: 768px;
   margin-left: 512px;
 }
 #narrative_container {
-  padding: 0px 20px 50px 80px;
-  width: 412px;
+  padding: 0px 20px 50px 90px;
+  width: 456px;
   float: left;
   z-index: 1;
+  line-height: 1.4em;
+}
+#narrative_container p {
+  font-family: HelveticaNeue-Light, sans-serif;
+  color: #333;
+}
+.event {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 50px;
+}
+.event_1 {
+  margin-left: 30px;
 }
 #timeline_container {
   position: fixed;
