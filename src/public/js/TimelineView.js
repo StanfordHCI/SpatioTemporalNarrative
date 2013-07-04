@@ -23,7 +23,7 @@ TimelineView = (function() {
 
       this.listenTo(this.modelView, "setup", _.bind(this.renderFromScratch, this)); 
       this.listenTo(this.modelView, "scroll:at", function(id) {
-        self.renderScrolled(this.model.get("events")[id]);  
+        self.renderScrolled(this.model.getEventById(id));  
       });
     },
 
@@ -34,7 +34,7 @@ TimelineView = (function() {
 
       //console.log(Number(this.el.getAttribute("height")));
 
-      timeline.absLen = 685;
+      timeline.absLen = 600;
       timeline.xOffset = 60;
       timeline.line_width = 1;
       timeline.yOffset = 10;
@@ -57,38 +57,37 @@ TimelineView = (function() {
       var tl = paper.path("M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + timeline.absLen));
 
       var evts = this.model.get("events");
- 
-      for (var i = 0; i < evts.length; i++) {
-        var start_time = new Date(evts[i].time[0]);
+      var modelView = this.modelView
+      
+      this.model.forAllEvents(function(currEvt){
+      //for (var i = 0; i < evts.length; i++) {
+        if (currEvt.time) {
+        var start_time = new Date(currEvt.time[0]);
 
 
-        times = evts[i].time;
+        times = currEvt.time;
         paper.setStart();
         var rect = paper.rect(timeline.xOffset - 10, timeline.yOffset, 10, 2, 0);
         rect.attr("fill", "#000");
-        /*
-        var circ = paper.circle(timeline.xOffset + timeline.line_width/2, timeline.yOffset, 5);
-        circ.attr("fill", "#A0A0A0");
-        circ.data("id", evts[i].id);
-        //*/
-        var modelView = this.modelView
 
-        if (evts[i].time.length > 1) {
+        
+
+        if (currEvt.time.length > 1) {
           var pathStr = "M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + 1);
           var path = paper.path(pathStr)
         }
 
         var markerSet = paper.setFinish();
-        markerSet.data("id", evts[i].id);
+        markerSet.data("id", currEvt.id);
         markerSet.click(function() {
           console.log(this.data("id"));
           modelView.scrollHasReached(this.data("id")); 
         });
 
         console.log(markerSet);
-        timeline.events.push({id: evts[i].id, marker: markerSet, time: times});
-        
-      }
+        timeline.events.push({id: currEvt.id, marker: markerSet, time: times});
+        }
+      });
       linearTransform(timeline);
       return this;
     }, 
