@@ -57,6 +57,9 @@ Models = (function() {
 
     //Return an event or subevent based on its unique id
     getEventById: function(id) {
+      if (typeof id == 'number') {
+        return this.data.events[id];
+      }
       idList = id.split(".");
       var evt = this.data.events[idList[0]];
       for (var i = 1; i < idList.length; i++) {
