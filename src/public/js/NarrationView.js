@@ -31,7 +31,7 @@ NarrationView = (function() {
       var events = this.model.get("events");
       var shortName = this.model.get("shortName");
 
-      this.el.innerHTML = this.template({model: this.model, root:shortName});
+      this.el.innerHTML = this.template({model: this.model, root:shortName, width:456});
 
       this.options.scroller = iPadScroller.createScroller(this.el, this.el, makeScrollDelegate(this.el, this.modelView));
 
@@ -112,7 +112,7 @@ NarrationView = (function() {
 
         if (currentTop < p[0]) {
 
-          effects[i].el.style.opacity = 0;
+          //effects[i].el.style.opacity = 0;
 
         } else if (currentTop > p[0] && currentTop < p[p.length-1]) {
 
@@ -126,7 +126,7 @@ NarrationView = (function() {
 
           if (j == 0) {        //Fading in:
             var amt = (currentTop - p[0]) / (p[1] - p[0]);
-            effects[i].el.style.opacity = amt;
+            //effects[i].el.style.opacity = amt;
             effects[i].on = false;
 
           } else if (j == 1) {  //Sustaining
@@ -134,18 +134,18 @@ NarrationView = (function() {
               effects[i].on = true;
               modelView.scrollHasReached(effects[i].el.getAttribute("data_id"));
             }
-            effects[i].el.style.opacity = amt;
+            //effects[i].el.style.opacity = amt;
 
           } else if (j == 2) {  //decaying
             effects[i].on = false;
             var amt = (p[3] - currentTop) / (p[3] - p[2]);
-            effects[i].el.style.opacity = amt;
+            //effects[i].el.style.opacity = amt;
           }
 
         
         } else {
 
-          effects[i].el.style.opacity = 0;
+          //effects[i].el.style.opacity = 0;
         
         }
       }

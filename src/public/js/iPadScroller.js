@@ -35,11 +35,11 @@ iPadScroller = (function() {
     var scrollFn = function(offsetX, offsetY, isDone) {
 
       var newY = currentY + offsetY;
-      // BUG:
-      if (newY > 0)
-        newY = 0;
-      if (newY < -maxY + screen.width)
-        newY = -maxY + screen.width;
+      // BUG: Doesnt work when images hasnt loaded yet, so its fucked.
+      // if (newY > 0)
+      //   newY = 0;
+      // if (newY < -maxY + screen.width)
+      //   newY = -maxY + screen.width;
 
       if (isDone)
           currentY = newY;

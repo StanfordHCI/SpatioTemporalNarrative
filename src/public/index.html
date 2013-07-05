@@ -21,7 +21,7 @@
   <h<%= event.depth+1%>><%= event.title %></h<%= event.depth+1%>>
   <% _.each(event.narrative, function(item) { %>
     <% if (item.type == "text") { %> <p><%= item.value %></p> <% } %>
-    <% if (item.type == "img") { %> <img src="/content/<%= root + "/" + item.value %>" width=600px> <% } %>
+    <% if (item.type == "img") { %> <img src="/content/<%= root + "/" + item.value %>?dim=<%=width%>" width=<%=width%>px> <% } %>
   <% }); %>
   </div>
 <% }); %>

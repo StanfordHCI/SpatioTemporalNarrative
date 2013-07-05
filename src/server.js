@@ -28,7 +28,7 @@ app.configure(function() {
   app.use(app.router);
   
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
-  app.use('/content', quickThumb.static(__dirname + '/public/content'))
+  //app.use('/content', quickThumb.static(__dirname + '/public/content'))
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.directory(path.join(__dirname, 'public')));
 
