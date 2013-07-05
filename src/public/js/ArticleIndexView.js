@@ -45,13 +45,13 @@ ArticleIndexView = (function() {
 
       var self = this;
       
-      this.el.on(isTouch ? 'touchend' : 'mousedown', "li", function(evt) {
-        var id = this.getAttribute("articleId");
+      this.el.on(isTouch ? 'touchend' : 'mousedown', 'li', function(evt) {
+        var id = this.getAttribute('articleId');
         self.trigger("navigate:article", id);
       });
 
-      this.el.on(isTouch ? 'touchstart touchend' : "mouseover mouseout", "li", function(evt) {
-        $(this).toggleClass("hover")
+      this.el.on(isTouch ? 'touchstart touchend' : 'mouseover mouseout', 'li', function(evt) {
+        $(this).toggleClass('hover');
       });
 
     },
