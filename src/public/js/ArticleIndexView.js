@@ -41,14 +41,16 @@ ArticleIndexView = (function() {
     //This means that we do not have to rebind events on every render
     _delegateEvents: function() {
 
+      var isTouch = "ontouchstart" in window;
+
       var self = this;
       
-      this.el.on("click", "li", function(evt) {
+      this.el.on(isTouch ? 'touchend' : 'mousedown', "li", function(evt) {
         var id = this.getAttribute("articleId");
         self.trigger("navigate:article", id);
       });
 
-      this.el.on("mouseover mouseout", "li", function(evt) {
+      this.el.on(isTouch ? 'touchstart touchend' : "mouseover mouseout", "li", function(evt) {
         $(this).toggleClass("hover")
       });
 
