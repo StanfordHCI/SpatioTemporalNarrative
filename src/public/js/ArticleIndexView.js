@@ -45,7 +45,7 @@ ArticleIndexView = (function() {
 
       var self = this;
       
-      this.el.on(isTouch ? 'touchend' : 'mousedown', 'li', function(evt) {
+      this.el.on(isTouch ? 'touchend' : 'mouseup', 'li', function(evt) {
         var id = this.getAttribute('articleId');
         self.trigger("navigate:article", id);
       });
