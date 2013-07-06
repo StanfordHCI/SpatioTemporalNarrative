@@ -97,6 +97,7 @@ iPadScroller = (function() {
 
     return {
       destroy: function() {
+        $scrollEl.css('-webkit-transform', 'translate(0px, 0px)');
         listenEl.removeEventListener("touchstart",  handleStart);
         listenEl.removeEventListener("touchmove",   handleMove);
         listenEl.removeEventListener("touchend",    handleEnd);

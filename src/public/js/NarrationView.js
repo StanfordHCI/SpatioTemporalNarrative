@@ -20,17 +20,6 @@ NarrationView = (function() {
 
     initialize: function() {
       this.listenTo(this.modelView, "setup", _.bind(this.renderFromScratch, this)); 
-
-      var self = this;
-      document.addEventListener('webkitAnimationStart', function(event){
-        debug("Called " + event.animationName)
-          if (event.animationName == 'nodeInserted'){
-            if (self.options.createOnceScrollerFunc);
-              self.options.createOnceScrollerFunc;
-            self.options.createOnceScrollerFunc = null;
-          }
-      }, true);
-
       iPadScroller.disableDefaultScrolling();
 
     },
@@ -45,13 +34,20 @@ NarrationView = (function() {
       var shortName = this.model.get("shortName");
 
 
-      this.options.createOnceScrollerFunc = function() {
-        debug("INSERTED!");        
-      }
-
       this.el.innerHTML = this.template({model: this.model, root:shortName, width:456});
-        self.options.scroller = iPadScroller.createScroller(self.el, self.el, makeScrollDelegate(self.el, self.modelView));
 
+      function waitForAllImages() {
+        var imgs = self.el.getElementsByTagName("img");
+        
+        for (var i = 0; i < imgs.length; i++) {
+          if (!imgs[i].complete) {
+            setTimeout(waitForAllImages, 50);
+            return;
+          }
+        }
+        self.options.scroller = iPadScroller.createScroller(self.el, self.el, makeScrollDelegate(self.el, self.modelView));
+      }
+      setTimeout(waitForAllImages, 50);
 
 
       return this;

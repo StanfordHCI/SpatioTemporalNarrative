@@ -114,18 +114,6 @@ a {
   margin: 0;
   margin-bottom: 50px;
 }
-@keyframes nodeInserted {
-  from {
-    clip: rect(1px, auto, auto, auto);
-  }
-  to {
-    clip: rect(0px, auto, auto, auto);
-  }
-}
-3 .cont {
-  -webkit-animation-duration: 0.001s;
-  -webkit-animation-name: nodeInserted;
-}
 #timeline_container {
   position: fixed;
   top: 15px;
