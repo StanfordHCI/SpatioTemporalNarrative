@@ -20,15 +20,18 @@ NarrationView = (function() {
 
     initialize: function() {
       this.listenTo(this.modelView, "setup", _.bind(this.renderFromScratch, this)); 
+      this.listenTo(this.modelView, "scroll:at", _.bind(this.possiblyScrollTo, this));
       iPadScroller.disableDefaultScrolling();
+
+      this.options.idToPos = {};
+      window.nv = this;
 
     },
 
     renderFromScratch: function() {
       var self = this;
       
-      if (this.options.scroller)
-        this.options.scroller.destroy();
+      this.clear();
 
       var events = this.model.get("events");
       var shortName = this.model.get("shortName");
@@ -44,17 +47,32 @@ NarrationView = (function() {
             return;
           }
         }
-        self.options.scroller = iPadScroller.createScroller(self.el, self.el, makeScrollDelegate(self.el, self.modelView));
+        self.options.scroller = iPadScroller.createScroller(self.el, self.el, makeScrollDelegate(self.el, self.modelView, self));
       }
       setTimeout(waitForAllImages, 50);
 
 
       return this;
     }, 
+
+    possiblyScrollTo: function(id) {
+      if (this.scrollAt != id) {
+        this.options.scroller.scrollTo(this.options.idToPos[id]);
+        this.setScrollAt(id);
+      }
+    },
     
     clear: function() {
-
+      if (this.options.scroller)
+        this.options.scroller.destroy();
+      this.scrollAt = "0";
+      this.options.idToPos = {};
       return this;
+    },
+
+    setScrollAt: function(id) {
+      this.scrollAt = id;
+      this.modelView.scrollHasReached(id);
     },
 
     _delegateEvents: function() {
@@ -82,7 +100,7 @@ function debug() {
   // Here we have the scroll delegate 
   //**************************************************
   
-  function makeScrollDelegate(container_el, modelView) {
+  function makeScrollDelegate(container_el, modelView, view) {
 
 
     var effects = (function() {
@@ -100,12 +118,15 @@ function debug() {
         var myMarginTop = parseInt( $("#myBlock").css("marginTop") );
 
         //start fading in when it becomes visible
-        var start = child.offset().top - 50;//(myMarginTop ? myMarginTop : 0);
+        var start = child.offset().top - 50;
+
+        view.options.idToPos[children_els[i].getAttribute("data_id")] = child.offset().top;
 
         result.push({
           start: start,
           el: children_els[i],
-          on: false
+          on: false,
+          id: children_els[i].getAttribute("data_id")
         });
 
       }
@@ -113,7 +134,7 @@ function debug() {
       return result;
     })();
 
-    window.effects = effects;
+    
 
     return function(currentTop) {
 
@@ -125,27 +146,24 @@ function debug() {
         if (effects[i+1])
           nextStart = effects[i+1].start;
         else
-          nextStart = start + effect.el.height;
+          nextStart = start + 200;
 
         if (currentTop < effect.start) {
-
           effect.on = false;
+          effect.el.getElementsByClassName("eventButton")[0].style.background = "#4479BA";
 
         } else if (currentTop > start && currentTop < nextStart) {
-
             if (!effect.on) {
+              view.setScrollAt(effect.id);
               effect.on = true;
-              modelView.scrollHasReached(effect.el.getAttribute("data_id"));
+              effect.el.getElementsByClassName("eventButton")[0].style.background = "red";
             }
-        
         } else {
-
           effect.on = false;
-        
+          effect.el.getElementsByClassName("eventButton")[0].style.background = "#4479BA";
+
         }
       }
-
-
 
       return currentTop;
     }

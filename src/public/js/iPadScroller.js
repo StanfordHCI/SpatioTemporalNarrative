@@ -22,17 +22,14 @@ iPadScroller = (function() {
    */
   function createScroller(listenEl, scrollEl, delegate) {
 
-    var startX = 0;
     var startY = 0;  
-
-    var currentX = 0;
     var currentY = 0;
 
     var $scrollEl = $(scrollEl);
 
     var maxY = scrollEl.scrollHeight;
-   
-    var scrollFn = function(offsetX, offsetY, isDone) {
+
+    var scrollFn = function(offsetY, isDone) {
 
       var newY = currentY + offsetY;
       // BUG: Doesnt work when images hasnt loaded yet, so its fucked.
@@ -41,19 +38,22 @@ iPadScroller = (function() {
       // if (newY < -maxY + screen.width)
       //   newY = -maxY + screen.width;
 
+      doScroll(newY, isDone);
+    }
+
+    var doScroll = function(newY, isDone) {
       if (isDone)
           currentY = newY;
 
       if (delegate)
         newY = -delegate(-newY);  
+
       $scrollEl.css('-webkit-transform', 'translate(0, ' + newY + 'px)');
-      
     }
 
     var handleStart  = function(e) {
       var touches = e.changedTouches;
       if (touches.length > 0) {
-        startX = touches[0].pageX;
         startY = touches[0].pageY;
       }
     };
@@ -62,11 +62,9 @@ iPadScroller = (function() {
       e.preventDefault();
       var touches = e.changedTouches;
       if (touches.length > 0) {
-        var newX = touches[0].pageX;
         var newY = touches[0].pageY;
-        var offsetX = newX - startX;
         var offsetY = newY - startY;
-        scrollFn(offsetX, offsetY, isDone);
+        scrollFn(offsetY, isDone);
       }
     }
 
@@ -96,6 +94,9 @@ iPadScroller = (function() {
       delegate(0);
 
     return {
+      scrollTo: function(pix) {
+        doScroll(-1*pix,true);
+      },
       destroy: function() {
         $scrollEl.css('-webkit-transform', 'translate(0px, 0px)');
         listenEl.removeEventListener("touchstart",  handleStart);

@@ -104,6 +104,7 @@ a {
   float: left;
   z-index: 1;
   line-height: 1.4em;
+  padding-bottom: 768px;
 }
 #narrative_container p {
   font-family: HelveticaNeue-Light, sans-serif;
@@ -124,12 +125,12 @@ a {
 }
 .eventTitle_0 {
   display: inline-block;
-  font-size: 2em;
+  font-size: 1.5em;
   vertical-align: middle;
 }
 .eventTitle_1 {
   display: inline-block;
-  font-size: 1.5em;
+  font-size: 1.3em;
   vertical-align: middle;
 }
 #timeline_container {
