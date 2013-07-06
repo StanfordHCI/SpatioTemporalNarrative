@@ -40,13 +40,32 @@ MapView = (function() {
 
       function addMarkers() {
 
-        function createMarker(latlng) {
+        function createMarker(latlng, title) {
           var marker = new google.maps.Marker({
             position: latlng,  
             map: map,
             animation: google.maps.Animation.DROP,
-            title: ""
+            title: title
           });
+
+          google.maps.event.addListener(marker, "click", function() {
+            console.log(marker.getTitle()); 
+            self.model.forAllEvents(function(event) {
+              console.log("CHECKING EVENT"); 
+              if (event.spatial == marker.getTitle()) {
+                console.log("EVENT FOUND"); 
+                self.modelView.scrollHasReached(event.id); 
+              }
+            })
+            marker.setAnimation(google.maps.Animation.BOUNCE); 
+            setTimeout(function() {
+              marker.setAnimation(null); 
+            }, 5000); 
+
+            map.setZoom(14); 
+            map.panTo(marker.getPosition()); 
+          }); 
+
           map.panTo(latlng); 
         }
 
@@ -102,13 +121,13 @@ MapView = (function() {
             (function(location) {
               addressToLatLng(location.value, function(result, status) {
                 eventLocations[location.name] = result[0].geometry.location; 
-                createMarker(result[0].geometry.location); 
+                createMarker(result[0].geometry.location, location.name); 
               }); 
             })(location); 
           } else if (location.type == "point") {
             var latlng = new google.maps.LatLng(location.lat, location.lng); 
             eventLocations[location.name] = latlng; 
-            createMarker(latlng); 
+            createMarker(latlng, location.name); 
 
           } else if (location.type == "area") {
             var addressCoords = []; 
@@ -170,8 +189,6 @@ MapView = (function() {
     },
 
     renderScrolled: function(eventName) {
-      console.log(eventName); 
-      console.log(eventLocations[eventName]); 
       map.panTo(eventLocations[eventName]); 
       map.setZoom(14); 
     },
