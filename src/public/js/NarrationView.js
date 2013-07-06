@@ -20,27 +20,59 @@ NarrationView = (function() {
 
     initialize: function() {
       this.listenTo(this.modelView, "setup", _.bind(this.renderFromScratch, this)); 
+      this.listenTo(this.modelView, "scroll:at", _.bind(this.possiblyScrollTo, this));
       iPadScroller.disableDefaultScrolling();
+
+      this.options.idToPos = {};
+      window.nv = this;
+
     },
 
     renderFromScratch: function() {
+      var self = this;
       
-      if (this.options.scroller)
-        this.options.scroller.destroy();
+      this.clear();
 
       var events = this.model.get("events");
       var shortName = this.model.get("shortName");
 
-      this.el.innerHTML = this.template({model: this.model, root:shortName});
 
-      this.options.scroller = iPadScroller.createScroller(this.el, this.el, makeScrollDelegate(this.el, this.modelView));
+      this.el.innerHTML = this.template({model: this.model, root:shortName, width:456});
+
+      function waitForAllImages() {
+        var imgs = self.el.getElementsByTagName("img");
+        for (var i = 0; i < imgs.length; i++) {
+          if (!imgs[i].complete) {
+            setTimeout(waitForAllImages, 50);
+            return;
+          }
+        }
+        self.options.scroller = iPadScroller.createScroller(self.el, self.el, makeScrollDelegate(self.el, self.modelView, self));
+      }
+      setTimeout(waitForAllImages, 50);
+
 
       return this;
     }, 
+
+    possiblyScrollTo: function(id) {
+      if (this.scrollAt != id) {
+        this.options.scroller.scrollTo(this.options.idToPos[id]);
+        this.setScrollAt(id);
+      }
+    },
     
     clear: function() {
-
+      if (this.options.scroller)
+        this.options.scroller.destroy();
+      this.scrollAt = "0";
+      this.options.idToPos = {};
       return this;
+    },
+
+    setScrollAt: function(id) {
+      this.scrollAt = id;
+      this.modelView.scrollHasReached(id);
     },
 
     _delegateEvents: function() {
@@ -53,12 +85,22 @@ NarrationView = (function() {
 
   });
 
+var debug_el = document.getElementById("debug_container");
+function debug() {
+  //*
+  var str = "";
+  for (var i in arguments) {
+    str += JSON.stringify(arguments[i]) + " ";
+  }
+  debug_el.innerHTML = str + "<br\>" + debug_el.innerHTML;
+  // */
+}
 
   //**************************************************
   // Here we have the scroll delegate 
   //**************************************************
   
-  function makeScrollDelegate(container_el, modelView) {
+  function makeScrollDelegate(container_el, modelView, view) {
 
 
     var effects = (function() {
@@ -66,87 +108,60 @@ NarrationView = (function() {
 
 
       var amountVisible = screen.width;
-      //debug("Amount visible: ", amountVisible);
+      var c_el = container_el.children[0];
 
-      var children_els = container_el.children;
+      var children_els = c_el.children;
       for (var i = 0; i < children_els.length; i++) {
 
         var child = $(children_els[i]);
 
-        var startOnPage = child.offset().top;
-        var outerHeight = child.outerHeight();
-        var innerHeight = child.height();
-
-        //debug("Start on page:", startOnPage, ", height:", outerHeight);
+        var myMarginTop = parseInt( $("#myBlock").css("marginTop") );
 
         //start fading in when it becomes visible
-        var start = startOnPage - amountVisible*3/4;
-        // sustain when it is fully visible
-        var sustain = startOnPage;
-        // decay when it's halfway out
-        var decay = startOnPage + innerHeight/2;
-        // done when it's all the way out
-        var done = startOnPage + outerHeight*3/4;
+        var start = child.offset().top - 50;
+
+        view.options.idToPos[children_els[i].getAttribute("data_id")] = child.offset().top;
 
         result.push({
-          progression: [start, sustain, decay, done],
-          el: children_els[i]
+          start: start,
+          el: children_els[i],
+          on: false,
+          id: children_els[i].getAttribute("data_id")
         });
-        //debug(result[result.length-1].progression)
+
       }
-      
+
       return result;
     })();
 
-
-    // var effects = [
-    //   { progression: [200,800,1000,1650],
-    //     el:        document.getElementById("img1")
-    //   }
-    // ];
+    
 
     return function(currentTop) {
 
+      var effect, start, nextStart;
       for (var i = 0; i < effects.length; i++) {
-        var p = effects[i].progression;
+        effect = effects[i];
+        start = effect.start;
 
-        if (currentTop < p[0]) {
+        if (effects[i+1])
+          nextStart = effects[i+1].start;
+        else
+          nextStart = start + 200;
 
-          effects[i].el.style.opacity = 0;
+        if (currentTop < effect.start) {
+          effect.on = false;
+          effect.el.getElementsByClassName("eventButton")[0].style.background = "#4479BA";
 
-        } else if (currentTop > p[0] && currentTop < p[p.length-1]) {
-
-          //How far along are we?
-          var j = 1;
-          for (; j < p.length; j++) {
-            if (currentTop < p[j])
-              break;
-          }
-          j -= 1;
-
-          if (j == 0) {        //Fading in:
-            var amt = (currentTop - p[0]) / (p[1] - p[0]);
-            effects[i].el.style.opacity = amt;
-            effects[i].on = false;
-
-          } else if (j == 1) {  //Sustaining
-            if (!effects[i].on) {
-              effects[i].on = true;
-              modelView.scrollHasReached(effects[i].el.getAttribute("data_id"));
+        } else if (currentTop > start && currentTop < nextStart) {
+            if (!effect.on) {
+              view.setScrollAt(effect.id);
+              effect.on = true;
+              effect.el.getElementsByClassName("eventButton")[0].style.background = "red";
             }
-            effects[i].el.style.opacity = amt;
-
-          } else if (j == 2) {  //decaying
-            effects[i].on = false;
-            var amt = (p[3] - currentTop) / (p[3] - p[2]);
-            effects[i].el.style.opacity = amt;
-          }
-
-        
         } else {
+          effect.on = false;
+          effect.el.getElementsByClassName("eventButton")[0].style.background = "#4479BA";
 
-          effects[i].el.style.opacity = 0;
-        
         }
       }
 

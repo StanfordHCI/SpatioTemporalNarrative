@@ -65,15 +65,15 @@ ArticleViewModel = (function() {
     //**********************************************
     // API for Views to update internal state:
     //**********************************************
+
+    //Notified that the user's scroll has reached an event;
     scrollHasReached: function(id) {
       this.trigger("scroll:at", id);
     }
 
   });
 
-
   return ArticleViewModel;
-
 
 
 })();

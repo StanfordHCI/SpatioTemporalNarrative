@@ -17,6 +17,14 @@ body {
 a {
   color: #00B7FF;
 }
+#debug_container {
+  z-index: 20;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+}
 #index_container {
   margin: 0;
   margin-left: 50px;
@@ -39,6 +47,10 @@ a {
   background: #4479BA;
   color: #fff;
   margin: 10px 0px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 #index_container li:active {
   -webkit-transform: scale(0.9);
@@ -55,6 +67,7 @@ a {
   margin: 0;
   padding: 0;
   width: 1024px;
+  height: 748px;
   overflow: hidden;
   background: white;
 }
@@ -82,7 +95,7 @@ a {
   margin: 0;
   padding: 0;
   width: 458px;
-  height: 768px;
+  height: 748px;
   margin-left: 512px;
 }
 #narrative_container {
@@ -91,6 +104,7 @@ a {
   float: left;
   z-index: 1;
   line-height: 1.4em;
+  padding-bottom: 768px;
 }
 #narrative_container p {
   font-family: HelveticaNeue-Light, sans-serif;
@@ -99,10 +113,25 @@ a {
 .event {
   padding: 0;
   margin: 0;
-  margin-bottom: 50px;
+  margin-top: 50px;
 }
-.event_1 {
-  margin-left: 30px;
+.eventButton {
+  display: inline-block;
+  padding: 10px 15px;
+  vertical-align: middle;
+  background: #4479BA;
+  color: #FFF;
+  margin-right: 1em;
+}
+.eventTitle_0 {
+  display: inline-block;
+  font-size: 1.5em;
+  vertical-align: middle;
+}
+.eventTitle_1 {
+  display: inline-block;
+  font-size: 1.3em;
+  vertical-align: middle;
 }
 #timeline_container {
   position: fixed;

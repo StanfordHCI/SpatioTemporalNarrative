@@ -1,11 +1,11 @@
 MapView = (function() {
 
   function MapView(options) {
-    this.options = options || {}; 
+    this.options = options || {};
     this.model = options.model || undefined;
     this.modelView = options.modelView || undefined;
-    this.setElement(options.el); 
-    this.initialize(); 
+    this.setElement(options.el);
+    this.initialize();
     this._delegateEvents();
   }
 
@@ -21,32 +21,68 @@ MapView = (function() {
     initialize: function() {
       var self = this;
 
-      this.listenTo(this.modelView, "setup", _.bind(this.renderFromScratch, this)); 
+      this.listenTo(this.modelView, "setup", _.bind(this.renderFromScratch, this));
       this.listenTo(this.modelView, "scroll:at", function(id) {
-        self.renderScrolled(this.model.getEventById(id).spatial);  
+        self.renderScrolled(this.model.getEventById(id).spatial);
       });
     },
 
     renderFromScratch: function() {
-      var mapOptions = {
-        center: new google.maps.LatLng(47.61, -122.33),
-        zoom: 12,
-        mapTypeId: google.maps.MapTypeId.SATELLITE
-      };
-      map = new google.maps.Map(this.el, mapOptions);
-      var self = this; 
-      addMarkers(); 
+
+      var self = this;
+      eventLocations = {};
+      eventMarkers = {};
+      createMap(); 
+      addMarkers();
+
+      function createMap() {
+        var center; 
+        var locations = self.model.get("map").poi;
+        for (i in locations) {
+          var location = locations[i];
+          if (location.type == "point") {
+            center = new google.maps.LatLng(location.lat, location.lng);
+          }
+        }
+        var mapOptions = {
+          center: center, 
+          zoom: 11,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(self.el, mapOptions);
+      }
 
       function addMarkers() {
 
-        function createMarker(latlng) {
-          var marker = new google.maps.Marker({
-            position: latlng,  
-            map: map,
-            animation: google.maps.Animation.DROP,
-            title: ""
-          });
-          map.panTo(latlng); 
+        function createMarker(latlng, title) {
+          var marker = null;
+          setTimeout(function() {
+            marker = new google.maps.Marker({
+              position: latlng,
+              map: map,
+              animation: google.maps.Animation.DROP,
+              title: title
+            });
+
+            google.maps.event.addListener(marker, "click", function() {
+              self.model.forAllEvents(function(event) {
+                if (event.spatial == marker.getTitle()) {
+                  self.modelView.scrollHasReached(event.id);
+                }
+              })
+              marker.setAnimation(google.maps.Animation.BOUNCE);
+              setTimeout(function() {
+                marker.setAnimation(null);
+              }, 3000);
+
+              map.setZoom(15);
+              map.panTo(marker.getPosition());
+            });
+
+            eventMarkers[title] = marker;
+          }, Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000);
+
+          map.panTo(latlng);
         }
 
         function createLine(coords) {
@@ -58,7 +94,7 @@ MapView = (function() {
           };
 
           var line = new google.maps.Polyline({
-            path: coords, 
+            path: coords,
             strokeOpacity: 0,
             icons: [{
               icon: lineSymbol,
@@ -81,127 +117,96 @@ MapView = (function() {
           area.setMap(map);
         }
 
-        var geocoder = new google.maps.Geocoder(); 
+        var geocoder = new google.maps.Geocoder();
         function addressToLatLng(address, callback) {
           var request = {
             address: address
           }
           geocoder.geocode(request, function(result, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-              callback(result, status); 
+              callback(result, status);
             }
-          }); 
+          });
         }
 
-        var locations = self.model.get("map").poi; 
+        var locations = self.model.get("map").poi;
         for (i in locations) {
-          var location = locations[i]; 
+          var location = locations[i];
 
           if (location.type == "address") {
-            addressToLatLng(location.value, function(result, status) {
-              createMarker(result[0].geometry.location); 
-            }); 
-
+            (function(location) {
+              addressToLatLng(location.value, function(result, status) {
+                eventLocations[location.name] = result[0].geometry.location;
+                createMarker(result[0].geometry.location, location.name);
+              });
+            })(location);
           } else if (location.type == "point") {
-            var latlng = new google.maps.LatLng(location.lat, location.lng); 
-            eventLocations[location.name] = latlng; 
-            createMarker(latlng); 
+            var latlng = new google.maps.LatLng(location.lat, location.lng);
+            eventLocations[location.name] = latlng;
+            createMarker(latlng, location.name);
 
           } else if (location.type == "area") {
-            var addressCoords = []; 
-            var pointCoords = []; 
-            var subPoints = location.value; 
-            var length = subPoints.length; 
+            var addressCoords = [];
+            var pointCoords = [];
+            var subPoints = location.value;
+            var length = subPoints.length;
             for (i in subPoints) {
-              var subPoint = subPoints[i]; 
+              var subPoint = subPoints[i];
               if (subPoint.type == "address") {
-                addressToLatLng(subPoint.value, function(result, status) {
-                  addressCoords.push(result[0].geometry.location); 
-                  if (i == length - 1) {
-                    createArea(addressCoords); 
-                  }
-                }); 
-
+                (function(location) {
+                  addressToLatLng(subPoint.value, function(result, status) {
+                    eventLocations[location.name] = result[0].geometry.location;
+                    addressCoords.push(result[0].geometry.location);
+                    if (i == length - 1) {
+                      createArea(addressCoords);
+                    }
+                  });
+                })(location);
               } else if (subPoint.type == "point") {
-                var latlng = new google.maps.LatLng(subPoint.lat, subPoint.lng); 
-                pointCoords.push(latlng); 
+                var latlng = new google.maps.LatLng(subPoint.lat, subPoint.lng);
+                eventLocations[location.name] = latlng;
+                pointCoords.push(latlng);
                 if (i == length - 1) {
-                  createArea(pointCoords); 
+                  createArea(pointCoords);
                 }
               }
             }
           } else if (location.type == "list") {
-            var addressCoords = []; 
-            var pointCoords = []; 
-            var subPoints = location.value; 
-            var length = subPoints.length; 
+            var addressCoords = [];
+            var pointCoords = [];
+            var subPoints = location.value;
+            var length = subPoints.length;
             for (i in subPoints) {
-              var subPoint = subPoints[i]; 
+              var subPoint = subPoints[i];
 
               if (subPoint.type == "address") {
-                addressToLatLng(subPoint.value, function(result, status) {
-                  addressCoords.push(result[0].geometry.location); 
-                  if (i == length - 1) {
-                    createLine(addressCoords); 
-                  }
-                }); 
-
+                (function(location) {
+                  addressToLatLng(subPoint.value, function(result, status) {
+                    eventLocations[location.name] = result[0].geometry.location;
+                    addressCoords.push(result[0].geometry.location);
+                    if (i == length - 1) {
+                      createLine(addressCoords);
+                    }
+                  });
+                })(location);
               } else if (subPoint.type == "point") {
-                var latlng = new google.maps.LatLng(subPoint.lat, subPoint.lng); 
-                pointCoords.push(latlng); 
+                var latlng = new google.maps.LatLng(subPoint.lat, subPoint.lng);
+                eventLocations[location.name] = latlng;
+                pointCoords.push(latlng);
                 if (i == length - 1) {
-                  createLine(pointCoords); 
+                  createLine(pointCoords);
                 }
               }
             }
           }
         }
       }
-      return this; 
+      return this;
     },
 
     renderScrolled: function(eventName) {
-      console.log(eventName); 
-      var locations = this.model.get("map").poi; 
-      for (i in locations) {
-        var location = locations[i]; 
-        if (location.name == eventName) {
-          if (location.type == "address") {
-            var geocoder = new google.maps.Geocoder(); 
-            var request = {
-              address: location.value
-            }
-            geocoder.geocode(request, function(result, status) {
-              if (status == google.maps.GeocoderStatus.OK) {
-                map.panTo(result[0].geometry.location); 
-              }
-            }); 
-            break; 
-          } else if (location.type == "point") {
-            var latlng = new google.maps.LatLng(location.lat, location.lng); 
-            map.panTo(latlng); 
-            break; 
-          } else if (location.type == "area" || location.type == "list") {
-            var start = location.value[0]; 
-            if (start.type == "address") {
-              var geocoder = new google.maps.Geocoder(); 
-              var request = {
-                address: start.value
-              }
-              geocoder.geocode(request, function(result, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                  map.panTo(result[0].geometry.location); 
-                }
-              }); 
-              break; 
-            } else if (start.type == "point") {
-              var latlng = new google.maps.LatLng(location.lat, location.lng); 
-              map.panTo(latlng); 
-              break;
-            }
-          }
-        }
-      }
+      map.panTo(eventLocations[eventName]);
+      map.setZoom(13);
     },
     
     clear: function() {
@@ -220,4 +225,3 @@ MapView = (function() {
   return MapView;
 
 })();
-

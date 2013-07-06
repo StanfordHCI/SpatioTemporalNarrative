@@ -18,6 +18,14 @@ a {
   color: #00B7FF;
 }
 
+#debug_container {
+  z-index: 20;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+}
 
 #index_container {
 
@@ -44,6 +52,11 @@ a {
     background: #4479BA;
     color: #fff;
     margin: 10px 0px;
+  
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
   }
 
   li:active {
@@ -63,6 +76,7 @@ a {
   margin: 0;
   padding: 0;
   width: 1024px;
+  height: 748px;
   overflow: hidden;
   background: white;
 }
