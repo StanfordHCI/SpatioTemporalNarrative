@@ -6,7 +6,7 @@
 var http = require('http');
 var path = require('path');
 var express = require('express');
-var quickThumb = require('./../lib/quickthumb.js');
+//var quickThumb = require('./../lib/quickthumb.js');
 
 var routes = require('./routes/routes');
 

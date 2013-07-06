@@ -20,10 +20,23 @@ NarrationView = (function() {
 
     initialize: function() {
       this.listenTo(this.modelView, "setup", _.bind(this.renderFromScratch, this)); 
+
+      var self = this;
+      document.addEventListener('webkitAnimationStart', function(event){
+        debug("Called " + event.animationName)
+          if (event.animationName == 'nodeInserted'){
+            if (self.options.createOnceScrollerFunc);
+              self.options.createOnceScrollerFunc;
+            self.options.createOnceScrollerFunc = null;
+          }
+      }, true);
+
       iPadScroller.disableDefaultScrolling();
+
     },
 
     renderFromScratch: function() {
+      var self = this;
       
       if (this.options.scroller)
         this.options.scroller.destroy();
@@ -31,9 +44,15 @@ NarrationView = (function() {
       var events = this.model.get("events");
       var shortName = this.model.get("shortName");
 
+
+      this.options.createOnceScrollerFunc = function() {
+        self.options.scroller = iPadScroller.createScroller(self.el, self.el, makeScrollDelegate(self.el, self.modelView));
+        debug("INSERTED!");        
+      }
+
       this.el.innerHTML = this.template({model: this.model, root:shortName, width:456});
 
-      this.options.scroller = iPadScroller.createScroller(this.el, this.el, makeScrollDelegate(this.el, this.modelView));
+
 
       return this;
     }, 
@@ -53,6 +72,16 @@ NarrationView = (function() {
 
   });
 
+var debug_el = document.getElementById("debug_container");
+function debug() {
+  //*
+  var str = "";
+  for (var i in arguments) {
+    str += JSON.stringify(arguments[i]) + " ";
+  }
+  debug_el.innerHTML = str + "<br\>" + debug_el.innerHTML;
+  // */
+}
 
   //**************************************************
   // Here we have the scroll delegate 
@@ -68,7 +97,9 @@ NarrationView = (function() {
       var amountVisible = screen.width;
       //debug("Amount visible: ", amountVisible);
 
-      var children_els = container_el.children;
+      var c_el = container_el.children[0];
+
+      var children_els = c_el.children;
       for (var i = 0; i < children_els.length; i++) {
 
         var child = $(children_els[i]);
@@ -84,9 +115,9 @@ NarrationView = (function() {
         // sustain when it is fully visible
         var sustain = startOnPage;
         // decay when it's halfway out
-        var decay = startOnPage + innerHeight/2;
+        var decay = startOnPage + innerHeight;
         // done when it's all the way out
-        var done = startOnPage + outerHeight*3/4;
+        var done = startOnPage + outerHeight;
 
         result.push({
           progression: [start, sustain, decay, done],
@@ -98,6 +129,7 @@ NarrationView = (function() {
       return result;
     })();
 
+    window.effects = effects;
 
     // var effects = [
     //   { progression: [200,800,1000,1650],
@@ -132,6 +164,7 @@ NarrationView = (function() {
           } else if (j == 1) {  //Sustaining
             if (!effects[i].on) {
               effects[i].on = true;
+              debug(effects[i].el.getAttribute("data_id"))
               modelView.scrollHasReached(effects[i].el.getAttribute("data_id"));
             }
             //effects[i].el.style.opacity = amt;
@@ -149,6 +182,8 @@ NarrationView = (function() {
         
         }
       }
+
+
 
       return currentTop;
     }

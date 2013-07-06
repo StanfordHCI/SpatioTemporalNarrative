@@ -16,6 +16,7 @@
 
 <script id='tmpl-event' type='text/template'>
 
+<div class="cont">
 <% model.forAllEvents(function(event) { %>
   <div class="event event_<%=event.depth%>" data_id=<%=event.id%>>
   <h<%= event.depth+1%>><%= event.title %></h<%= event.depth+1%>>
@@ -25,6 +26,7 @@
   <% }); %>
   </div>
 <% }); %>
+</div>
 
 </script>
 
@@ -44,6 +46,10 @@
 <body>
 <div id="container">
   
+  <div id="debug_container">
+    DEBUG
+  </div>
+
   <div id="index_container">
   </div>
   

@@ -21,7 +21,5 @@
     "dirty":"0.x.x",
     "express":"3.2.6",
     "less-middleware": "*",
-    "imagemagick":"0.x.x",
-    "mkdirp":"0.x.x"
   }
 }

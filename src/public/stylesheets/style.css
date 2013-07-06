@@ -17,6 +17,14 @@ body {
 a {
   color: #00B7FF;
 }
+#debug_container {
+  z-index: 20;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+}
 #index_container {
   margin: 0;
   margin-left: 50px;
@@ -106,8 +114,17 @@ a {
   margin: 0;
   margin-bottom: 50px;
 }
-.event_1 {
-  margin-left: 30px;
+@keyframes nodeInserted {
+  from {
+    clip: rect(1px, auto, auto, auto);
+  }
+  to {
+    clip: rect(0px, auto, auto, auto);
+  }
+}
+.cont {
+  -webkit-animation-duration: 0.001s;
+  -webkit-animation-name: nodeInserted;
 }
 #timeline_container {
   position: fixed;

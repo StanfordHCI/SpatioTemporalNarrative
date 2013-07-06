@@ -19,5 +19,19 @@
 
 
 .event_1 {
-  margin-left: 30px;
+
+}
+
+@keyframes nodeInserted {  
+    from {  
+        clip: rect(1px, auto, auto, auto);  
+    }
+    to {  
+        clip: rect(0px, auto, auto, auto);
+    }  
+}
+
+ .cont {
+    -webkit-animation-duration: 0.001s;
+    -webkit-animation-name: nodeInserted;
 }
