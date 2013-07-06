@@ -46,11 +46,11 @@ NarrationView = (function() {
 
 
       this.options.createOnceScrollerFunc = function() {
-        self.options.scroller = iPadScroller.createScroller(self.el, self.el, makeScrollDelegate(self.el, self.modelView));
         debug("INSERTED!");        
       }
 
       this.el.innerHTML = this.template({model: this.model, root:shortName, width:456});
+        self.options.scroller = iPadScroller.createScroller(self.el, self.el, makeScrollDelegate(self.el, self.modelView));
 
 
 
