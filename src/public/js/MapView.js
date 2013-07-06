@@ -28,24 +28,29 @@ MapView = (function() {
     },
 
     renderFromScratch: function() {
-      var center; 
-      var locations = this.model.get("map").poi;
-      for (i in locations) {
-        var location = locations[i];
-        if (location.type == "point") {
-          center = new google.maps.LatLng(location.lat, location.lng);
-        }
-      }
-      var mapOptions = {
-        center: center, 
-        zoom: 11,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-      map = new google.maps.Map(this.el, mapOptions);
+
       var self = this;
       eventLocations = {};
       eventMarkers = {};
+      createMap(); 
       addMarkers();
+
+      function createMap() {
+        var center; 
+        var locations = self.model.get("map").poi;
+        for (i in locations) {
+          var location = locations[i];
+          if (location.type == "point") {
+            center = new google.maps.LatLng(location.lat, location.lng);
+          }
+        }
+        var mapOptions = {
+          center: center, 
+          zoom: 11,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(self.el, mapOptions);
+      }
 
       function addMarkers() {
 
