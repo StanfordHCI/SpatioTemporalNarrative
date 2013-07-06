@@ -13,7 +13,7 @@ TimelineView = (function() {
 
     setElement: function(el) {
       if (!el)
-        throw new Errpr("View requires a container element");
+        throw new Error("View requires a container element");
       this.el = el instanceof $ ? el.get(0) : el;
       this.$el = el instanceof $ ? el : $(el);
     },
@@ -29,38 +29,25 @@ TimelineView = (function() {
 
     renderFromScratch: function() {
 
+      this.paper ? this.paper.clear() : this.paper = Raphael(this.el, 60, 700);
+
       var timeline = this.timeline = {};
       timeline.events = [];
 
-      //console.log(Number(this.el.getAttribute("height")));
-
-      timeline.absLen = 600;
+      timeline.absLen = 300;
       timeline.xOffset = 60;
       timeline.line_width = 1;
-      timeline.yOffset = 10;
+      timeline.yOffset = 40;
 
-      var paper = this.paper = Raphael(this.el, 60, 700);
-      this.notCurrentSpacing = nonlinearTransform;
-      /*var toggleButton = paper.rect(10, 40, 30, 20).attr("fill", "white");
-      toggleButton.click(function() {
-        console.log(this.notCurrentSpacing);
-        this.notCurrentSpacing.call(null, timeline);
-        if (this.notCurrentSpacing == nonlinearTransform) {
-          this.notCurrentSpacing = linearTransform;
-        } else {
-          this.notCurrentSpacing = nonlinearTransform;
-        }
-
-
-      }, this);
-*/
+      var paper = this.paper;
+      
       var tl = paper.path("M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + timeline.absLen));
 
       var evts = this.model.get("events");
       var modelView = this.modelView
       
+      //creates timeline markers for all events. Markers will be repositione based on the readers' chosen transformation
       this.model.forAllEvents(function(currEvt){
-      //for (var i = 0; i < evts.length; i++) {
         if (currEvt.time) {
         var start_time = new Date(currEvt.time[0]);
 
@@ -70,6 +57,8 @@ TimelineView = (function() {
         var rect = paper.rect(timeline.xOffset - 10, timeline.yOffset, 10, 2, 0);
         rect.attr("fill", "#000");
 
+        var stamp = paper.text(10, timeline.yOffset, currEvt.time[0]);
+        stamp.attr("fill-opacity", 0);
         
 
         if (currEvt.time.length > 1) {
@@ -80,15 +69,68 @@ TimelineView = (function() {
         var markerSet = paper.setFinish();
         markerSet.data("id", currEvt.id);
         markerSet.click(function() {
-          console.log(this.data("id"));
           modelView.scrollHasReached(this.data("id")); 
         });
 
-        console.log(markerSet);
         timeline.events.push({id: currEvt.id, marker: markerSet, time: times});
         }
       });
-      linearTransform(timeline);
+
+//* attempts to do gaussian tranformation over timeline
+      var container = this.el;
+      this.el.onmouseover = function(e) {
+          var xPos = e.clientX;
+          var yPos = e.clientY;
+
+          var currEvt = paper.getElementByPoint(xPos, yPos);
+          if (currEvt) {
+            modelView.scrollHasReached(currEvt.data("id"));
+          }
+
+          for (var i = 0; i < timeline.events.length; i++) {
+
+            timeline.events[i].marker.forEach(function(obj){
+
+              var currY = obj.attr("y");
+
+              //currently hardcoded in for testing 
+              sd = 600/7;
+              
+              var transformFactor = Math.pow((currY - yPos), 2)/(2 * Math.pow(sd,2)) * -1;
+              transformFactor = Math.exp(transformFactor);
+
+              
+
+              var newY;
+              currY > yPos ? newY = obj.attr("y") + (1 - transformFactor) : newY = obj.attr("y") - (1 - transformFactor);
+
+              var properties = {
+                y: newY
+              };
+
+              obj.animate(properties, 100, "linear");
+
+
+            });
+          }
+
+          container.onmouseout = function() {
+            for (var i = 0; i < timeline.events.length; i++) {
+              timeline.events[i].marker.forEach(function(obj){
+                var properties = {
+                  "y" : obj.data("y")
+                }
+                obj.animate(properties, 100, "linear");
+              });
+
+            }
+          }
+        }
+   
+
+        //*/
+
+      nonlinearTransform(timeline);
       return this;
     }, 
 
@@ -100,15 +142,16 @@ TimelineView = (function() {
         var evt = this.timeline.events[i];
 
         if(event.id == evt.id) {
+          evt.marker[1].attr("stroke-opacity", 1);
           evt.marker.attr("fill", "#fff");
           evt.marker.attr("stroke", "red");
         } else {
+
           evt.marker.attr("fill", "#A0A0A0");
           evt.marker.attr("stroke", "#000");
+          evt.marker[1].attr("stroke-opacity", 0);
         }
       }
-      //this.el.innerHTML = event.time;
-      //this.events[event.id + 1].marker.attr("fill", "blue");
     },
     
     clear: function() {
@@ -138,17 +181,17 @@ TimelineView = (function() {
     for (var i = 0; i < events.length; i++) {
       var currStart = events[i].time[0];
       var offsetFromStart = scale(tlRange, timeline.absLen, tlStart, currStart);
-      console.log(offsetFromStart);
+      //console.log(offsetFromStart);
       var properties = {
         x: (timeline.xOffset - 10),
         y: (timeline.yOffset + offsetFromStart)
       }
       if (events[i].time.length > 1) {
-        console.log("hit");
         var currEnd = events[i].time[events[i].time.length - 1];
         var segmentLen = scale(tlRange, timeline.absLen, currStart, currEnd);
-        properties.path = "M" + timeline.xOffset + " " + (timeline.yOffset + offsetFromStart) + "V" + (timeline.yOffset + offsetFromStart + segmentLen);
+        properties.path = "M" + timeline.xOffset + " " + properties.y + "V" + (properties.y + segmentLen);
       }
+      events[i].marker.data("y", properties.y);
       events[i].marker.animate(properties, 3000, "linear");
     }
   }
@@ -171,6 +214,7 @@ TimelineView = (function() {
       if (events[i].time.length > 1) {
         properties.path = "M" + timeline.xOffset + " " + (timeline.yOffset + offsetFromStart)+ "V" + (timeline.yOffset + offsetFromStart + spacing);
       }
+      events[i].marker.data("y", properties.y);
       events[i].marker.animate(properties, 3000, "linear");
     }
 
