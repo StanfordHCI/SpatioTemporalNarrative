@@ -36,13 +36,13 @@ MapView = (function() {
       map = new google.maps.Map(this.el, mapOptions);
       var self = this;
       eventLocations = {};
-      eventMarkers = {}; 
+      eventMarkers = {};
       addMarkers();
 
       function addMarkers() {
 
         function createMarker(latlng, title) {
-          var marker = null; 
+          var marker = null;
           setTimeout(function() {
             marker = new google.maps.Marker({
               position: latlng,
@@ -66,8 +66,8 @@ MapView = (function() {
               map.panTo(marker.getPosition());
             });
 
-            eventMarkers[title] = marker; 
-          }, Math.floor(Math.random() * (3000 - 500 + 1)) + 500); 
+            eventMarkers[title] = marker;
+          }, Math.floor(Math.random() * (3000 - 500 + 1)) + 500);
 
           map.panTo(latlng);
         }
@@ -194,13 +194,7 @@ MapView = (function() {
     renderScrolled: function(eventName) {
       map.panTo(eventLocations[eventName]);
       map.setZoom(14);
-      /*
-      var marker = eventMarkers[eventName]; 
-      marker.setAnimation(google.maps.Animation.BOUNCE); 
-      setTimeout(function() {
-        marker.setAnimation(null);
-      }, 3000);
-     */
+
     },
     
     clear: function() {
@@ -219,4 +213,3 @@ MapView = (function() {
   return MapView;
 
 })();
-
