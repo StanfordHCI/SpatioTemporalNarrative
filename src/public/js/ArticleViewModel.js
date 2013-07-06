@@ -66,6 +66,7 @@ ArticleViewModel = (function() {
     // API for Views to update internal state:
     //**********************************************
     scrollHasReached: function(id) {
+      console.log("scroll:at", id);
       this.trigger("scroll:at", id);
     }
 

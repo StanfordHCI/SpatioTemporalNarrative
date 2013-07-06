@@ -38,7 +38,6 @@ NarrationView = (function() {
 
       function waitForAllImages() {
         var imgs = self.el.getElementsByTagName("img");
-        
         for (var i = 0; i < imgs.length; i++) {
           if (!imgs[i].complete) {
             setTimeout(waitForAllImages, 50);
@@ -91,8 +90,6 @@ function debug() {
 
 
       var amountVisible = screen.width;
-      //debug("Amount visible: ", amountVisible);
-
       var c_el = container_el.children[0];
 
       var children_els = c_el.children;
@@ -100,81 +97,50 @@ function debug() {
 
         var child = $(children_els[i]);
 
-        var startOnPage = child.offset().top;
-        var outerHeight = child.outerHeight();
-        var innerHeight = child.height();
-
-        //debug("Start on page:", startOnPage, ", height:", outerHeight);
+        var myMarginTop = parseInt( $("#myBlock").css("marginTop") );
 
         //start fading in when it becomes visible
-        var start = startOnPage - amountVisible*3/4;
-        // sustain when it is fully visible
-        var sustain = startOnPage;
-        // decay when it's halfway out
-        var decay = startOnPage + innerHeight;
-        // done when it's all the way out
-        var done = startOnPage + outerHeight;
+        var start = child.offset().top - 50;//(myMarginTop ? myMarginTop : 0);
 
         result.push({
-          progression: [start, sustain, decay, done],
-          el: children_els[i]
+          start: start,
+          el: children_els[i],
+          on: false
         });
-        //debug(result[result.length-1].progression)
+
       }
-      
+
       return result;
     })();
 
     window.effects = effects;
 
-    // var effects = [
-    //   { progression: [200,800,1000,1650],
-    //     el:        document.getElementById("img1")
-    //   }
-    // ];
-
     return function(currentTop) {
 
+      var effect, start, nextStart;
       for (var i = 0; i < effects.length; i++) {
-        var p = effects[i].progression;
+        effect = effects[i];
+        start = effect.start;
 
-        if (currentTop < p[0]) {
+        if (effects[i+1])
+          nextStart = effects[i+1].start;
+        else
+          nextStart = start + effect.el.height;
 
-          //effects[i].el.style.opacity = 0;
+        if (currentTop < effect.start) {
 
-        } else if (currentTop > p[0] && currentTop < p[p.length-1]) {
+          effect.on = false;
 
-          //How far along are we?
-          var j = 1;
-          for (; j < p.length; j++) {
-            if (currentTop < p[j])
-              break;
-          }
-          j -= 1;
+        } else if (currentTop > start && currentTop < nextStart) {
 
-          if (j == 0) {        //Fading in:
-            var amt = (currentTop - p[0]) / (p[1] - p[0]);
-            //effects[i].el.style.opacity = amt;
-            effects[i].on = false;
-
-          } else if (j == 1) {  //Sustaining
-            if (!effects[i].on) {
-              effects[i].on = true;
-              debug(effects[i].el.getAttribute("data_id"))
-              modelView.scrollHasReached(effects[i].el.getAttribute("data_id"));
+            if (!effect.on) {
+              effect.on = true;
+              modelView.scrollHasReached(effect.el.getAttribute("data_id"));
             }
-            //effects[i].el.style.opacity = amt;
-
-          } else if (j == 2) {  //decaying
-            effects[i].on = false;
-            var amt = (p[3] - currentTop) / (p[3] - p[2]);
-            //effects[i].el.style.opacity = amt;
-          }
-
         
         } else {
 
-          //effects[i].el.style.opacity = 0;
+          effect.on = false;
         
         }
       }

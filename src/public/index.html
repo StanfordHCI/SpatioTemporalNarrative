@@ -19,7 +19,7 @@
 <div class="cont">
 <% model.forAllEvents(function(event) { %>
   <div class="event event_<%=event.depth%>" data_id=<%=event.id%>>
-  <h<%= event.depth+1%>><%= event.title %></h<%= event.depth+1%>>
+  <div class="eventHeader"><div class="eventButton"><%= event.id %></div><div class="eventTitle_<%=event.depth%>"><%= event.title %></div></div>
   <% _.each(event.narrative, function(item) { %>
     <% if (item.type == "text") { %> <p><%= item.value %></p> <% } %>
     <% if (item.type == "img") { %> <img src="/content/<%= root + "/" + item.value %>?dim=<%=width%>" width=<%=width%>px> <% } %>
