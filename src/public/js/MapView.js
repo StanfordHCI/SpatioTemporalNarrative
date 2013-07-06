@@ -28,8 +28,16 @@ MapView = (function() {
     },
 
     renderFromScratch: function() {
+      var center; 
+      var locations = this.model.get("map").poi;
+      for (i in locations) {
+        var location = locations[i];
+        if (location.type == "point") {
+          center = new google.maps.LatLng(location.lat, location.lng);
+        }
+      }
       var mapOptions = {
-        center: new google.maps.LatLng(47.61, -122.33),
+        center: center, 
         zoom: 11,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
@@ -62,12 +70,12 @@ MapView = (function() {
                 marker.setAnimation(null);
               }, 3000);
 
-              map.setZoom(13);
+              map.setZoom(15);
               map.panTo(marker.getPosition());
             });
 
             eventMarkers[title] = marker;
-          }, Math.floor(Math.random() * (3000 - 500 + 1)) + 500);
+          }, Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000);
 
           map.panTo(latlng);
         }
@@ -193,8 +201,7 @@ MapView = (function() {
 
     renderScrolled: function(eventName) {
       map.panTo(eventLocations[eventName]);
-      map.setZoom(14);
-
+      map.setZoom(13);
     },
     
     clear: function() {
