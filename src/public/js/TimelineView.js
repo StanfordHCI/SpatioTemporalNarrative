@@ -55,10 +55,10 @@ TimelineView = (function() {
         times = currEvt.time;
         paper.setStart();
         var rect = paper.rect(timeline.xOffset - 10, timeline.yOffset, 10, 2, 0);
-        rect.attr("fill", "#000");
+        rect.attr("fill", "#fff");
 
         var stamp = paper.text(10, timeline.yOffset, currEvt.time[0]);
-        stamp.attr("fill-opacity", 0);
+        stamp.attr("stroke-opacity", 0);
         
 
         if (currEvt.time.length > 1) {
@@ -67,6 +67,8 @@ TimelineView = (function() {
         }
 
         var markerSet = paper.setFinish();
+        markerSet.attr("stroke", "#4479BA");
+        markerSet[1].attr("fill-opacity", 0);
         markerSet.data("id", currEvt.id);
         markerSet.click(function() {
           modelView.scrollHasReached(this.data("id")); 
@@ -79,46 +81,74 @@ TimelineView = (function() {
 //* attempts to do gaussian tranformation over timeline
       var container = this.el;
       this.el.onmouseover = function(e) {
-          var xPos = e.clientX;
-          var yPos = e.clientY;
+        var maxMarkerHeight = 10; 
+        var maxMarkerWidth = 20;
+        var markerHeight = 2;
+        var markerWidth = 10;
+        var xPos = e.clientX;
+        var yPos = e.clientY;
 
-          var currEvt = paper.getElementByPoint(xPos, yPos);
-          if (currEvt) {
-            modelView.scrollHasReached(currEvt.data("id"));
-          }
+        var currEvt = paper.getElementByPoint(xPos, yPos);
+        if (currEvt) {
+          modelView.scrollHasReached(currEvt.data("id"));
+        }
+        
 
-          for (var i = 0; i < timeline.events.length; i++) {
+        for (var i = 0; i < timeline.events.length; i++) {
 
-            timeline.events[i].marker.forEach(function(obj){
+          timeline.events[i].marker.forEach(function(obj){
 
-              var currY = obj.attr("y");
+            var currY = obj.attr("y");
 
-              //currently hardcoded in for testing 
-              sd = 600/7;
+            //currently hardcoded in for testing 
+            sd = 600/7;
               
-              var transformFactor = Math.pow((currY - yPos), 2)/(2 * Math.pow(sd,2)) * -1;
-              transformFactor = Math.exp(transformFactor);
+            var transformFactor = Math.pow((currY - yPos), 2)/(2 * Math.pow(sd,2)) * -1;
+            transformFactor = Math.exp(transformFactor);
 
-              
+            var pushDown;
+            currEvt && currEvt.data("id") != obj.data("id") ? pushDown = currEvt.attr("height") + 1 : pushDown = 0;
 
-              var newY;
-              currY > yPos ? newY = obj.attr("y") + (1 - transformFactor) : newY = obj.attr("y") - (1 - transformFactor);
+            var newH = maxMarkerHeight * transformFactor;
+            var newW = maxMarkerWidth * transformFactor;
+            console.log(newW);
 
-              var properties = {
-                y: newY
-              };
+            if (newH < markerHeight) newH = markerHeight;
+            if (newW < markerWidth) newW = markerWidth;
 
-              obj.animate(properties, 100, "linear");
+            console.log(newW);
 
 
-            });
-          }
+            var newY;
+            if (currEvt) {
+              obj.data("y") > currEvt.data("y") ? newY = obj.data("y") + pushDown + (1 - transformFactor) : newY = obj.data("y") - pushDown - (1 - transformFactor);
+            } else {
+              obj.attr("y") > yPos ? newY = obj.data("y") + pushDown + (1 - transformFactor) : newY = obj.data("y") - pushDown - (1 - transformFactor);
+            }
+            
+
+
+            var properties = {
+              y: newY,
+              height: newH,
+              width: newW,
+              x: (timeline.xOffset - newW)
+            };
+
+            obj.animate(properties, 100, "linear");
+            console.log("output:" + obj.attr("width"));
+
+
+          });
+        }
 
           container.onmouseout = function() {
             for (var i = 0; i < timeline.events.length; i++) {
               timeline.events[i].marker.forEach(function(obj){
                 var properties = {
-                  "y" : obj.data("y")
+                  "y" : obj.data("y"),
+                  "height" : 2,
+                  "x" : (timeline.xOffset - 10)
                 }
                 obj.animate(properties, 100, "linear");
               });
@@ -143,12 +173,12 @@ TimelineView = (function() {
 
         if(event.id == evt.id) {
           evt.marker[1].attr("stroke-opacity", 1);
-          evt.marker.attr("fill", "#fff");
+          evt.marker.attr("fill", "red");
           evt.marker.attr("stroke", "red");
         } else {
 
-          evt.marker.attr("fill", "#A0A0A0");
-          evt.marker.attr("stroke", "#000");
+          evt.marker.attr("fill", "#fff");
+          evt.marker.attr("stroke", "#4479BA");
           evt.marker[1].attr("stroke-opacity", 0);
         }
       }
@@ -181,7 +211,7 @@ TimelineView = (function() {
     for (var i = 0; i < events.length; i++) {
       var currStart = events[i].time[0];
       var offsetFromStart = scale(tlRange, timeline.absLen, tlStart, currStart);
-      //console.log(offsetFromStart);
+
       var properties = {
         x: (timeline.xOffset - 10),
         y: (timeline.yOffset + offsetFromStart)
