@@ -1,6 +1,7 @@
 TimelineView = (function() {
 
   function TimelineView(options) {
+
     this.options = options || {}; 
     this.model = options.model || undefined;
     this.modelView = options.modelView || undefined;
@@ -38,6 +39,8 @@ TimelineView = (function() {
       timeline.xOffset = 60;
       timeline.line_width = 1;
       timeline.yOffset = 40;
+      timeline.markerWidth = 10;
+      timeline.markerHeight = 2;
 
       var paper = this.paper;
       
@@ -49,50 +52,46 @@ TimelineView = (function() {
       //creates timeline markers for all events. Markers will be repositione based on the readers' chosen transformation
       this.model.forAllEvents(function(currEvt){
         if (currEvt.time) {
-        var start_time = new Date(currEvt.time[0]);
+          var start_time = new Date(currEvt.time[0]);
 
+          paper.setStart();
+          var rect = paper.rect(timeline.xOffset - 10, timeline.yOffset, timeline.markerWidth, timeline.markerHeight, 0);
+          rect.attr("fill", "#fff");
 
-        times = currEvt.time;
-        paper.setStart();
-        var rect = paper.rect(timeline.xOffset - 10, timeline.yOffset, 10, 2, 0);
-        rect.attr("fill", "#fff");
+          var label = paper.text(10, timeline.yOffset, currEvt.time[0]);
+          label.attr("stroke-opacity", 0);
 
-        var stamp = paper.text(10, timeline.yOffset, currEvt.time[0]);
-        stamp.attr("stroke-opacity", 0);
-        
+          if (currEvt.time.length > 1) {
+            var pathStr = "M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + 1);
+            var path = paper.path(pathStr)
+          }
 
-        if (currEvt.time.length > 1) {
-          var pathStr = "M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + 1);
-          var path = paper.path(pathStr)
-        }
+          var markerSet = paper.setFinish();
 
-        var markerSet = paper.setFinish();
-        markerSet.attr("stroke", "#4479BA");
-        markerSet[1].attr("fill-opacity", 0);
-        markerSet.data("id", currEvt.id);
-        markerSet.click(function() {
-          modelView.scrollHasReached(this.data("id")); 
-        });
+          markerSet.attr("stroke", "#4479BA");
+          markerSet[1].attr("fill-opacity", 0); //makes the label invisible
+          markerSet.data("id", currEvt.id);
 
-        timeline.events.push({id: currEvt.id, marker: markerSet, time: times});
+          markerSet.click(function() {
+            modelView.scrollHasReached(this.data("id")); 
+          });
+
+          timeline.events.push({id: currEvt.id, marker: markerSet, time: currEvt.time});
         }
       });
 
-//* attempts to do gaussian tranformation over timeline
-      var container = this.el;
-      this.el.onmouseover = function(e) {
+      var handleMove = function(e) {
+        e.preventDefault();
+
         var maxMarkerHeight = 10; 
         var maxMarkerWidth = 20;
-        var markerHeight = 2;
-        var markerWidth = 10;
-        var xPos = e.clientX;
-        var yPos = e.clientY;
+        var xPos = e.pageX;
+        var yPos = e.pageY;
 
         var currEvt = paper.getElementByPoint(xPos, yPos);
         if (currEvt) {
           modelView.scrollHasReached(currEvt.data("id"));
         }
-        
 
         for (var i = 0; i < timeline.events.length; i++) {
 
@@ -111,13 +110,9 @@ TimelineView = (function() {
 
             var newH = maxMarkerHeight * transformFactor;
             var newW = maxMarkerWidth * transformFactor;
-            console.log(newW);
 
-            if (newH < markerHeight) newH = markerHeight;
-            if (newW < markerWidth) newW = markerWidth;
-
-            console.log(newW);
-
+            if (newH < timeline.markerHeight) newH = timeline.markerHeight;
+            if (newW < timeline.markerWidth) newW = timeline.markerWidth;
 
             var newY;
             if (currEvt) {
@@ -125,8 +120,6 @@ TimelineView = (function() {
             } else {
               obj.attr("y") > yPos ? newY = obj.data("y") + pushDown + (1 - transformFactor) : newY = obj.data("y") - pushDown - (1 - transformFactor);
             }
-            
-
 
             var properties = {
               y: newY,
@@ -134,33 +127,33 @@ TimelineView = (function() {
               width: newW,
               x: (timeline.xOffset - newW)
             };
-
-            obj.animate(properties, 100, "linear");
-            console.log("output:" + obj.attr("width"));
-
-
+            obj.attr(properties);
+            //obj.animate(properties, 100, "linear");
           });
         }
+      }
 
-          container.onmouseout = function() {
-            for (var i = 0; i < timeline.events.length; i++) {
-              timeline.events[i].marker.forEach(function(obj){
-                var properties = {
-                  "y" : obj.data("y"),
-                  "height" : 2,
-                  "x" : (timeline.xOffset - 10)
-                }
-                obj.animate(properties, 100, "linear");
-              });
-
+      var handleLeave = function(e) {
+        for (var i = 0; i < timeline.events.length; i++) {
+          timeline.events[i].marker.forEach(function(obj){
+            var properties = {
+              "y" : obj.data("y"),
+              "height" : 2,
+              "x" : (timeline.xOffset - 10)
             }
-          }
+            obj.animate(properties, 100, "linear");
+          });
         }
-   
+      }
 
-        //*/
+      this.el.addEventListener("touchstart",  handleMove, false);
+      this.el.addEventListener("touchmove",   handleMove, false);
+      this.el.addEventListener("touchend",    handleLeave, false);
+      this.el.addEventListener("touchleave",  handleLeave, false);
+      this.el.addEventListener("touchcancel", handleLeave, false);
 
-      nonlinearTransform(timeline);
+
+      linearTransform(timeline);
       return this;
     }, 
 
@@ -222,7 +215,7 @@ TimelineView = (function() {
         properties.path = "M" + timeline.xOffset + " " + properties.y + "V" + (properties.y + segmentLen);
       }
       events[i].marker.data("y", properties.y);
-      events[i].marker.animate(properties, 3000, "linear");
+      events[i].marker.attr(properties);
     }
   }
 
@@ -245,7 +238,7 @@ TimelineView = (function() {
         properties.path = "M" + timeline.xOffset + " " + (timeline.yOffset + offsetFromStart)+ "V" + (timeline.yOffset + offsetFromStart + spacing);
       }
       events[i].marker.data("y", properties.y);
-      events[i].marker.animate(properties, 3000, "linear");
+      events[i].marker.attr(properties);
     }
 
   }
