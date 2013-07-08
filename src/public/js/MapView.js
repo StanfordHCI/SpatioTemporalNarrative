@@ -42,6 +42,7 @@ MapView = (function() {
           var location = locations[i];
           if (location.type == "point") {
             center = new google.maps.LatLng(location.lat, location.lng);
+            break; 
           }
         }
         var mapOptions = {
@@ -69,14 +70,14 @@ MapView = (function() {
                 if (event.spatial == marker.getTitle()) {
                   self.modelView.scrollHasReached(event.id);
                 }
-              })
+              });
               marker.setAnimation(google.maps.Animation.BOUNCE);
               setTimeout(function() {
                 marker.setAnimation(null);
               }, 3000);
 
-              map.setZoom(15);
               map.panTo(marker.getPosition());
+              map.setZoom(15);
             });
 
             eventMarkers[title] = marker;
