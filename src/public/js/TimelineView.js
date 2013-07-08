@@ -35,16 +35,16 @@ TimelineView = (function() {
       var timeline = this.timeline = {};
       timeline.events = [];
 
-      timeline.absLen = 300;
+      timeline.absLen = 585;
       timeline.xOffset = 60;
       timeline.line_width = 1;
-      timeline.yOffset = 40;
+      timeline.yOffset = 50;
       timeline.markerWidth = 10;
       timeline.markerHeight = 2;
 
       var paper = this.paper;
       
-      var tl = paper.path("M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + timeline.absLen));
+      var tl = paper.path("M" + timeline.xOffset + " " + (timeline.yOffset - 15) + "V" + (timeline.yOffset + timeline.absLen));
 
       var evts = this.model.get("events");
       var modelView = this.modelView
@@ -88,6 +88,8 @@ TimelineView = (function() {
         var xPos = e.pageX;
         var yPos = e.pageY;
 
+        var sd = timeline.sd || standardDeviation(yPos, timeline);
+
         var currEvt = paper.getElementByPoint(xPos, yPos);
         if (currEvt) {
           modelView.scrollHasReached(currEvt.data("id"));
@@ -98,15 +100,12 @@ TimelineView = (function() {
           timeline.events[i].marker.forEach(function(obj){
 
             var currY = obj.attr("y");
-
-            //currently hardcoded in for testing 
-            sd = 600/7;
               
             var transformFactor = Math.pow((currY - yPos), 2)/(2 * Math.pow(sd,2)) * -1;
             transformFactor = Math.exp(transformFactor);
 
-            var pushDown;
-            currEvt && currEvt.data("id") != obj.data("id") ? pushDown = currEvt.attr("height") + 1 : pushDown = 0;
+            var pushDown = 0;
+            //currEvt && currEvt.data("id") != obj.data("id") ? pushDown = currEvt.attr("height") + 1 : pushDown = 0;
 
             var newH = maxMarkerHeight * transformFactor;
             var newW = maxMarkerWidth * transformFactor;
@@ -116,7 +115,7 @@ TimelineView = (function() {
 
             var newY;
             if (currEvt) {
-              obj.data("y") > currEvt.data("y") ? newY = obj.data("y") + pushDown + (1 - transformFactor) : newY = obj.data("y") - pushDown - (1 - transformFactor);
+              obj.data("y") > currEvt.data("y") ? newY = obj.data("y") + pushDown + currEvt.attr("height") + (1 - transformFactor) : newY = obj.data("y") - pushDown - (1 - transformFactor);
             } else {
               obj.attr("y") > yPos ? newY = obj.data("y") + pushDown + (1 - transformFactor) : newY = obj.data("y") - pushDown - (1 - transformFactor);
             }
@@ -146,6 +145,8 @@ TimelineView = (function() {
         }
       }
 
+      this.el.addEventListener("mouseover",  handleMove, false);
+
       this.el.addEventListener("touchstart",  handleMove, false);
       this.el.addEventListener("touchmove",   handleMove, false);
       this.el.addEventListener("touchend",    handleLeave, false);
@@ -160,6 +161,7 @@ TimelineView = (function() {
 
 
     renderScrolled: function(event) {
+      console.log(event.id)
       for (var i = 0; i < this.timeline.events.length; i++){
         
         var evt = this.timeline.events[i];
@@ -192,7 +194,67 @@ TimelineView = (function() {
 
   return TimelineView;
 
-  /* Takes in the timeline object and returns it with an updated array of points that have been linearly transformed*/
+  /*
+
+  function excludeOutliers(timeline) {
+    var events = timeline.events;
+    var midpoint = (timeline.events.length - 1) / 2;
+    var median = (events[Math.ceil(midpoint)].marker[0].data("y") + events[Math.floor(midpoint)].marker[0].data("y")) / 2;
+    var lowerFourth = (timeline.events.length - 1) / 4;
+    var lowerQuartile = ( events[Math.ceil(lowerFourth)].marker[0].data("y") + events[Math.floor(midpoint).marker[0].data("y")]) / 2;
+
+  }
+
+    function calculateSD(timeline) {
+    var sum = 0;
+    var lastEvtY = 0;
+    var mean = 0;
+    var includedMarkers = 0;
+
+    for (var i = 0; i < timeline.events.length; i++) {
+      var currEvtY = timeline.events[i].marker[0].data("y");
+      
+
+      if (Math.abs(currEvtY - last_evtY) < 100) {     //check to exclude outliers
+        avg += currEvtY;
+        last_evtY = currEvtY;
+        includedMarkers++;
+      }
+      var difSq = currEvt.marker[0].data("y") - mean;
+      difSq *= difSq;
+      if (difSq > 10000) break;
+      difSum += difSq;
+    }
+    var variance = difSum / timeline.events.length;
+    var sd = Math.sqrt(variance);
+    return sd;
+  }
+
+  //*/
+
+  /*
+    Takes in the touch's current y position and timeline and calculates the standard 
+    deviation based on that y position as the mean.
+  */
+
+  function standardDeviation(mean, timeline) {
+    var difSum = 0;
+    for (var i = 0; i < timeline.events.length; i++) {
+      var currEvt = timeline.events[i];
+      var difSq = currEvt.marker[0].data("y") - mean;
+      difSq *= difSq;
+      if (difSq > 10000) break;
+      difSum += difSq;
+    }
+    var variance = difSum / timeline.events.length;
+    var sd = Math.sqrt(variance);
+    return sd;
+  }
+
+  /* 
+    Takes in the timeline object and updates the position of its markers to
+    display a linear representation of the times in which the events occured
+  */
   function linearTransform(timeline) {
     var events = timeline.events;
 
@@ -220,13 +282,14 @@ TimelineView = (function() {
   }
 
   /* 
-    Takes in the timeline object and returns it with an updated arrtay of points that have been transformed such that they
-    are equally spaced 
+    Takes in the timeline object and updates the positions of its markers to 
+    display an evenly spaced, non-linear representation
   */
   function nonlinearTransform(timeline) {
     var events = timeline.events;
 
     var spacing = timeline.absLen / events.length;
+    timeline.sd = spacing;
 
     for (var i = 0; i < events.length; i++) {
       var offsetFromStart = spacing * i;
@@ -242,6 +305,12 @@ TimelineView = (function() {
     }
 
   }
+
+  /*
+    Takes in a timeline range in milliseconds since 1970, the absolute length of
+    the timeline in pixels, and two points on the timeline. Returns the pixel point
+    of the second point's displacement from the first on the timeline.
+  */
 
   function scale(tlRange, tlLen, point1, point2) {
     date1 = new Date(point1);
