@@ -62,11 +62,15 @@ MapView = (function() {
           bounds.extend(latlng); 
           var marker = null;
           setTimeout(function() {
-            marker = new google.maps.Marker({
+            marker = new google.maps.MarkerWithLabel({
               position: latlng,
               map: map,
               animation: google.maps.Animation.DROP,
               title: title, 
+              labelContent: "$425K",
+              labelAnchor: new google.maps.Point(22, 0),
+              labelClass: "labels", // the CSS class for the label
+              labelStyle: {opacity: 0.75}
             });
 
             google.maps.event.addListener(marker, "click", function() {
