@@ -484,70 +484,59 @@
         "type": "google",
         "poi": [
             {
-                "type": "point",
+                "type": "address",
                 "name": "The McKittrick Hotel",
-                "lat": 40.7507416, 
-                "lng": -74.00378330000001
+                "value": "530 W 27th St, New York, NY 10001"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Gallow Green",
-                "lat": 40.750725, 
-                "lng": -74.00413800000001
+                "value": "542 W 27th St, New York, NY 10001"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Amor Y Amargo",
-                "lat": 40.7256977, 
-                "lng": -73.98428869999998
+                "value": "443 E 6th St, New York, NY 10009"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Please Don't Tell",
-                "lat": 40.72716399999999, 
-                "lng": -73.98371500000002
+                "value": "113 St Marks Pl, New York, NY 10009"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "International Bar",
-                "lat": 40.7226492, 
-                "lng": -73.98975539999998
+                "value": "120-1/2 1st Ave New York, NY 10009"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Roeblings Tea Room",
-                "lat": 40.714044, 
-                "lng": -73.957291
+                "value": "143 Roebling St, Brooklyn, NY 11211"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Miller's Tavern",
-                "lat": 40.7137578, 
-                "lng": -73.95785790000002
+                "value": "2 Hope St, Brooklyn, NY 11211"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Caracas Arepa Bar",
-                "lat": 40.72691469999999, 
-                "lng": -73.9852995
+                "value": "93 1/2 E 7th St, New York, NY 10003"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "McSorley's Old Ale House",
-                "lat": 40.7287521,
-                "lng": -73.9896928
+                "value": "15 E 7th St, New York, NY"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Angel's Share",
-                "lat": 40.7298027, 
-                "lng": -73.98919760000001
+                "value": "8 Stuyvesant St, Manhattan, NY"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Lovers of Today",
-                "lat": 40.7259242, 
-                "lng": -73.9833413
+                "value": "132 1/2 E 7th St, New York, NY 10009"
             },
             {
                 "type": "address",
