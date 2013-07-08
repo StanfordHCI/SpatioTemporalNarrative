@@ -127,6 +127,7 @@ MapView = (function() {
             address: address
           }
           geocoder.geocode(request, function(result, status) {
+            console.log(status); 
             if (status == google.maps.GeocoderStatus.OK) {
               callback(result, status);
             }
@@ -138,13 +139,16 @@ MapView = (function() {
           var location = locations[i];
 
           if (location.type == "address") {
+            console.log(location.name + ", " + location.value); 
             (function(location) {
               addressToLatLng(location.value, function(result, status) {
+                        console.log("Added __" + location.name + "__ at location " + result[0].geometry.location); 
                 eventLocations[location.name] = result[0].geometry.location;
                 createMarker(result[0].geometry.location, location.name);
               });
             })(location);
           } else if (location.type == "point") {
+            console.log(location.name); 
             var latlng = new google.maps.LatLng(location.lat, location.lng);
             eventLocations[location.name] = latlng;
             createMarker(latlng, location.name);
@@ -154,8 +158,8 @@ MapView = (function() {
             var pointCoords = [];
             var subPoints = location.value;
             var length = subPoints.length;
-            for (i in subPoints) {
-              var subPoint = subPoints[i];
+            for (j in subPoints) {
+              var subPoint = subPoints[j];
               if (subPoint.type == "address") {
                 (function(location) {
                   addressToLatLng(subPoint.value, function(result, status) {
@@ -180,8 +184,8 @@ MapView = (function() {
             var pointCoords = [];
             var subPoints = location.value;
             var length = subPoints.length;
-            for (i in subPoints) {
-              var subPoint = subPoints[i];
+            for (j in subPoints) {
+              var subPoint = subPoints[j];
 
               if (subPoint.type == "address") {
                 (function(location) {
@@ -209,6 +213,8 @@ MapView = (function() {
     },
 
     renderScrolled: function(eventName) {
+      console.log("Event name: " + eventName); 
+      console.log("Event location: " + eventLocations[eventName]); 
       map.panTo(eventLocations[eventName]);
       map.setZoom(13);
     },
