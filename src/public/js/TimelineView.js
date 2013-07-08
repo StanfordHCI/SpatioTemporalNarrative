@@ -39,12 +39,12 @@ TimelineView = (function() {
       timeline.xOffset = 60;
       timeline.line_width = 1;
       timeline.yOffset = 50;
-      timeline.markerWidth = 10;
+      timeline.markerWidth = 30;
       timeline.markerHeight = 2;
 
       var paper = this.paper;
       
-      var tl = paper.path("M" + timeline.xOffset + " " + (timeline.yOffset - 15) + "V" + (timeline.yOffset + timeline.absLen));
+      var tl = paper.path("M" + timeline.xOffset + " " + (timeline.yOffset - 15) + "V" + (timeline.yOffset + timeline.absLen + 100));
 
       var evts = this.model.get("events");
       var modelView = this.modelView
@@ -55,11 +55,8 @@ TimelineView = (function() {
           var start_time = new Date(currEvt.time[0]);
 
           paper.setStart();
-          var rect = paper.rect(timeline.xOffset - 10, timeline.yOffset, timeline.markerWidth, timeline.markerHeight, 0);
+          var rect = paper.rect(timeline.xOffset - 30, timeline.yOffset, timeline.markerWidth, timeline.markerHeight, 0);
           rect.attr("fill", "#fff");
-
-          var label = paper.text(10, timeline.yOffset, currEvt.time[0]);
-          label.attr("stroke-opacity", 0);
 
           if (currEvt.time.length > 1) {
             var pathStr = "M" + timeline.xOffset + " " + timeline.yOffset + "V" + (timeline.yOffset + 1);
@@ -69,12 +66,7 @@ TimelineView = (function() {
           var markerSet = paper.setFinish();
 
           markerSet.attr("stroke", "#4479BA");
-          markerSet[1].attr("fill-opacity", 0); //makes the label invisible
           markerSet.data("id", currEvt.id);
-
-          markerSet.click(function() {
-            modelView.scrollHasReached(this.data("id")); 
-          });
 
           timeline.events.push({id: currEvt.id, marker: markerSet, time: currEvt.time});
         }
@@ -84,15 +76,17 @@ TimelineView = (function() {
         e.preventDefault();
 
         var maxMarkerHeight = 10; 
-        var maxMarkerWidth = 20;
+        var maxMarkerWidth = 50;
         var xPos = e.pageX;
         var yPos = e.pageY;
 
-        var sd = timeline.sd || standardDeviation(yPos, timeline);
+        var sd = timeline.sd || (timeline.absLen/timeline.events.length);
 
-        var currEvt = paper.getElementByPoint(xPos, yPos);
+        var currEvt = paper.getElementByPoint(timeline.xOffset - 30, yPos);
         if (currEvt) {
-          modelView.scrollHasReached(currEvt.data("id"));
+          if (this.currentMarker) this.currentMarker.attr("stroke", "#4479BA");
+          this.currentMarker = currEvt;
+          this.currentMarker.attr("stroke", "yellow");
         }
 
         for (var i = 0; i < timeline.events.length; i++) {
@@ -104,8 +98,6 @@ TimelineView = (function() {
             var transformFactor = Math.pow((currY - yPos), 2)/(2 * Math.pow(sd,2)) * -1;
             transformFactor = Math.exp(transformFactor);
 
-            var pushDown = 0;
-            //currEvt && currEvt.data("id") != obj.data("id") ? pushDown = currEvt.attr("height") + 1 : pushDown = 0;
 
             var newH = maxMarkerHeight * transformFactor;
             var newW = maxMarkerWidth * transformFactor;
@@ -114,38 +106,45 @@ TimelineView = (function() {
             if (newW < timeline.markerWidth) newW = timeline.markerWidth;
 
             var newY;
-            if (currEvt) {
-              obj.data("y") > currEvt.data("y") ? newY = obj.data("y") + pushDown + currEvt.attr("height") + (1 - transformFactor) : newY = obj.data("y") - pushDown - (1 - transformFactor);
-            } else {
-              obj.attr("y") > yPos ? newY = obj.data("y") + pushDown + (1 - transformFactor) : newY = obj.data("y") - pushDown - (1 - transformFactor);
-            }
 
+            obj.attr("y") > yPos ? newY = obj.data("y")  + transformFactor * 10 : newY = obj.data("y") - transformFactor * 10;
+            
             var properties = {
               y: newY,
               height: newH,
               width: newW,
               x: (timeline.xOffset - newW)
             };
-            obj.attr(properties);
-            //obj.animate(properties, 100, "linear");
+            obj.animate(properties, 100, "linear");
+
+            /*
+
+            if (yPos >= obj.attr("y") && yPos <= (obj.attr("y") + obj.attr("height"))) {
+              if (this.currentMarker) this.currentMarker.attr("stroke", "#4479BA");          
+              this.currentMarker = timeline.events[i].marker;
+              this.currentMarker.attr("stroke", "yellow");
+            }
+
+            */
           });
         }
       }
 
       var handleLeave = function(e) {
+        e.preventDefault();
+        if (this.currentMarker) modelView.scrollHasReached(this.currentMarker.data("id"));
         for (var i = 0; i < timeline.events.length; i++) {
           timeline.events[i].marker.forEach(function(obj){
             var properties = {
               "y" : obj.data("y"),
               "height" : 2,
-              "x" : (timeline.xOffset - 10)
+              "x" : (timeline.xOffset - 30),
+              "width" : timeline.markerWidth
             }
-            obj.animate(properties, 100, "linear");
+            obj.attr(properties);
           });
         }
       }
-
-      this.el.addEventListener("mouseover",  handleMove, false);
 
       this.el.addEventListener("touchstart",  handleMove, false);
       this.el.addEventListener("touchmove",   handleMove, false);
@@ -162,20 +161,25 @@ TimelineView = (function() {
 
     renderScrolled: function(event) {
       console.log(event.id)
+      if (this.currentMarker) {
+        this.currentMarker.attr("fill", "#fff");
+        this.currentMarker.attr("stroke", "#4479BA");
+        //this.currentMarker[1].attr("stroke-opacity", 0);
+      }
       for (var i = 0; i < this.timeline.events.length; i++){
-        
         var evt = this.timeline.events[i];
+        
 
-        if(event.id == evt.id) {
-          evt.marker[1].attr("stroke-opacity", 1);
-          evt.marker.attr("fill", "red");
-          evt.marker.attr("stroke", "red");
-        } else {
-
-          evt.marker.attr("fill", "#fff");
-          evt.marker.attr("stroke", "#4479BA");
-          evt.marker[1].attr("stroke-opacity", 0);
+        if(event.id === evt.id) {
+          console.log("accessed:" + evt.id + " at " + evt.marker);
+          this.currentMarker = evt.marker;
+          //this.currentMarker[1].attr("stroke-opacity", 1);
+          this.currentMarker.attr("fill", "red");
+          this.currentMarker.attr("stroke", "red");
+          
+          break;
         }
+
       }
     },
     
@@ -194,48 +198,12 @@ TimelineView = (function() {
 
   return TimelineView;
 
-  /*
-
-  function excludeOutliers(timeline) {
-    var events = timeline.events;
-    var midpoint = (timeline.events.length - 1) / 2;
-    var median = (events[Math.ceil(midpoint)].marker[0].data("y") + events[Math.floor(midpoint)].marker[0].data("y")) / 2;
-    var lowerFourth = (timeline.events.length - 1) / 4;
-    var lowerQuartile = ( events[Math.ceil(lowerFourth)].marker[0].data("y") + events[Math.floor(midpoint).marker[0].data("y")]) / 2;
-
-  }
-
-    function calculateSD(timeline) {
-    var sum = 0;
-    var lastEvtY = 0;
-    var mean = 0;
-    var includedMarkers = 0;
-
-    for (var i = 0; i < timeline.events.length; i++) {
-      var currEvtY = timeline.events[i].marker[0].data("y");
-      
-
-      if (Math.abs(currEvtY - last_evtY) < 100) {     //check to exclude outliers
-        avg += currEvtY;
-        last_evtY = currEvtY;
-        includedMarkers++;
-      }
-      var difSq = currEvt.marker[0].data("y") - mean;
-      difSq *= difSq;
-      if (difSq > 10000) break;
-      difSum += difSq;
-    }
-    var variance = difSum / timeline.events.length;
-    var sd = Math.sqrt(variance);
-    return sd;
-  }
-
-  //*/
 
   /*
     Takes in the touch's current y position and timeline and calculates the standard 
     deviation based on that y position as the mean.
   */
+  /*
 
   function standardDeviation(mean, timeline) {
     var difSum = 0;
@@ -250,6 +218,7 @@ TimelineView = (function() {
     var sd = Math.sqrt(variance);
     return sd;
   }
+  //*/
 
   /* 
     Takes in the timeline object and updates the position of its markers to
@@ -268,7 +237,7 @@ TimelineView = (function() {
       var offsetFromStart = scale(tlRange, timeline.absLen, tlStart, currStart);
 
       var properties = {
-        x: (timeline.xOffset - 10),
+        x: (timeline.xOffset - 30),
         y: (timeline.yOffset + offsetFromStart)
       }
       if (events[i].time.length > 1) {
@@ -294,7 +263,7 @@ TimelineView = (function() {
     for (var i = 0; i < events.length; i++) {
       var offsetFromStart = spacing * i;
       var properties = {
-        x: (timeline.xOffset - 10),
+        //x: (timeline.xOffset - 10),
         y: (timeline.yOffset + offsetFromStart)
       };
       if (events[i].time.length > 1) {
