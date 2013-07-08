@@ -31,9 +31,12 @@ MapView = (function() {
 
       var self = this;
       eventLocations = {};
-      eventMarkers = {};
+      var bounds = new google.maps.LatLngBounds(); 
       createMap(); 
       addMarkers();
+      setTimeout(function() {
+        map.fitBounds(bounds); 
+      }, 4000); 
 
       function createMap() {
         var center; 
@@ -47,7 +50,7 @@ MapView = (function() {
         }
         var mapOptions = {
           center: center, 
-          zoom: 11,
+          zoom: 10,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(self.el, mapOptions);
@@ -56,6 +59,7 @@ MapView = (function() {
       function addMarkers() {
 
         function createMarker(latlng, title) {
+          bounds.extend(latlng); 
           var marker = null;
           setTimeout(function() {
             marker = new google.maps.Marker({
@@ -80,7 +84,6 @@ MapView = (function() {
               map.setZoom(15);
             });
 
-            eventMarkers[title] = marker;
           }, Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000);
 
           map.panTo(latlng);
