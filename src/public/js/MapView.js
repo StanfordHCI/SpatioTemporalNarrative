@@ -66,7 +66,7 @@ MapView = (function() {
               position: latlng,
               map: map,
               animation: google.maps.Animation.DROP,
-              title: title
+              title: title, 
             });
 
             google.maps.event.addListener(marker, "click", function() {
@@ -156,7 +156,7 @@ MapView = (function() {
                   addressToLatLng(subPoint.value, function(result, status) {
                     eventLocations[location.name] = result[0].geometry.location;
                     addressCoords.push(result[0].geometry.location);
-                    if (i == length - 1) {
+                    if (j == length - 1) {
                       createArea(addressCoords);
                     }
                   });
@@ -165,7 +165,7 @@ MapView = (function() {
                 var latlng = new google.maps.LatLng(subPoint.lat, subPoint.lng);
                 eventLocations[location.name] = latlng;
                 pointCoords.push(latlng);
-                if (i == length - 1) {
+                if (j == length - 1) {
                   createArea(pointCoords);
                 }
               }
@@ -183,7 +183,7 @@ MapView = (function() {
                   addressToLatLng(subPoint.value, function(result, status) {
                     eventLocations[location.name] = result[0].geometry.location;
                     addressCoords.push(result[0].geometry.location);
-                    if (i == length - 1) {
+                    if (j == length - 1) {
                       createLine(addressCoords);
                     }
                   });
@@ -192,7 +192,7 @@ MapView = (function() {
                 var latlng = new google.maps.LatLng(subPoint.lat, subPoint.lng);
                 eventLocations[location.name] = latlng;
                 pointCoords.push(latlng);
-                if (i == length - 1) {
+                if (j == length - 1) {
                   createLine(pointCoords);
                 }
               }
