@@ -106,30 +106,29 @@ MapView = (function() {
           marker = new google.maps.Marker({
             position: latlng,
             map: map,
-            // animation: google.maps.Animation.DROP,
+            animation: google.maps.Animation.DROP,
             icon: "/marker?color=%234479BA&text=" + id
           });
 
           config.eventMarkers[id] = marker; 
 
           google.maps.event.addListener(marker, "click", function() {
-            self.model.forAllEvents(function(event) {
-              if (event.spatial == marker.getTitle()) {
-                console.log("CLICKED ON MARKER, SCROLL HAS REACHED")
-                self.modelView.scrollHasReached(event.id);
-              }
-            });
-            map.panTo(marker.getPosition());
-            map.setZoom(15);
-          });
+            if (config.currentMarker != null) {
+              var num = config.currentMarker; 
+              config.eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
+            }
 
-          map.panTo(latlng);
+            marker.setIcon("/marker?color=%23ff0000&text=" + id); 
+            config.currentMarker = id; 
+            map.panTo(config.eventMarkers[id].getPosition()); 
+            self.modelView.scrollHasReached(id); 
+          });
         }
 
         function drawLine(coords, id, scale) {
           var weight = 4; 
           if (scale && !isNaN(parseInt(scale))) {
-            weight = 50 - 0.00051136 * (100000 - parseInt(scale)); 
+            weight = 50 - 0.000340909 * (100000 - parseInt(scale)); 
           }
           var lineSymbol = {
             path: 'M 0,-1 0,1',
@@ -302,10 +301,10 @@ MapView = (function() {
       config.atCurrentId = id;
 
       //reset the old marker back to blue
-      // if (config.currentMarker != null) {
-      //   var num = config.currentMarker; 
-      //   config.eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
-      // }
+      if (config.currentMarker != null) {
+        var num = config.currentMarker; 
+        config.eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
+      }
 
       if (config.eventMarkers[id] != null /* Current marker is a point */) {
 
