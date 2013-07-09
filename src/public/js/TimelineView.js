@@ -26,22 +26,54 @@ TimelineView = (function() {
       this.listenTo(this.modelView, "scroll:at", function(id) {
         self.renderScrolled(this.model.getEventById(id));  
       });
+
+      this.paper = Raphael(this.el, 60, 700);
+
+      var handleMove = function(e) {
+        e.preventDefault();
+
+        var yPos = e.pageY;
+        var currEvt = self.paper.getElementByPoint(self.timeline.xOffset - 30, yPos);
+        if (currEvt) {
+          self.currentHoverMarker = currEvt;
+        }
+
+        self.drawAllPoints(e);
+      }
+
+      var handleLeave = function(e) {
+        if (self.currentHoverMarker) {
+          self.currentMarker = self.currentHoverMarker;
+          self.currentHoverMarker = null;
+          self.modelView.scrollHasReached(self.currentMarker.data("id"));
+        }
+        self.drawAllPoints();
+      }
+
+      this.el.addEventListener("touchstart",  handleMove, false);
+      this.el.addEventListener("touchmove",   handleMove, false);
+      this.el.addEventListener("touchend",    handleLeave, false);
+      this.el.addEventListener("touchleave",  handleLeave, false);
+      this.el.addEventListener("touchcancel", handleLeave, false);
     },
 
     renderFromScratch: function() {
+      var self = this;
 
-      this.paper ? this.paper.clear() : this.paper = Raphael(this.el, 60, 700);
+      this.currentMarker = null;
 
       var timeline = this.timeline = {};
       timeline.events = [];
       timeline.pageLen = 585;
       timeline.xOffset = 60;
       timeline.line_width = 1;
-      timeline.yOffset = 50;
+      timeline.yOffset = timeline.yStart = 50;
       timeline.markerWidth = 30;
       timeline.markerHeight = 2;
 
+
       var paper = this.paper;
+      paper.clear();
 
       var evts = this.model.get("events");
       var modelView = this.modelView;
@@ -54,17 +86,18 @@ TimelineView = (function() {
       //var newY = offsetByLaplacian(obj.data("y"), yPos, timeline.beta, timeline.scale);
 
       //Calculate scaling factors and parameters for gaussian and laplacian
-      timeline.spread = 0.05;
-      timeline.scale = 50;
+      timeline.spread = 0.12;
+      timeline.scale = 60;
 
       timeline.sigmaSq = calculateSigmaSq(timeline.pageLen, timeline.spread);
       timeline.beta = calculateBeta(timeline.pageLen, timeline.spread);
       
-      timeline.absLen = contractByForLaplacian(timeline.pageLen, timeline.scale, timeline.beta);
-      console.log("Timeline abslen:", timeline.absLen);
+      var expansionAmount = laplacianExpansionAmount(timeline.pageLen, timeline.scale, timeline.beta);
+      timeline.absLen = timeline.pageLen - expansionAmount;
+      timeline.yOffset += expansionAmount / 2;
 
       //Draws the timeline
-      var tl = paper.path("M" + timeline.xOffset + " " + (timeline.yOffset) + "V" + (timeline.yOffset + timeline.absLen));
+       timeline.rightBorder = paper.path("M" + timeline.xOffset + " " + timeline.yStart + "V" + (timeline.yStart + timeline.pageLen));
       
       //creates timeline markers for all events. Markers will be repositione based on the readers' chosen transformation
       this.model.forAllEvents(function(currEvt){
@@ -89,84 +122,6 @@ TimelineView = (function() {
         }
       });
 
-      var handleMove = function(e) {
-        e.preventDefault();
-
-        var maxMarkerHeight = 7; 
-        var maxMarkerWidth = 50;
-        var xPos = e.pageX;
-        var yPos = e.pageY;
-
-        var sd = timeline.sd || (timeline.absLen/timeline.events.length);
-
-        for (var i = 0; i < timeline.events.length; i++) {
-
-          timeline.events[i].marker.forEach(function(obj){
-
-            var currY = obj.attr("y");
-              
-            transformFactor = laplacian(currY, yPos, timeline.beta);
-
-            var newH = maxMarkerHeight * transformFactor;
-            var newW = maxMarkerWidth * transformFactor;
-
-            if (newH < timeline.markerHeight) newH = timeline.markerHeight;
-            if (newW < timeline.markerWidth) newW = timeline.markerWidth;
-
-            var newY = offsetByLaplacian(obj.data("y"), yPos, timeline.beta, timeline.scale);
-              
-            var properties = {
-              y: newY,
-              //height: newH,
-              width: newW,
-              x: (timeline.xOffset - newW)
-            };
-            obj.attr(properties);
-
-            //*
-
-            if (yPos >= obj.attr("y") && yPos <= (obj.attr("y") + obj.attr("height"))) {
-              if (this.currentMarker) this.currentMarker.attr("stroke", "#4479BA");          
-              this.currentMarker = timeline.events[i].marker;
-              this.currentMarker.attr("stroke", "red");
-            }
-
-            //*/
-          });
-        }
-        /*
-        var currEvt = paper.getElementByPoint(timeline.xOffset - 30, yPos);
-        if (currEvt) {
-          if (this.currentMarker) this.currentMarker.attr("stroke", "#4479BA");
-          this.currentMarker = currEvt;
-          this.currentMarker.attr("stroke", "blue");
-        }
-        //*/
-      }
-
-      var handleLeave = function(e) {
-        e.preventDefault();
-        if (this.currentMarker) modelView.scrollHasReached(this.currentMarker.data("id"));
-        for (var i = 0; i < timeline.events.length; i++) {
-          timeline.events[i].marker.forEach(function(obj){
-            var properties = {
-              "y" : obj.data("y"),
-              "height" : 2,
-              "x" : (timeline.xOffset - 30),
-              "width" : timeline.markerWidth
-            }
-            obj.attr(properties);
-          });
-        }
-      }
-
-      this.el.addEventListener("touchstart",  handleMove, false);
-      this.el.addEventListener("touchmove",   handleMove, false);
-      this.el.addEventListener("touchend",    handleLeave, false);
-      this.el.addEventListener("touchleave",  handleLeave, false);
-      this.el.addEventListener("touchcancel", handleLeave, false);
-
-
       linearTransform(timeline);
       return this;
     }, 
@@ -174,26 +129,77 @@ TimelineView = (function() {
 
 
     renderScrolled: function(event) {
-      console.log(event.id)
-      if (this.currentMarker) {
-        this.currentMarker.attr("fill", "#fff");
-        this.currentMarker.attr("stroke", "#4479BA");
-        //this.currentMarker[1].attr("stroke-opacity", 0);
-      }
-      for (var i = 0; i < this.timeline.events.length; i++){
-        var evt = this.timeline.events[i];
-        
-
-        if(event.id === evt.id) {
-          console.log("accessed:" + evt.id + " at " + evt.marker);
-          this.currentMarker = evt.marker;
-          //this.currentMarker[1].attr("stroke-opacity", 1);
-          this.currentMarker.attr("fill", "red");
-          this.currentMarker.attr("stroke", "red");
-          
+      var events = this.timeline.events;
+      for (var i = 0; i < events.length; i++){
+        if(event.id === events[i].id) {
+          this.currentMarker = events[i].marker[0];
           break;
         }
+      }
+      this.drawAllPoints();
+    },
 
+    drawAllPoints: function(evt, iterFunc) {
+
+      var timeline = this.timeline;
+
+      var maxMarkerHeight = 7; 
+      var maxMarkerWidth = 50;
+
+      var yPos = 0;
+      if (evt) {
+        yPos = evt.pageY;
+      } else if (this.currentMarker) {  
+        yPos = this.currentMarker.data("y");
+      }
+
+      var newH = timeline.markerHeight;
+      var newW = timeline.markerWidth;
+      var newY;
+
+      var self = this;
+
+      for (var i = 0; i < timeline.events.length; i++) {
+
+        timeline.events[i].marker.forEach(function(obj){
+
+          var currY = newY = obj.data("y");
+
+          if (evt) {
+            transformFactor = laplacian(currY, yPos, timeline.beta);
+
+            newH = maxMarkerHeight * transformFactor;
+            newW = maxMarkerWidth * transformFactor;
+
+            if (newH < timeline.markerHeight) newH = timeline.markerHeight;
+            if (newW < timeline.markerWidth) newW = timeline.markerWidth;
+            newY = offsetByLaplacian(currY, yPos, timeline.beta, timeline.scale);
+
+          }
+
+
+          var properties = {
+            y: newY,
+            //height: newH,
+            width: newW,
+            x: (timeline.xOffset - newW),
+            fill: "white",
+            stroke: "#4479BA"
+          };
+          
+          //Is this the currentMarker? solid red plz
+          if (self.currentMarker && obj.data("id") == self.currentMarker.data("id")) {
+            properties.fill = "red";
+            properties.stroke = "red";
+          } else if (self.currentHoverMarker && obj.data("id") == self.currentHoverMarker.data("id")) {
+            properties.stroke = "red";
+          }
+
+          //Is this the hover marker? outline red
+            
+          obj.attr(properties);
+
+        });
       }
     },
     
@@ -220,8 +226,8 @@ TimelineView = (function() {
       return x - transformFactor;
   }
 
-  function contractByForLaplacian(availableSize, scale, beta) {
-    return availableSize - scale * (1 - laplacian(availableSize, 0, beta));
+  function laplacianExpansionAmount(availableSize, scale, beta) {
+    return 2 * scale * (1 - laplacian(availableSize, 0, beta));
   }
 
   function laplacian(x, mu, beta) {
