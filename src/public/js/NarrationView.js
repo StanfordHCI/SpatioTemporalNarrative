@@ -56,10 +56,12 @@ NarrationView = (function() {
     }, 
 
     possiblyScrollTo: function(id) {
-      if (this.scrollAt != id) {
-        this.options.scroller.scrollTo(this.options.idToPos[id]);
-        this.setScrollAt(id);
+      if (this.scrollAt === id) {
+        return;
       }
+
+      this.setScrollAt(id);    
+      this.options.scroller.scrollTo(this.options.idToPos[id]);
     },
     
     clear: function() {
@@ -71,6 +73,9 @@ NarrationView = (function() {
     },
 
     setScrollAt: function(id) {
+      if (this.scrollAt === id) {
+        return;
+      }
       this.scrollAt = id;
       this.modelView.scrollHasReached(id);
     },
