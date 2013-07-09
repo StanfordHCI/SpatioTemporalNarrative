@@ -29,7 +29,7 @@ MapView = (function() {
 
     renderFromScratch: function() {
 
-      var self = this;
+      self = this;
       currentMarker = null; 
       eventMarkers = {}; 
       eventAreas = {}; 
@@ -52,9 +52,15 @@ MapView = (function() {
             break; 
           }
         }
+        var zoom = 10; 
+        if (self.model.get("shortName") == "napoleon") {
+          zoom = 6; 
+        } else if (self.model.get("shortName") == "boston_bombing") {
+          zoom = 11; 
+        }
         var mapOptions = {
           center: center, 
-          zoom: 10,
+          zoom: zoom,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(self.el, mapOptions);
@@ -91,12 +97,14 @@ MapView = (function() {
           map.panTo(latlng);
         }
 
-        function drawLine(coords, id) {
+        function drawLine(coords, id, scale) {
+          var weight = 50 - 0.00051136 * (100000 - parseInt(scale)); 
           var lineSymbol = {
             path: 'M 0,-1 0,1',
             strokeColor: '#4479BA',
             strokeOpacity: 1,
-            scale: 4
+            scale: 4,
+            strokeWeight: weight || 4
           };
 
           var line = new google.maps.Polyline({
@@ -175,7 +183,7 @@ MapView = (function() {
           }, 4000); 
         }
 
-        function createEventList(list, id) {
+        function createEventList(list, id, scale) {
           var coords = []; 
           var subpoints = list.value; 
           var length = subpoints.length; 
@@ -193,7 +201,7 @@ MapView = (function() {
             }
           }
           setTimeout(function() {
-            drawLine(coords, id); 
+            drawLine(coords, id, scale); 
           }, 4000); 
         }
 
@@ -216,7 +224,7 @@ MapView = (function() {
                     } else if (locations[k].type == "area") {
                       createEventArea(locations[k]); 
                     } else if (locations[k].type == "list") {
-                      createEventList(locations[k], fullID); 
+                      createEventList(locations[k], fullID, events[iter].participants[0]); 
                     }
                   }
                 }
@@ -232,7 +240,7 @@ MapView = (function() {
                 } else if (locations[j].type == "area") {
                   createEventArea(locations[j], "" + iter); 
                 } else if (locations[j].type == "list") {
-                  createEventList(locations[j], "" + iter); 
+                  createEventList(locations[j], "" + iter, events[iter].participants[0]); 
                 }
               }
             }
@@ -261,11 +269,14 @@ MapView = (function() {
         eventAreas[id].setOptions(options); 
         map.panTo(eventAreas[id].getPath().pop()); 
       } else if (eventLists[id] != null) {
+        var scale = self.model.getEventById(id).participants[0]; 
+        var weight = 50 - 0.00051136 * (100000 - parseInt(scale)); 
         var lineSymbol = {
           path: 'M 0,-1 0,1',
           strokeColor: '#FF0000',
           strokeOpacity: 1,
-          scale: 4
+          scale: 4, 
+          strokeWeight: weight
         };
 
         var options = {
@@ -277,7 +288,12 @@ MapView = (function() {
         }
 
         eventLists[id].setOptions(options); 
+        map.panTo(eventLists[id].getPath().getAt(0)); 
       }
+      /*
+      if (self.model.get("shortName") == "napoleon" && map.getZoom() != 11) {
+        map.setZoom(11);
+      } */
       if (map.getZoom() != 14) {
         map.setZoom(14); 
       }
