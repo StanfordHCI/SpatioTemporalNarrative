@@ -65,7 +65,7 @@ NarrationView = (function() {
     clear: function() {
       if (this.options.scroller)
         this.options.scroller.destroy();
-      this.scrollAt = "0";
+      this.scrollAt = null;
       this.options.idToPos = {};
       return this;
     },
