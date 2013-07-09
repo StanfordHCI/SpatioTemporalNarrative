@@ -32,6 +32,8 @@ MapView = (function() {
       var self = this;
       currentMarker = null; 
       eventMarkers = {}; 
+      eventAreas = {}; 
+      eventLists = {}; 
       eventLocations = {}; 
       var bounds = new google.maps.LatLngBounds(); 
       createMap(); 
@@ -89,7 +91,7 @@ MapView = (function() {
           map.panTo(latlng);
         }
 
-        function drawLine(coords) {
+        function drawLine(coords, id) {
           var lineSymbol = {
             path: 'M 0,-1 0,1',
             strokeColor: '#4479BA',
@@ -107,9 +109,10 @@ MapView = (function() {
             }],
             map: map
           });
+          eventLists[id] = line; 
         }
 
-        function drawArea(coords) {
+        function drawArea(coords, id) {
           var area = new google.maps.Polygon({
             paths: coords,
             strokeColor: '#4479BA',
@@ -118,6 +121,7 @@ MapView = (function() {
             fillColor: '#3368A9',
             fillOpacity: 0.25
           });
+          eventAreas[id] = area; 
           area.setMap(map);
         }
 
@@ -156,20 +160,18 @@ MapView = (function() {
           for (i in subpoints) {
             var subpoint = subpoints[i]; 
             if (subpoint.type == "address") {
-              (function(subpoint, i, id) {
+              (function(subpoint, i) {
                 addressToLatLng(subpoint.value, function(result, status) {
                   coords[i] = result[0].geometry.location;
-                  eventLocations[id] = result[0].geometry.location;
                 });
-              })(subpoint, i, id);
+              })(subpoint, i);
             } else if (subpoint.type == "point") {
               var latlng = new google.maps.LatLng(subpoint.lat, subpoint.lng); 
-              eventLocations[id] = latlng; 
               coords[i] = latlng; 
             }
           }
           setTimeout(function() {
-            drawArea(coords); 
+            drawArea(coords, id); 
           }, 4000); 
         }
 
@@ -180,20 +182,18 @@ MapView = (function() {
           for (i in subpoints) {
             var subpoint = subpoints[i]; 
             if (subpoint.type == "address") {
-              (function(subpoint, i, id) {
+              (function(subpoint, i) {
                 addressToLatLng(subpoint.value, function(result, status) {
-                  eventLocations[id] = result[0].geometry.location; 
                   coords[i] = result[0].geometry.location;
                 });
-              })(subpoint, i, id);
+              })(subpoint, i);
             } else if (subpoint.type == "point") {
               var latlng = new google.maps.LatLng(subpoint.lat, subpoint.lng); 
-              eventLocations[id] = latlng; 
               coords[i] = latlng; 
             }
           }
           setTimeout(function() {
-            drawLine(coords); 
+            drawLine(coords, id); 
           }, 4000); 
         }
 
@@ -242,18 +242,41 @@ MapView = (function() {
       return this;
     },
 
-    renderScrolled: function(id) {
-      if (eventLocations["" + id] != null) {
-        map.panTo(eventLocations["" + id]);
-      }
+    renderScrolled: function(intID) {
+      var id = "" + intID; 
       if (currentMarker != null) {
         var num = currentMarker; 
         eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
       }
-      if (eventMarkers["" + id] != null) {
+      if (eventMarkers[id] != null) {
         icon = "/marker?color=%23ff0000&text=" + id; 
-        eventMarkers["" + id].setIcon(icon); 
+        eventMarkers[id].setIcon(icon); 
         currentMarker = id; 
+        map.panTo(eventMarkers[id].getPosition()); 
+      } else if (eventAreas[id] != null) {
+        var options = {
+          strokeColor: "#FF0000",
+          fillColor: "#FF0000"
+        }; 
+        eventAreas[id].setOptions(options); 
+        map.panTo(eventAreas[id].getPath().pop()); 
+      } else if (eventLists[id] != null) {
+        var lineSymbol = {
+          path: 'M 0,-1 0,1',
+          strokeColor: '#FF0000',
+          strokeOpacity: 1,
+          scale: 4
+        };
+
+        var options = {
+          icons: [{
+            icon: lineSymbol,
+            offset: '0',
+            repeat: '15px'
+          }],
+        }
+
+        eventLists[id].setOptions(options); 
       }
       if (map.getZoom() != 14) {
         map.setZoom(14); 
