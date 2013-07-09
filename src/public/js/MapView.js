@@ -262,7 +262,6 @@ MapView = (function() {
         currentMarker = id; 
         map.panTo(eventMarkers[id].getPosition()); 
       } else if (eventAreas[id] != null) {
-        console.log(eventAreas[id]); 
         var options = {
           strokeColor: "#FF0000",
           fillColor: "#FF0000"
