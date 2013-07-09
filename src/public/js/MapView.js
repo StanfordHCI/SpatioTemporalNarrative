@@ -98,13 +98,16 @@ MapView = (function() {
         }
 
         function drawLine(coords, id, scale) {
-          var weight = 50 - 0.00051136 * (100000 - parseInt(scale)); 
+          var weight = 4; 
+          if (scale && !isNaN(parseInt(scale))) {
+            weight = 50 - 0.00051136 * (100000 - parseInt(scale)); 
+          }
           var lineSymbol = {
             path: 'M 0,-1 0,1',
             strokeColor: '#4479BA',
             strokeOpacity: 1,
             scale: 4,
-            strokeWeight: weight || 4
+            strokeWeight: weight
           };
 
           var line = new google.maps.Polyline({
@@ -262,7 +265,6 @@ MapView = (function() {
         currentMarker = id; 
         map.panTo(eventMarkers[id].getPosition()); 
       } else if (eventAreas[id] != null) {
-        console.log(eventAreas[id]); 
         var options = {
           strokeColor: "#FF0000",
           fillColor: "#FF0000"
