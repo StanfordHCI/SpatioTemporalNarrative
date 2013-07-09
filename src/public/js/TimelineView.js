@@ -195,11 +195,11 @@ TimelineView = (function() {
           if (self.currentMarker) {
             if (eventParent && obj.data("id") === eventParent.id) {
               properties.stroke = "pink";
-              obj.toFront();
+              //obj.toFront();
             } else if (obj.data("id") === self.currentMarker.data("id")) {
               properties.fill = "red";
               properties.stroke = "red";
-              obj.toFront();
+             // obj.toFront();
             } 
           }
 

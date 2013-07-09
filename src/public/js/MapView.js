@@ -43,7 +43,10 @@ MapView = (function() {
       config.eventMarkers = {}; 
 
       //map from event ids to areas
-      config.eventAreas = {}; 
+      config.eventAreas = {};
+
+      //map from spatial names to Google objects
+      config.poiMapObjects = {};
 
       //map from event ids to multi-point lists
       config.eventLists = {}; 
@@ -100,28 +103,25 @@ MapView = (function() {
           bounds.extend(latlng); 
           var marker = null;
 
-          setTimeout(function() {
-            marker = new google.maps.Marker({
-              position: latlng,
-              map: map,
-              // animation: google.maps.Animation.DROP,
-              icon: "/marker?color=%234479BA&text=" + id
+          marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            // animation: google.maps.Animation.DROP,
+            icon: "/marker?color=%234479BA&text=" + id
+          });
+
+          config.eventMarkers[id] = marker; 
+
+          google.maps.event.addListener(marker, "click", function() {
+            self.model.forAllEvents(function(event) {
+              if (event.spatial == marker.getTitle()) {
+                console.log("CLICKED ON MARKER, SCROLL HAS REACHED")
+                self.modelView.scrollHasReached(event.id);
+              }
             });
-
-            config.eventMarkers[id] = marker; 
-
-            google.maps.event.addListener(marker, "click", function() {
-              self.model.forAllEvents(function(event) {
-                if (event.spatial == marker.getTitle()) {
-                  console.log("CLICKED ON MARKER, SCROLL HAS REACHED")
-                  self.modelView.scrollHasReached(event.id);
-                }
-              });
-              map.panTo(marker.getPosition());
-              map.setZoom(15);
-            });
-
-          }, 100);
+            map.panTo(marker.getPosition());
+            map.setZoom(15);
+          });
 
           map.panTo(latlng);
         }
@@ -163,121 +163,121 @@ MapView = (function() {
           });
           config.eventAreas[id] = area; 
           area.setMap(map);
+          return area;
         }
 
         var geocoder = new google.maps.Geocoder();
-        function addressToLatLng(address, callback) {
+        function addressToLatLng(poi, callback) {
           var request = {
-            address: address
+            address: poi.value
           }
           geocoder.geocode(request, function(result, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-              callback(result, status);
+              callback(null, result);
+            } else {
+              callback("FUCK", null);
             }
           });
         }
 
         function createEventPoint(location, id) {
           var latlng;
+          
           if (location.type == "address") {
+            
             (function(location, id) {
-              addressToLatLng(location.value, function(result, status) {
+              addressToLatLng(location, function(err, result) {
                 config.eventLocations[id] = result[0].geometry.location;  
                 drawMarker(result[0].geometry.location, id); 
               });
             })(location, id);
+
           } else if (location.type == "point") {
+          
             latlng = new google.maps.LatLng(location.lat, location.lng); 
             config.eventLocations[id] = latlng; 
             drawMarker(latlng, id); 
+          
           }
+
         } 
 
-        function createEventArea(area, id) {
-          var coords = []; 
-          var subpoints = area.value; 
-          var length = subpoints.length; 
-          for (i in subpoints) {
-            var subpoint = subpoints[i]; 
-            if (subpoint.type == "address") {
-              (function(subpoint, i) {
-                addressToLatLng(subpoint.value, function(result, status) {
-                  coords[i] = result[0].geometry.location;
-                });
-              })(subpoint, i);
-            } else if (subpoint.type == "point") {
-              var latlng = new google.maps.LatLng(subpoint.lat, subpoint.lng); 
-              coords[i] = latlng; 
+        function createEventArea(area_poi, id) {
+          if (config.poiMapObjects[area_poi.name]) {
+            config.eventAreas[id] = config.poiMapObjects[area_poi.name];
+          } else {
+            var coords = []; 
+            var subpoints = area_poi.value; 
+            var length = subpoints.length; 
+            for (i in subpoints) {
+              var subpoint = subpoints[i]; 
+              if (subpoint.type == "address") {
+                throw new Error("Does not support address subpoints");
+              } else if (subpoint.type == "point") {
+                var latlng = new google.maps.LatLng(subpoint.lat, subpoint.lng); 
+                coords[i] = latlng; 
+              }
             }
+            config.poiMapObjects[area_poi.name] = drawArea(coords, id);             
           }
-          setTimeout(function() {
-            drawArea(coords, id); 
-          }, 100); 
+
         }
 
         function createEventList(list, id, scale) {
-          var coords = []; 
+
+          
           var subpoints = list.value; 
           var length = subpoints.length; 
-          for (i in subpoints) {
-            var subpoint = subpoints[i]; 
-            if (subpoint.type == "address") {
-              (function(subpoint, i) {
-                addressToLatLng(subpoint.value, function(result, status) {
-                  coords[i] = result[0].geometry.location;
-                });
-              })(subpoint, i);
-            } else if (subpoint.type == "point") {
-              var latlng = new google.maps.LatLng(subpoint.lat, subpoint.lng); 
+
+          //Please Lord forgive me
+          if (subpoints[0].type == "address") {
+            //Assume everything is an address
+
+            async.map(subpoints, addressToLatLng, function(err, results) {
+
+              var coords = new Array(results.length);
+              results.forEach(function(geocodedLocation, i) {
+                var latlng = new google.maps.LatLng(geocodedLocation[0].geometry.location.lat(), geocodedLocation[0].geometry.location.lng()); 
+                coords[i] = latlng; 
+              });
+              drawLine(coords, id, scale);
+
+            });
+
+          } else {
+            //Assume everything is a point
+
+            var coords = new Array(subpoints.length);
+            subpoints.forEach(function(point, i) {
+              var latlng = new google.maps.LatLng(point.lat, point.lng); 
               coords[i] = latlng; 
-            }
+            });
+            drawLine(coords, id, scale);
           }
-          setTimeout(function() {
-            drawLine(coords, id, scale); 
-          }, 1000); 
+
         }
 
         var events = self.model.get("events"); 
         var locations = self.model.get("map").poi; 
-        for (i in events) {
-          var iter = i; 
-          if (events[i].events) {
-            var subevents = events[i].events; 
-            var id = i; 
-            for (j in subevents) {
-              var subevent = subevents[j]; 
-              if (subevent.spatial) {
-                var spatial = subevent.spatial; 
-                for (k in locations) {
-                  if (locations[k].name == spatial) {
-                    var fullID = id + "." + j; 
-                    if (locations[k].type == "point" || locations[k].type == "address") {
-                      createEventPoint(locations[k], fullID); 
-                    } else if (locations[k].type == "area") {
-                      createEventArea(locations[k]); 
-                    } else if (locations[k].type == "list") {
-                      createEventList(locations[k], fullID, events[iter].participants[0]); 
-                    }
-                  }
-                }
-              }
-            }
-          }
-          if (events[iter].spatial) {
-            var spatial = events[iter].spatial; 
+
+        self.model.forAllEvents(function(event) {
+          if (event.spatial) {
+            var spatial = event.spatial; 
             for (j in locations) {
               if (locations[j].name == spatial) {
                 if (locations[j].type == "point" || locations[j].type == "address") {
-                  createEventPoint(locations[j], "" + iter); 
+                  createEventPoint(locations[j], event.id); 
                 } else if (locations[j].type == "area") {
-                  createEventArea(locations[j], "" + iter); 
+                  createEventArea(locations[j], event.id); 
                 } else if (locations[j].type == "list") {
-                  createEventList(locations[j], "" + iter, events[iter].participants[0]); 
+                  createEventList(locations[j], event.id, event.participants[0]); 
                 }
               }
             }
           }
-        }
+
+        });
+
       })();
 
       //*********************** END MARKER ADDING ***************************************
@@ -301,16 +301,11 @@ MapView = (function() {
       }
       config.atCurrentId = id;
 
-      console.log(id);
-      console.log(config.eventMarkers[id]);
-      console.log(config.eventAreas[id]);
-      console.log(config.eventLists[id]);
-
       //reset the old marker back to blue
-      if (config.currentMarker != null) {
-        var num = config.currentMarker; 
-        config.eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
-      }
+      // if (config.currentMarker != null) {
+      //   var num = config.currentMarker; 
+      //   config.eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
+      // }
 
       if (config.eventMarkers[id] != null /* Current marker is a point */) {
 

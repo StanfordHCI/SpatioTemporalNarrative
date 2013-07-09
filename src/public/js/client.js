@@ -142,6 +142,7 @@ requireScript('/js/lib/underscore-min.js',     false);
 requireScript("/js/lib/jquery-2.0.2.min.js"  , false);
 requireScript('/js/lib/backbone-min.js',     false);
 requireScript('/js/lib/raphael-min.js',     false);
+requireScript('/js/lib/async.js',     false);
 
 //Internal Libraries
 
