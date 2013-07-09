@@ -269,8 +269,11 @@ MapView = (function() {
         eventAreas[id].setOptions(options); 
         map.panTo(eventAreas[id].getPath().pop()); 
       } else if (eventLists[id] != null) {
-        var scale = self.model.getEventById(id).participants[0]; 
-        var weight = 50 - 0.00051136 * (100000 - parseInt(scale)); 
+        var scale = parseInt(self.model.getEventById(id).participants[0]); 
+        var weight = 6; 
+        if (!isNaN(scale)) {
+          weight = 50 - 0.00051136 * (100000 - scale); 
+        }
         var lineSymbol = {
           path: 'M 0,-1 0,1',
           strokeColor: '#FF0000',

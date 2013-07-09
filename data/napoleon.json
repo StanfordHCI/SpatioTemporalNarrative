@@ -9,7 +9,7 @@
 	}, 
 	"events": [
 		{
-			"title": "", 
+			"title": "Moscow (100,000 troops)", 
 			"time": ["Fri, 19 April 13 00:49:00 -0400"],
 			"participants": [
 				"100000"
@@ -18,7 +18,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "After the bloody stalemate at Borodino, the Russians evacuated Moscow, allowing it to fall into French hands. Napoleon remained in Moscow in the belief that an armistice would soon be offered, but none was forthcoming, and after a month of waiting he realized that he was in serious trouble. The lack of supplies and shelter and continual harassment by Russian skirmishing forces made it impossible for him to winter in Moscow. And if he remained in Moscow for the winter, the situation back in France could destabilize. If he withdrew, it would be seen as a defeat, which could result in the economic strangulation of France and the ultimate return of a monarchy. The only choice was to try to move closer to France without actually abandoning the campaign. This required that the army move as soon as possible back into western Russia, Poland and East Prussia, where there were large, well stocked French depots to support his men through the winter. On October 19 the French retreat from Moscow began. "
 				}
 			]
 		},
@@ -32,12 +32,12 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "100,000"
 				}
 			]
 		},
 		{
-			"title": "", 
+			"title": "Near Tarantino", 
 			"time": ["Fri, 19 April 13 00:51:00 -0400"],
 			"participants": [
 				"96000"
@@ -46,7 +46,8 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "96,000 troops."
+
 				}
 			]
 		},
@@ -65,7 +66,7 @@
 			]
 		},
 		{
-			"title": "", 
+			"title": "Near Malo-Jarosewii", 
 			"time": ["Fri, 19 April 13 00:53:00 -0400"],
 			"participants": [
 				"96000"
@@ -74,7 +75,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "96,000 troops."
 				}
 			]
 		},
@@ -102,7 +103,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "96,000 troops."
 				}
 			]
 		},
@@ -121,7 +122,7 @@
 			]
 		},
 		{
-			"title": "", 
+			"title": "Near Mojaisk", 
 			"time": ["Fri, 19 April 13 00:57:00 -0400"],
 			"participants": [
 				"87000"
@@ -130,7 +131,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "87,000 troops."
 				}
 			]
 		},
@@ -158,7 +159,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "87,000 troops."
 				}
 			]
 		},
@@ -177,7 +178,7 @@
 			]
 		},
 		{
-			"title": "", 
+			"title": "Wixma", 
 			"time": ["Fri, 19 April 13 01:01:00 -0400"],
 			"participants": [
 				"55000"
@@ -186,7 +187,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "55,000 troops."
 				}
 			]
 		},
@@ -205,7 +206,7 @@
 			]
 		},
 		{
-			"title": "", 
+			"title": "Near Dorogobouge", 
 			"time": ["Fri, 19 April 13 01:03:00 -0400"],
 			"participants": [
 				"37000"
@@ -214,7 +215,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "37,000 troops."
 				}
 			]
 		},
@@ -233,7 +234,7 @@
 			]
 		},
 		{
-			"title": "", 
+			"title": "Near Smolensk", 
 			"time": ["Fri, 19 April 13 01:05:00 -0400"],
 			"participants": [
 				"24000"
@@ -242,7 +243,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "24,000 troops."
 				}
 			]
 		},
@@ -270,7 +271,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "24,000 troops."
 				}
 			]
 		},
@@ -289,7 +290,7 @@
 			]
 		},
 		{
-			"title": "", 
+			"title": "Near Orscha", 
 			"time": ["Fri, 19 April 13 01:09:00 -0400"],
 			"participants": [
 				"20000"
@@ -298,7 +299,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "20,000 troops."
 				}
 			]
 		},
@@ -317,7 +318,7 @@
 			]
 		},
 		{
-			"title": "", 
+			"title": "Near Bobr", 
 			"time": ["Fri, 19 April 13 01:11:00 -0400"],
 			"participants": [
 				"50000"
@@ -326,7 +327,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "50,000 troops."
 				}
 			]
 		},
@@ -354,7 +355,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "28,000 troops."
 				}
 			]
 		},
@@ -382,7 +383,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "12,000 troops."
 				}
 			]
 		},
@@ -410,7 +411,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "12,000 troops."
 				}
 			]
 		}
