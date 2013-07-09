@@ -147,16 +147,19 @@ TimelineView = (function() {
       var maxMarkerWidth = 50;
 
       var yPos = 0;
+      var eventParent = null;
       if (evt) {
         yPos = evt.pageY;
       } else if (this.currentMarker) {  
         yPos = this.currentMarker.data("y");
+        eventParent = this.model.getEventParent(this.currentMarker.data("id"));
       }
 
       var newH = timeline.markerHeight;
       var newW = timeline.markerWidth;
       var newY;
 
+      
       var self = this;
 
       for (var i = 0; i < timeline.events.length; i++) {
@@ -188,12 +191,24 @@ TimelineView = (function() {
           };
           
           //Is this the currentMarker? solid red plz
-          if (self.currentMarker && obj.data("id") === self.currentMarker.data("id")) {
-            properties.fill = "red";
-            properties.stroke = "red";
-          } else if (self.currentHoverMarker && obj.data("id") === self.currentHoverMarker.data("id")) {
-            properties.stroke = "red";
+          //DO WE WANT TO BRING THE CURRENT MARKERS TO THE FRONT?
+          if (self.currentMarker) {
+            if (eventParent && obj.data("id") === eventParent.id) {
+              properties.stroke = "pink";
+              obj.toFront();
+            } else if (obj.data("id") === self.currentMarker.data("id")) {
+              properties.fill = "red";
+              properties.stroke = "red";
+              obj.toFront();
+            } 
           }
+
+          //DESIGN DECISION: do we still want the current marker to be highlighted when hovered over or not?
+          if (self.currentHoverMarker && obj.data("id") === self.currentHoverMarker.data("id")) {
+            console.log("hover");
+            properties.stroke = "red";
+
+          } 
 
           //Is this the hover marker? outline red
             
@@ -249,27 +264,6 @@ TimelineView = (function() {
     var beta = Math.abs(lengthSpread)/(-1 * Math.log(spread));
     return beta;
   }
-
-  /*
-    Takes in the touch's current y position and timeline and calculates the standard 
-    deviation based on that y position as the mean.
-  */
-  /*
-
-  function standardDeviation(mean, timeline) {
-    var difSum = 0;
-    for (var i = 0; i < timeline.events.length; i++) {
-      var currEvt = timeline.events[i];
-      var difSq = currEvt.marker[0].data("y") - mean;
-      difSq *= difSq;
-      if (difSq > 10000) break;
-      difSum += difSq;
-    }
-    var variance = difSum / timeline.events.length;
-    var sd = Math.sqrt(variance);
-    return sd;
-  }
-  //*/
 
   /* 
     Takes in the timeline object and updates the position of its markers to
