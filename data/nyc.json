@@ -20,7 +20,7 @@
     "events": [
         {
             "title": "Monday",
-            "time": ["2013-05-13"],
+            "time": ["Mon, 13 May 13 00:00:00 -0400", "Mon, 13 May 13 23:59:59 -0400"],
             "events": [
                 {
                     "title": "The McKittrick Hotel",
@@ -91,7 +91,7 @@
         },
         {
             "title": "Tuesday",
-            "time": ["2013-05-14"],
+            "time": ["Tue, 14 May 13 00:00:00 -0400", "Tue, 14 May 13 23:59:59 -0400"],
             "events": [
                 {
                     "title": "Amor Y Amargo",
@@ -170,7 +170,7 @@
         },
         {
             "title": "Wednesday",
-            "time": ["2013-05-15"],
+            "time": ["Wed, 15 May 13 00:00:00 -0400", "Wed, 15 May 13 23:59:59 -0400"],
             "events": [
                 {
                     "title": "Roeblings Tea Room",
@@ -307,7 +307,7 @@
         },
         {
             "title": "Thursday",
-            "time": ["2013-05-16"],
+            "time": ["Thu, 16 May 13 00:00:00 -0400", "Thu, 16 May 13 23:59:59 -0400"],
             "events": [
                 {
                     "title": "Maison Premiere",
@@ -362,7 +362,7 @@
         },
         {
             "title": "Friday",
-            "time": ["2013-05-17"],
+            "time": ["Fri, 17 May 13 00:00:00 -0400", "Fri, 17 May 13 23:59:59 -0400"],
             "events": [
                 {
                     "title": "Little Branch",
@@ -426,7 +426,7 @@
         },
         {
             "title": "Saturday",
-            "time": ["2013-05-18"],
+            "time": ["Sat, 18 May 13 00:00:00 -0400", "Sat, 18 May 13 23:59:59 -0400"],
             "events": [
                 {
                     "title": "Gran Electrica",
@@ -470,7 +470,7 @@
         },
         {
             "title": "Sunday",
-            "time": ["2013-05-19"],
+            "time": ["Sun, 19 May 13 00:00:00 -0400", "Sun, 19 May 13 23:59:59 -0400"],
             "spatial": "Newark International Airport",
             "participants": [
                 "Niels"
