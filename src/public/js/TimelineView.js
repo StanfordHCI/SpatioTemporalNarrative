@@ -34,7 +34,6 @@ TimelineView = (function() {
 
       var timeline = this.timeline = {};
       timeline.events = [];
-
       timeline.absLen = 585;
       timeline.xOffset = 60;
       timeline.line_width = 1;
@@ -47,7 +46,20 @@ TimelineView = (function() {
       var tl = paper.path("M" + timeline.xOffset + " " + (timeline.yOffset - 15) + "V" + (timeline.yOffset + timeline.absLen + 100));
 
       var evts = this.model.get("events");
-      var modelView = this.modelView
+      var modelView = this.modelView;
+
+      timeline.start = new Date(evts[0].time[0]);
+      var last_evt = evts[evts.length -1];
+      var tlEnd = new Date(last_evt.time[last_evt.time.length - 1]);
+      timeline.range = tlEnd - timeline.start;
+
+      var spread = 0.05;
+
+
+      timeline.sigmaSq = calculateSigmaSq(timeline, spread);
+      timeline.beta = calculateBeta(timeline, spread);
+
+
       
       //creates timeline markers for all events. Markers will be repositione based on the readers' chosen transformation
       this.model.forAllEvents(function(currEvt){
@@ -75,6 +87,8 @@ TimelineView = (function() {
       var handleMove = function(e) {
         e.preventDefault();
 
+        var scale = 50;
+
         var maxMarkerHeight = 10; 
         var maxMarkerWidth = 50;
         var xPos = e.pageX;
@@ -86,7 +100,7 @@ TimelineView = (function() {
         if (currEvt) {
           if (this.currentMarker) this.currentMarker.attr("stroke", "#4479BA");
           this.currentMarker = currEvt;
-          this.currentMarker.attr("stroke", "yellow");
+          this.currentMarker.attr("stroke", "blue");
         }
 
         for (var i = 0; i < timeline.events.length; i++) {
@@ -95,7 +109,7 @@ TimelineView = (function() {
 
             var currY = obj.attr("y");
               
-            var transformFactor = Math.pow((currY - yPos), 2)/(2 * Math.pow(sd,2)) * -1;
+            var transformFactor = Math.abs((currY - yPos))/(timeline.beta) * -1;
             transformFactor = Math.exp(transformFactor);
 
 
@@ -107,15 +121,15 @@ TimelineView = (function() {
 
             var newY;
 
-            obj.attr("y") > yPos ? newY = obj.data("y")  + transformFactor * 10 : newY = obj.data("y") - transformFactor * 10;
+            obj.attr("y") > yPos ? newY = obj.data("y") + (1 - transformFactor) * scale : newY = obj.data("y") - (1 - transformFactor) * scale;
             
             var properties = {
-              y: newY,
-              height: newH,
-              width: newW,
-              x: (timeline.xOffset - newW)
+              y: newY
+              //height: newH,
+              //width: newW,
+              //x: (timeline.xOffset - newW)
             };
-            obj.animate(properties, 100, "linear");
+            obj.attr(properties);
 
             /*
 
@@ -198,6 +212,17 @@ TimelineView = (function() {
 
   return TimelineView;
 
+  function calculateSigmaSq(timeline, spread) {
+    var lengthSpread = timeline.absLen/2;
+    var sigmaSq = (lengthSpread * lengthSpread)/(-2 * Math.log(spread));
+    return sigmaSq;
+  }
+
+  function calculateBeta(timeline, spread) {
+    var lengthSpread = timeline.absLen/2;
+    var beta = Math.abs(lengthSpread)/(-1 * Math.log(spread));
+    return beta;
+  }
 
   /*
     Takes in the touch's current y position and timeline and calculates the standard 
@@ -227,14 +252,10 @@ TimelineView = (function() {
   function linearTransform(timeline) {
     var events = timeline.events;
 
-    var tlStart = new Date(events[0].time[0]);
-    var last_evt = events[events.length -1];
-    var tlEnd = new Date(last_evt.time[last_evt.time.length - 1]);
-    var tlRange = tlEnd - tlStart;
 
     for (var i = 0; i < events.length; i++) {
       var currStart = events[i].time[0];
-      var offsetFromStart = scale(tlRange, timeline.absLen, tlStart, currStart);
+      var offsetFromStart = scale(timeline.range, timeline.absLen, timeline.start, currStart);
 
       var properties = {
         x: (timeline.xOffset - 30),
@@ -242,7 +263,7 @@ TimelineView = (function() {
       }
       if (events[i].time.length > 1) {
         var currEnd = events[i].time[events[i].time.length - 1];
-        var segmentLen = scale(tlRange, timeline.absLen, currStart, currEnd);
+        var segmentLen = scale(timeline.range, timeline.absLen, currStart, currEnd);
         properties.path = "M" + timeline.xOffset + " " + properties.y + "V" + (properties.y + segmentLen);
       }
       events[i].marker.data("y", properties.y);
