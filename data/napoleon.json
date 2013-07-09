@@ -9,7 +9,7 @@
 	}, 
 	"events": [
 		{
-			"title": "Moscow (100,000 troops)", 
+			"title": "Moscow", 
 			"time": ["Fri, 19 April 13 00:49:00 -0400"],
 			"participants": [
 				"100000"
@@ -32,7 +32,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": "100,000"
+					"value": "100,000 troops."
 				}
 			]
 		},
@@ -75,7 +75,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": "96,000 troops."
+					"value": "The move west went well at first. Some people were joyfully carrying enormous amounts of loot, but the more experienced men were already worried. They knew how long it would take to walk back to Poland, and there simply was not enough time to escape the coming cold. Many people could be seen carrying unusually heavy coats and furs in their baggage. Napoleon tried to move southwestward, but Kutuzov blocked his attempt to proceed along the fertile, southern route by giving a fierce battle at Maloyaroslavets.? The encounter was quite lossy for both on the sides. Russians lost about 7,000 soldiers, and the French lost 4,000 soldiers. The next day, the war did not resume, both sides withdrew. The French army left Maloyaroslavets with 96,000 soldiers total." 
 				}
 			]
 		},
@@ -187,7 +187,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": "55,000 troops."
+					"value": "By forcing the disintegrating French army to leave Russia by the path it had devastated when it entered the country, thus depriving the French army of fresh stocks of food and supplies. Kutuzov destroyed his opponent without fighting another major battle. Kutuzov's troops harried the retreating French, engaging them at Vyazma."
 				}
 			]
 		},
@@ -201,7 +201,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": ""
+					"value": "55,000 troops."
 				}
 			]
 		},
@@ -243,7 +243,7 @@
 			"narrative": [
 				{
 					"type": "text",
-					"value": "24,000 troops."
+					"value": "Napoleon arrived in Smolensk on 9 November 1812, and he remained there for four days. By the time the French Army reached Smolensk the temperatures had fallen down to -26 degrees Centigrade. Although Smolensk was stocked up with the cattle and supplies brought from France, most of these resources were soon unfairly consumed by the first groups to reach the city. The rest of the army which arrived later did not get it's share of the food."
 				}
 			]
 		},
