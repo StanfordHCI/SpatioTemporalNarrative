@@ -128,7 +128,7 @@ MapView = (function() {
         function drawLine(coords, id, scale) {
           var weight = 4; 
           if (scale && !isNaN(parseInt(scale))) {
-            weight = 50 - 0.000340909 * (100000 - parseInt(scale)); 
+            weight = 50 - 0.00051136 * (100000 - parseInt(scale)); 
           }
           var lineSymbol = {
             path: 'M 0,-1 0,1',
