@@ -34,20 +34,25 @@ MapView = (function() {
       //Stores the zoom level when scrolled to a specific event.
       this.scrolledZoomLevel = this.model.get("scollingZoomLevel") || 14;
 
+      var config = this.config = {};
+
       //the current element highlighted on the map (point, line, area)
-      currentMarker = null; 
+      config.currentMarker = null; 
       
       //map from event ids to points
-      eventMarkers = {}; 
+      config.eventMarkers = {}; 
 
       //map from event ids to areas
-      eventAreas = {}; 
+      config.eventAreas = {}; 
 
       //map from event ids to multi-point lists
-      eventLists = {}; 
+      config.eventLists = {}; 
       
       //map from event ids to LatLon
-      eventLocations = {}; 
+      config.eventLocations = {}; 
+
+      //Stores which event ID we are currently on
+      config.atCurrentId = null;
 
       //stores the bounding box for the initial map bounds.
       var bounds = new google.maps.LatLngBounds();
@@ -103,11 +108,12 @@ MapView = (function() {
               icon: "/marker?color=%234479BA&text=" + id
             });
 
-            eventMarkers[id] = marker; 
+            config.eventMarkers[id] = marker; 
 
             google.maps.event.addListener(marker, "click", function() {
               self.model.forAllEvents(function(event) {
                 if (event.spatial == marker.getTitle()) {
+                  console.log("CLICKED ON MARKER, SCROLL HAS REACHED")
                   self.modelView.scrollHasReached(event.id);
                 }
               });
@@ -143,7 +149,7 @@ MapView = (function() {
             }],
             map: map
           });
-          eventLists[id] = line; 
+          config.eventLists[id] = line; 
         }
 
         function drawArea(coords, id) {
@@ -155,7 +161,7 @@ MapView = (function() {
             fillColor: '#3368A9',
             fillOpacity: 0.25
           });
-          eventAreas[id] = area; 
+          config.eventAreas[id] = area; 
           area.setMap(map);
         }
 
@@ -176,13 +182,13 @@ MapView = (function() {
           if (location.type == "address") {
             (function(location, id) {
               addressToLatLng(location.value, function(result, status) {
-                eventLocations[id] = result[0].geometry.location;  
+                config.eventLocations[id] = result[0].geometry.location;  
                 drawMarker(result[0].geometry.location, id); 
               });
             })(location, id);
           } else if (location.type == "point") {
             latlng = new google.maps.LatLng(location.lat, location.lng); 
-            eventLocations[id] = latlng; 
+            config.eventLocations[id] = latlng; 
             drawMarker(latlng, id); 
           }
         } 
@@ -285,34 +291,45 @@ MapView = (function() {
     },
 
     renderScrolled: function(intID) {
+      var config = this.config;
 
       //coerce ID to string
-      var id = "" + intID; 
-      
+      var id = intID.toString(); 
+
+      if (config.atCurrentId === id) {
+        return;
+      }
+      config.atCurrentId = id;
+
+      console.log(id);
+      console.log(config.eventMarkers[id]);
+      console.log(config.eventAreas[id]);
+      console.log(config.eventLists[id]);
+
       //reset the old marker back to blue
-      if (currentMarker != null) {
-        var num = currentMarker; 
-        eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
+      if (config.currentMarker != null) {
+        var num = config.currentMarker; 
+        config.eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
       }
 
-      if (eventMarkers[id] != null /* Current marker is a point */) {
+      if (config.eventMarkers[id] != null /* Current marker is a point */) {
 
         icon = "/marker?color=%23ff0000&text=" + id; 
-        eventMarkers[id].setIcon(icon); 
-        currentMarker = id; 
-        map.panTo(eventMarkers[id].getPosition()); 
+        config.eventMarkers[id].setIcon(icon); 
+        config.currentMarker = id; 
+        map.panTo(config.eventMarkers[id].getPosition()); 
 
-      } else if (eventAreas[id] != null /* Current marker is an area */) {
+      } else if (config.eventAreas[id] != null /* Current marker is an area */) {
 
         var options = {
           strokeColor: "#FF0000",
           fillColor: "#FF0000"
         }; 
-        eventAreas[id].setOptions(options); 
-        currentMarker = null; 
-        map.panTo(eventAreas[id].getPath().getAt(0)); 
+        config.eventAreas[id].setOptions(options); 
+        config.currentMarker = null; 
+        map.panTo(config.eventAreas[id].getPath().getAt(0)); 
 
-      } else if (eventLists[id] != null /* Current marker is a list */) {
+      } else if (config.eventLists[id] != null /* Current marker is a list */) {
 
         var scale = parseInt(self.model.getEventById(id).participants[0]); 
         var weight = 6; 
@@ -335,10 +352,9 @@ MapView = (function() {
           }],
         }
 
-        currentMarker = null; 
-        eventLists[id].setOptions(options); 
-        debugger;
-        map.panTo(eventLists[id].getPath().getAt(0)); 
+        config.currentMarker = null; 
+        config.eventLists[id].setOptions(options); 
+        map.panTo(config.eventLists[id].getPath().getAt(0)); 
 
       }
 
