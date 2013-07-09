@@ -3,6 +3,8 @@
     "shortName": "nyc",
     "timezone": "-0400",
     "style":"dark",
+    "scollingZoomLevel": 14,
+    "startingZoomLevel": 10,
     "participants": {
         "Niels": {
             "default": true

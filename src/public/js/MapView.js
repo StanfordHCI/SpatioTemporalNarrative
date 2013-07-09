@@ -25,48 +25,71 @@ MapView = (function() {
       this.listenTo(this.modelView, "scroll:at", function(id) {
         self.renderScrolled(id);
       });
+
     },
 
     renderFromScratch: function() {
-
       self = this;
-      currentMarker = null; 
-      eventMarkers = {}; 
-      eventAreas = {}; 
-      eventLists = {}; 
-      eventLocations = {}; 
-      var bounds = new google.maps.LatLngBounds(); 
-      createMap(); 
-      addMarkers();
-      setTimeout(function() {
-        map.fitBounds(bounds); 
-      }, 4000); 
 
-      function createMap() {
+      //Stores the zoom level when scrolled to a specific event.
+      this.scrolledZoomLevel = this.model.get("scollingZoomLevel") || 14;
+
+      //the current element highlighted on the map (point, line, area)
+      currentMarker = null; 
+      
+      //map from event ids to points
+      eventMarkers = {}; 
+
+      //map from event ids to areas
+      eventAreas = {}; 
+
+      //map from event ids to multi-point lists
+      eventLists = {}; 
+      
+      //map from event ids to LatLon
+      eventLocations = {}; 
+
+      //stores the bounding box for the initial map bounds.
+      var bounds = new google.maps.LatLngBounds();
+      
+      //****************************************************************
+      // IIFE for creating the map elements 
+      //****************************************************************
+      (function createMap() {
+        
         var center; 
         var locations = self.model.get("map").poi;
-        for (i in locations) {
+        
+        var obj = {
+          name : "Niels"
+        }
+
+        //Find the first point with lat-lon and use as center.
+        for (var i = 0; i < locations.length; i++) {
           var location = locations[i];
           if (location.type == "point") {
             center = new google.maps.LatLng(location.lat, location.lng);
-            break; 
+            break;
           }
         }
-        var zoom = 10; 
-        if (self.model.get("shortName") == "napoleon") {
-          zoom = 6; 
-        } else if (self.model.get("shortName") == "boston_bombing") {
-          zoom = 11; 
-        }
+
+        var zoom = this.model.get("startingZoomLevel"); 
+        
         var mapOptions = {
           center: center, 
           zoom: zoom,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-        map = new google.maps.Map(self.el, mapOptions);
-      }
 
-      function addMarkers() {
+        map = new google.maps.Map(self.el, mapOptions);
+
+      }).apply(this);
+      //********************* END MAP CREATION *************************
+
+      //****************************************************************
+      // IIFE for adding all the markers
+      //****************************************************************
+      (function addMarkers() {
 
         function drawMarker(latlng, id) {
           bounds.extend(latlng); 
@@ -92,7 +115,7 @@ MapView = (function() {
               map.setZoom(15);
             });
 
-          }, Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000);
+          }, 0);
 
           map.panTo(latlng);
         }
@@ -183,7 +206,7 @@ MapView = (function() {
           }
           setTimeout(function() {
             drawArea(coords, id); 
-          }, 4000); 
+          }, 0); 
         }
 
         function createEventList(list, id, scale) {
@@ -205,7 +228,7 @@ MapView = (function() {
           }
           setTimeout(function() {
             drawLine(coords, id, scale); 
-          }, 4000); 
+          }, 0); 
         }
 
         var events = self.model.get("events"); 
@@ -249,30 +272,49 @@ MapView = (function() {
             }
           }
         }
-      }
+      })();
+
+      //*********************** END MARKER ADDING ***************************************
+
+      //Fits the bounds of the map after markers were added to the bounds object.
+      setTimeout(function() {
+        map.fitBounds(bounds); 
+      }, 1000); 
+
       return this;
     },
 
     renderScrolled: function(intID) {
+
+      //coerce ID to string
       var id = "" + intID; 
+      
+      //reset the old marker back to blue
       if (currentMarker != null) {
         var num = currentMarker; 
         eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
       }
+
+      //Case statement to choose the type of marker
       if (eventMarkers[id] != null) {
+
         icon = "/marker?color=%23ff0000&text=" + id; 
         eventMarkers[id].setIcon(icon); 
         currentMarker = id; 
         map.panTo(eventMarkers[id].getPosition()); 
+
       } else if (eventAreas[id] != null) {
+
         var options = {
           strokeColor: "#FF0000",
           fillColor: "#FF0000"
         }; 
         eventAreas[id].setOptions(options); 
         currentMarker = null; 
-        map.panTo(eventAreas[id].getPath().pop()); 
+        map.panTo(eventAreas[id].getPath().b[0]); 
+
       } else if (eventLists[id] != null) {
+
         var scale = parseInt(self.model.getEventById(id).participants[0]); 
         var weight = 6; 
         if (!isNaN(scale)) {
@@ -297,13 +339,14 @@ MapView = (function() {
         currentMarker = null; 
         eventLists[id].setOptions(options); 
         map.panTo(eventLists[id].getPath().getAt(0)); 
+
       }
       /*
       if (self.model.get("shortName") == "napoleon" && map.getZoom() != 11) {
         map.setZoom(11);
       } */
-      if (map.getZoom() != 14) {
-        map.setZoom(14); 
+      if (map.getZoom() != this.scrolledZoomLevel) {
+        map.setZoom(this.scrolledZoomLevel); 
       }
     },
     
