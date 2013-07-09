@@ -76,7 +76,7 @@ MapView = (function() {
             marker = new google.maps.Marker({
               position: latlng,
               map: map,
-              animation: google.maps.Animation.DROP,
+              // animation: google.maps.Animation.DROP,
               icon: "/marker?color=%234479BA&text=" + id
             });
 
@@ -262,11 +262,13 @@ MapView = (function() {
         currentMarker = id; 
         map.panTo(eventMarkers[id].getPosition()); 
       } else if (eventAreas[id] != null) {
+        console.log(eventAreas[id]); 
         var options = {
           strokeColor: "#FF0000",
           fillColor: "#FF0000"
         }; 
         eventAreas[id].setOptions(options); 
+        currentMarker = null; 
         map.panTo(eventAreas[id].getPath().pop()); 
       } else if (eventLists[id] != null) {
         var scale = parseInt(self.model.getEventById(id).participants[0]); 
@@ -290,6 +292,7 @@ MapView = (function() {
           }],
         }
 
+        currentMarker = null; 
         eventLists[id].setOptions(options); 
         map.panTo(eventLists[id].getPath().getAt(0)); 
       }
