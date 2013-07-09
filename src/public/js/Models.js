@@ -70,10 +70,12 @@ Models = (function() {
 
     //If id is a nested event, get its parent
     getEventParent: function(id) {
-      var splits = id.split(".");
-      if (splits.length > 1) {
-        splits.splice(-1,1);
-        return this.getEventById(splits.join("."));
+      if (typeof id != 'number'){
+        var splits = id.split(".");
+        if (splits.length > 1) {
+          splits.splice(-1,1);
+          return this.getEventById(splits.join("."));
+        }
       }
       return undefined;
     }
