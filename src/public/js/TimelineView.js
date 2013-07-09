@@ -188,10 +188,10 @@ TimelineView = (function() {
           };
           
           //Is this the currentMarker? solid red plz
-          if (self.currentMarker && obj.data("id") == self.currentMarker.data("id")) {
+          if (self.currentMarker && obj.data("id") === self.currentMarker.data("id")) {
             properties.fill = "red";
             properties.stroke = "red";
-          } else if (self.currentHoverMarker && obj.data("id") == self.currentHoverMarker.data("id")) {
+          } else if (self.currentHoverMarker && obj.data("id") === self.currentHoverMarker.data("id")) {
             properties.stroke = "red";
           }
 
