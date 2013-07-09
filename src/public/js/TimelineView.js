@@ -29,6 +29,11 @@ TimelineView = (function() {
 
       this.paper = Raphael(this.el, 60, 700);
 
+      /* 
+        Handler function for touchstart and touchmove events. Sets the currentHoverMarker if
+        the touch event is over some SVG marker object and calls drawAllPoints to redraw the
+        timeline for the event
+      */
       var handleMove = function(e) {
         e.preventDefault();
 
@@ -40,6 +45,12 @@ TimelineView = (function() {
 
         self.drawAllPoints(e);
       }
+
+      /*
+        Handler function for touchend, leave, or cancel events. Updates the currentMarker to
+        the last marker that was hovered over (currentHoverMarker), sets the currentHoverMarker 
+        to null, and calls scrollHasReached to render the updated view
+      */
 
       var handleLeave = function(e) {
         if (self.currentHoverMarker) {
@@ -57,6 +68,10 @@ TimelineView = (function() {
       this.el.addEventListener("touchcancel", handleLeave, false);
     },
 
+    /*
+      Sets up the properties of the timeline, draws all the objects, and calls an external
+      transformation function to set the markers in place.
+    */
     renderFromScratch: function() {
       var self = this;
 
@@ -82,8 +97,6 @@ TimelineView = (function() {
       var last_evt = evts[evts.length -1];
       var tlEnd = new Date(last_evt.time[last_evt.time.length - 1]);
       timeline.range = tlEnd - timeline.start;
-
-      //var newY = offsetByLaplacian(obj.data("y"), yPos, timeline.beta, timeline.scale);
 
       //Calculate scaling factors and parameters for gaussian and laplacian
       timeline.spread = 0.12;
@@ -126,8 +139,11 @@ TimelineView = (function() {
       return this;
     }, 
 
-
-
+    /*
+      Handler for the call:at event. Finds the event's corresponding
+      SVG object and update the currentMarker as that marker and then
+      calls drawAllPoints to redraw the view.
+    */
     renderScrolled: function(event) {
       var events = this.timeline.events;
       for (var i = 0; i < events.length; i++){
@@ -139,20 +155,28 @@ TimelineView = (function() {
       this.drawAllPoints();
     },
 
+    /*
+      Takes in an optional touch event evt and iterator function. If the
+      timeline view is being interacted, drawAllPoint redraws the
+      timeline based on the marker that was last hovered over. If there is
+      no event passed in, it redraws the timeline based on the currentMarker
+      and its parent events, if any.
+    */
     drawAllPoints: function(evt, iterFunc) {
 
       var timeline = this.timeline;
 
       var maxMarkerHeight = 7; 
       var maxMarkerWidth = 50;
-
+ 
+      //sets the y position that will serve as the mean or peak point for the laplacian transform
+      //if an event has been passed in, the y position will be the y position of the event
+      //if there is no event and there is a currentMarker, the y position is the initial y poisition of the currentMarker
       var yPos = 0;
-      var eventParent = null;
       if (evt) {
         yPos = evt.pageY;
       } else if (this.currentMarker) {  
         yPos = this.currentMarker.data("y");
-        eventParent = this.model.getEventParent(this.currentMarker.data("id"));
       }
 
       var newH = timeline.markerHeight;
@@ -162,12 +186,14 @@ TimelineView = (function() {
       
       var self = this;
 
+      //Sets the new properties for each event marker SVG object
       for (var i = 0; i < timeline.events.length; i++) {
 
         timeline.events[i].marker.forEach(function(obj){
 
           var currY = newY = obj.data("y");
 
+          //calculates and applies the laplacian transformation if necessary
           if (evt) {
             transformFactor = laplacian(currY, yPos, timeline.beta);
 
@@ -191,26 +217,13 @@ TimelineView = (function() {
           };
           
           //Is this the currentMarker? solid red plz
-          //DO WE WANT TO BRING THE CURRENT MARKERS TO THE FRONT?
-          if (self.currentMarker) {
-            if (eventParent && obj.data("id") === eventParent.id) {
-              properties.stroke = "pink";
-              //obj.toFront();
-            } else if (obj.data("id") === self.currentMarker.data("id")) {
-              properties.fill = "red";
-              properties.stroke = "red";
-             // obj.toFront();
-            } 
-          }
-
-          //DESIGN DECISION: do we still want the current marker to be highlighted when hovered over or not?
-          if (self.currentHoverMarker && obj.data("id") === self.currentHoverMarker.data("id")) {
-            console.log("hover");
+          if (self.currentMarker && obj.data("id") === self.currentMarker.data("id")) {
+            properties.fill = "red";
+            properties.stroke = "red";
+          } else if (self.currentHoverMarker && obj.data("id") === self.currentHoverMarker.data("id")) {
             properties.stroke = "red";
 
           } 
-
-          //Is this the hover marker? outline red
             
           obj.attr(properties);
 
@@ -233,6 +246,11 @@ TimelineView = (function() {
 
   return TimelineView;
 
+  /*
+    Takes in all parameters needed to calculate a laplacian transformation
+    factor as well as a scale value, calculates the laplacian, and multiplies
+    it by the scale value to return the offset
+  */
   function offsetByLaplacian(x, mu, beta, scale) {
     var transformFactor = scale * (1 - laplacian(x, mu, beta));
     if (x > mu)
@@ -241,24 +259,48 @@ TimelineView = (function() {
       return x - transformFactor;
   }
 
+  /*
+    Takes in the length of the available space of the timeline, the
+    timeline's constant scaling factor, and a beta value to calculate
+    the laplacian displacement factor. It returns the amount that the
+    timeline would need to expand by on both sides to accomodate all of
+    the points when they are displaced by the laplacian at any given time
+  */
   function laplacianExpansionAmount(availableSize, scale, beta) {
     return 2 * scale * (1 - laplacian(availableSize, 0, beta));
   }
 
+  /*
+    Calculates and returns a gaussian transformation factor based for a given point
+    x, based on the spread center at mu, and a beta value to control the spread
+  */
   function laplacian(x, mu, beta) {
   return Math.exp(Math.abs(x - mu)/(beta) * -1);
   }
 
+  /*
+    Calculates and returns a gaussian transformation factor based for a given point
+    x, based on the spread center at mu, and a sigma squared value, sigmasq,
+    to control the spread
+  */
   function gaussian(x, mu, sigmasq) {
     return Math.exp(Math.pow((x - mu),2)/(2*sigmasq) * -1);
   }
 
+  /*
+    Takes in the pagelength of the timeline in pixels and the desired pixel spread,
+    and returns the sigma squared value for a gaussian function based on those values
+  */
   function calculateSigmaSq(totalLen, spread) {
     var lengthSpread = totalLen/2;
     var sigmaSq = (lengthSpread * lengthSpread)/(-2 * Math.log(spread));
     return sigmaSq;
   }
 
+  /*
+    Takes in the pagelength of the timeline in pixels and the desired pixel spread,
+    and returns beta for a laplacian function based on those values
+  */
   function calculateBeta(totalLen, spread) {
     var lengthSpread = totalLen/2;
     var beta = Math.abs(lengthSpread)/(-1 * Math.log(spread));
@@ -275,15 +317,16 @@ TimelineView = (function() {
 
     for (var i = 0; i < events.length; i++) {
       var currStart = events[i].time[0];
-      var offsetFromStart = scale(timeline.range, timeline.absLen, timeline.start, currStart);
+      var offsetFromStart = lerp(timeline.range, timeline.absLen, timeline.start, currStart);
 
       var properties = {
         x: (timeline.xOffset - 30),
         y: (timeline.yOffset + offsetFromStart)
       }
+      //If the event spans over a range of time
       if (events[i].time.length > 1) {
         var currEnd = events[i].time[events[i].time.length - 1];
-        var segmentLen = scale(timeline.range, timeline.absLen, currStart, currEnd);
+        var segmentLen = lerp(timeline.range, timeline.absLen, currStart, currEnd);
         properties.path = "M" + timeline.xOffset + " " + properties.y + "V" + (properties.y + segmentLen);
       }
       events[i].marker.data("y", properties.y);
@@ -304,9 +347,9 @@ TimelineView = (function() {
     for (var i = 0; i < events.length; i++) {
       var offsetFromStart = spacing * i;
       var properties = {
-        //x: (timeline.xOffset - 10),
         y: (timeline.yOffset + offsetFromStart)
       };
+      //If the event spans over a range of time
       if (events[i].time.length > 1) {
         properties.path = "M" + timeline.xOffset + " " + (timeline.yOffset + offsetFromStart)+ "V" + (timeline.yOffset + offsetFromStart + spacing);
       }
@@ -322,7 +365,7 @@ TimelineView = (function() {
     of the second point's displacement from the first on the timeline.
   */
 
-  function scale(tlRange, tlLen, point1, point2) {
+  function lerp(tlRange, tlLen, point1, point2) {
     date1 = new Date(point1);
     date2 = new Date(point2);
     return (tlLen * (date2 - date1)/tlRange);
