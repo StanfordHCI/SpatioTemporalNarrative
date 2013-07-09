@@ -115,7 +115,7 @@ MapView = (function() {
               map.setZoom(15);
             });
 
-          }, 0);
+          }, 100);
 
           map.panTo(latlng);
         }
@@ -206,7 +206,7 @@ MapView = (function() {
           }
           setTimeout(function() {
             drawArea(coords, id); 
-          }, 0); 
+          }, 100); 
         }
 
         function createEventList(list, id, scale) {
@@ -228,7 +228,7 @@ MapView = (function() {
           }
           setTimeout(function() {
             drawLine(coords, id, scale); 
-          }, 0); 
+          }, 1000); 
         }
 
         var events = self.model.get("events"); 
@@ -295,15 +295,14 @@ MapView = (function() {
         eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
       }
 
-      //Case statement to choose the type of marker
-      if (eventMarkers[id] != null) {
+      if (eventMarkers[id] != null /* Current marker is a point */) {
 
         icon = "/marker?color=%23ff0000&text=" + id; 
         eventMarkers[id].setIcon(icon); 
         currentMarker = id; 
         map.panTo(eventMarkers[id].getPosition()); 
 
-      } else if (eventAreas[id] != null) {
+      } else if (eventAreas[id] != null /* Current marker is an area */) {
 
         var options = {
           strokeColor: "#FF0000",
@@ -311,9 +310,9 @@ MapView = (function() {
         }; 
         eventAreas[id].setOptions(options); 
         currentMarker = null; 
-        map.panTo(eventAreas[id].getPath().b[0]); 
+        map.panTo(eventAreas[id].getPath().getAt(0)); 
 
-      } else if (eventLists[id] != null) {
+      } else if (eventLists[id] != null /* Current marker is a list */) {
 
         var scale = parseInt(self.model.getEventById(id).participants[0]); 
         var weight = 6; 
@@ -338,20 +337,18 @@ MapView = (function() {
 
         currentMarker = null; 
         eventLists[id].setOptions(options); 
+        debugger;
         map.panTo(eventLists[id].getPath().getAt(0)); 
 
       }
-      /*
-      if (self.model.get("shortName") == "napoleon" && map.getZoom() != 11) {
-        map.setZoom(11);
-      } */
+
+      //Zoom the map to the appropriate level
       if (map.getZoom() != this.scrolledZoomLevel) {
         map.setZoom(this.scrolledZoomLevel); 
       }
     },
     
     clear: function() {
-
       return this;
     },
 
