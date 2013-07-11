@@ -42,11 +42,11 @@ iPadScroller = (function() {
     }
 
     var doScroll = function(newY, isDone) {
-      if (isDone)
-          currentY = newY;
-
       if (delegate)
         newY = -delegate(-newY, isDone);  
+
+      if (isDone)
+        currentY = newY;
 
       $scrollEl.css('-webkit-transform', 'translate(0, ' + newY + 'px)');
     }
@@ -94,8 +94,8 @@ iPadScroller = (function() {
       delegate(0);
 
     return {
-      scrollTo: function(pix) {
-        doScroll(-1*pix,true);
+      scrollTo: function(pix, skipDelegate) {
+        doScroll(-1*pix,true, skipDelegate);
       },
       destroy: function() {
         $scrollEl.css('-webkit-transform', 'translate(0px, 0px)');

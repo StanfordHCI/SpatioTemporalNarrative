@@ -24,7 +24,8 @@ NarrationView = (function() {
       iPadScroller.disableDefaultScrolling();
 
       this.options.idToPos = {};
-      window.nv = this;
+      
+      this.options.snapTo = true;
 
     },
 
@@ -143,6 +144,7 @@ function debug() {
 
     return function(currentTop, isDone) {
 
+      var currentEffect;
       var effect, start, nextStart;
       for (var i = 0; i < effects.length; i++) {
         effect = effects[i];
@@ -162,15 +164,18 @@ function debug() {
               effect.on = true;
               effect.el.getElementsByClassName("eventButton")[0].style.background = "red";
             }
-            if (isDone)
+            currentEffect = effect;
+            if (isDone) {
               view.setScrollAt(effect.id);
+            }
         } else {
           effect.on = false;
           effect.el.getElementsByClassName("eventButton")[0].style.background = "#4479BA";
 
         }
       }
-
+      if (isDone && view.options.snapTo)
+        return view.options.idToPos[currentEffect.id];
       return currentTop;
     }
 
