@@ -188,8 +188,13 @@ MapView = (function() {
             
             (function(location, id) {
               addressToLatLng(location, function(err, result) {
-                config.eventLocations[id] = result[0].geometry.location;  
-                drawMarker(result[0].geometry.location, id); 
+                try {
+                  config.eventLocations[id] = result[0].geometry.location;  
+                  drawMarker(result[0].geometry.location, id); 
+                } catch (err) {
+                  console.log("Could not get lat-long from google - possibly over API limit?", err);
+                  boundsCount += 1;
+                }
               });
             })(location, id);
 
