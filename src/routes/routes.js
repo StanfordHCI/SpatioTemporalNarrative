@@ -32,11 +32,8 @@ var svgText = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C
 
 
 svgText += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="30" height="38">'
-svgText += '<g>'
-svgText += '  <rect width="30" height="32" style="fill:<%COLOR%>;stroke-width:0"/>'
-svgText += '  <polygon points="12,32 18,32  15,38" style="fill:<%COLOR%>;stroke-width:0"/>'
+svgText += '  <polygon points="0,0 0,32 12,32 15,38 18,32 30,32 30,0" style="fill:<%COLOR%>;stroke-width:0.5;stroke:black;stroke-location:inside;"/>'
 svgText += '  <text style="font-family:museo,Helvetica; font-weight:100; text-anchor:middle; font-size: 10pt; baseline-shift:-33%;" x="15" y="16" fill="white"><%TEXT%></text>'
-svgText += '</g>'
 svgText += '</svg>'
 
 var svgmarker = function(req, res, next) {
