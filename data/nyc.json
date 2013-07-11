@@ -574,12 +574,6 @@
                 "type": "address",
                 "name": "Washington Commons",
                 "value": "748 Washington Ave, New York, NY 11238"
-            },
-            {
-                "type": "point",
-                "name": "Newark International Airport",
-                "lat": 40.690718,
-                "lng": -74.180374
             }
         ]
     }
