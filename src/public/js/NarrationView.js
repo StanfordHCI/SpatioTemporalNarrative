@@ -141,6 +141,9 @@ function debug() {
     })();
 
     
+    function within(one, two, dist) {
+      return (Math.abs(two - one) < dist);
+    }
 
     return function(currentTop, isDone) {
 
@@ -174,8 +177,10 @@ function debug() {
 
         }
       }
-      if (isDone && view.options.snapTo)
-        return view.options.idToPos[currentEffect.id];
+      if (isDone && view.options.snapTo && within(view.options.idToPos[currentEffect.id], currentTop, 150)) {
+          return view.options.idToPos[currentEffect.id];
+
+      }
       return currentTop;
     }
 
