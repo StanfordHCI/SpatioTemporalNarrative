@@ -31,11 +31,11 @@ var get_article = function(req, res, next) {
 var svgText = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'
 
 
-svgText += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="50">'
+svgText += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="30" height="38">'
 svgText += '<g>'
-svgText += '  <rect width="40" height="42" style="font-family:museo,serif; fill:<%COLOR%>;stroke-width:0"/>'
-svgText += '  <polygon points="14,42 26,42  20,50" style="fill:<%COLOR%>;stroke-width:0"/>'
-svgText += '  <text style="text-anchor:middle; font-size: 12pt; baseline-shift:-33%;" x="20" y="21" fill="white"><%TEXT%></text>'
+svgText += '  <rect width="30" height="32" style="fill:<%COLOR%>;stroke-width:0"/>'
+svgText += '  <polygon points="12,32 18,32  15,38" style="fill:<%COLOR%>;stroke-width:0"/>'
+svgText += '  <text style="font-family:museo,Helvetica; font-weight:100; text-anchor:middle; font-size: 10pt; baseline-shift:-33%;" x="15" y="16" fill="white"><%TEXT%></text>'
 svgText += '</g>'
 svgText += '</svg>'
 
