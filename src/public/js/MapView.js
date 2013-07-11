@@ -59,7 +59,8 @@ MapView = (function() {
 
       //stores the bounding box for the initial map bounds.
       var bounds = new google.maps.LatLngBounds();
-      
+      var boundsCount = 0;
+
       //****************************************************************
       // IIFE for creating the map elements 
       //****************************************************************
@@ -101,6 +102,7 @@ MapView = (function() {
 
         function drawMarker(latlng, id) {
           bounds.extend(latlng); 
+          boundsCount += 1;
           var marker = null;
 
           marker = new google.maps.Marker({
@@ -259,12 +261,14 @@ MapView = (function() {
         var events = self.model.get("events"); 
         var locations = self.model.get("map").poi; 
 
+        var numberOfPoints = 0;
         self.model.forAllEvents(function(event) {
           if (event.spatial) {
             var spatial = event.spatial; 
             for (j in locations) {
               if (locations[j].name == spatial) {
                 if (locations[j].type == "point" || locations[j].type == "address") {
+                  numberOfPoints += 1;
                   createEventPoint(locations[j], event.id); 
                 } else if (locations[j].type == "area") {
                   createEventArea(locations[j], event.id); 
@@ -277,14 +281,21 @@ MapView = (function() {
 
         });
 
+        //Spinlock to fit the bounds of the map after markers were added to the bounds object.
+        function spinUntilAllMarkers() {
+          if (boundsCount == numberOfPoints) {
+            map.fitBounds(bounds); 
+          } else {
+            setTimeout(spinUntilAllMarkers, 10);
+          }
+        }
+        setTimeout(spinUntilAllMarkers, 10);
+
       })();
 
       //*********************** END MARKER ADDING ***************************************
 
-      //Fits the bounds of the map after markers were added to the bounds object.
-      setTimeout(function() {
-        map.fitBounds(bounds); 
-      }, 1000); 
+      
 
       return this;
     },
