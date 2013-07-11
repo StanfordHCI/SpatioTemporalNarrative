@@ -146,6 +146,8 @@ requireScript('/js/lib/async.js',     false);
 
 //Internal Libraries
 
+requireScript('/js/Base64.js');
+
 requireScript('/js/Events.js');
 
 requireScript('/js/ArticleViewModel.js');

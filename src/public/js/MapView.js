@@ -108,8 +108,8 @@ MapView = (function() {
           marker = new google.maps.Marker({
             position: latlng,
             map: map,
-            animation: google.maps.Animation.DROP,
-            icon: "/svgmarker?text=" + id
+            animation: google.maps.Animation.NONE,
+            icon: generateMarkerSVG(id.toString())
           });
 
           config.eventMarkers[id] = marker; 
@@ -117,10 +117,10 @@ MapView = (function() {
           google.maps.event.addListener(marker, "click", function() {
             if (config.currentMarker != null) {
               var num = config.currentMarker; 
-              config.eventMarkers[num].setIcon("/svgmarker?text=" + num); 
+              config.eventMarkers[num].setIcon(generateMarkerSVG(num.toString())); 
             }
 
-            marker.setIcon("/svgmarker?text=" + id + "&color=red"); 
+            marker.setIcon(generateMarkerSVG(id.toString(), "red")); 
             config.currentMarker = id; 
             map.panTo(config.eventMarkers[id].getPosition()); 
             self.modelView.scrollHasReached(id); 
@@ -417,6 +417,41 @@ MapView = (function() {
     },
 
   });
+
+
+  //****************************************
+  // Here we generate SVG markers for the map client-side.
+  // We hash them to a data-uri, which we cache
+  //****************************************
+  
+
+  var svgText = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'
+  svgText += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="30" height="38">'
+  svgText += '  <polygon points="0,0 0,32 12,32 15,38 18,32 30,32 30,0" style="fill:<%COLOR%>;stroke-width:0.5;stroke:black;stroke-location:inside;"/>'
+  svgText += '  <text style="font-family:museo,Helvetica; font-weight:100; text-anchor:middle; font-size: 10pt; baseline-shift:-33%;" x="15" y="16" fill="white"><%TEXT%></text>'
+  svgText += '</svg>'
+
+  var memoizeSVG = {};
+  window.memoizeSVG = memoizeSVG;
+  function generateMarkerSVG(text, color) {
+    var color = color || "rgb(68,121,186)"; 
+    var text = text || "-"; 
+
+    var hash = color + "--HASH--" + text;
+    if (memoizeSVG[hash]) {
+      console.log("Memoized!")
+      return memoizeSVG[hash];
+    }
+
+    var newText = svgText.replace("<%TEXT%>", text).replace("<%COLOR%>", color);
+
+    var b64 = "data:image/svg+xml;base64," + Base64.encode(newText);
+    
+    memoizeSVG[hash] = b64;
+    return b64;
+
+  }
+
 
   return MapView;
 
