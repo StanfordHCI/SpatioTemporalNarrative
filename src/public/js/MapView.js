@@ -441,7 +441,6 @@ MapView = (function() {
     var hash = color + "--HASH--" + text;
     var alt_hash = alt_color + "--HASH--" + text;
     if (memoizeSVG[hash]) {
-      console.log("MEMO")
       return memoizeSVG[hash];
     }
 
