@@ -438,16 +438,19 @@ MapView = (function() {
     var text = text || "-"; 
 
     var hash = color + "--HASH--" + text;
+    var alt_hash = "red--HASH--" + text;
     if (memoizeSVG[hash]) {
-      console.log("Memoized!")
       return memoizeSVG[hash];
     }
 
     var newText = svgText.replace("<%TEXT%>", text).replace("<%COLOR%>", color);
+    var altText = svgText.replace("<%TEXT%>", text).replace("<%COLOR%>", "red");
 
     var b64 = "data:image/svg+xml;base64," + Base64.encode(newText);
-    
+    var alt_b64 = "data:image/svg+xml;base64," + Base64.encode(altText);
+
     memoizeSVG[hash] = b64;
+    memoizeSVG[alt_hash] = alt_b64;
     return b64;
 
   }
