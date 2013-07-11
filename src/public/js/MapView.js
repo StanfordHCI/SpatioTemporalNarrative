@@ -115,10 +115,7 @@ MapView = (function() {
           config.eventMarkers[id] = marker; 
 
           google.maps.event.addListener(marker, "click", function() {
-            if (config.currentMarker != null) {
-              var num = config.currentMarker; 
-              config.eventMarkers[num].setIcon(generateMarkerSVG(num.toString())); 
-            }
+            self.resetCurrentMarker();
 
             marker.setIcon(generateMarkerSVG(id.toString(), "red")); 
             config.currentMarker = id; 
@@ -316,46 +313,7 @@ MapView = (function() {
       }
       config.atCurrentId = id;
 
-      //reset the old marker back to blue
-      if (config.currentMarker != null) {
-        var curr = config.currentMarker; 
-        if (config.eventMarkers[curr] != null /* Current marker is a point */) {
-          var icon = generateMarkerSVG(curr.toString())
-          config.eventMarkers[curr].setIcon(icon); 
-
-        } else if (config.eventAreas[curr] != null /* Current marker is an area */) {
-
-          var options = {
-            strokeColor: "#4479BA",
-            fillColor: "#4479BA"
-          }; 
-          config.eventAreas[curr].setOptions(options); 
-
-        } else if (config.eventLists[curr] != null /* Current marker is a list */) {
-          var scale = parseInt(self.model.getEventById(curr).participants[0]); 
-          var weight = 6; 
-          if (!isNaN(scale)) {
-            weight = 50 - 0.00051136 * (100000 - scale); 
-          }
-          var lineSymbol = {
-            path: 'M 0,-1 0,1',
-            strokeColor: '#4479BA',
-            strokeOpacity: 1,
-            scale: 4, 
-            strokeWeight: weight
-          };
-
-          var options = {
-            icons: [{
-              icon: lineSymbol,
-              offset: '0',
-              repeat: '15px'
-            }],
-          }
-
-          config.eventLists[curr].setOptions(options); 
-        }
-      }
+      this.resetCurrentMarker();
 
       if (config.eventMarkers[id] != null /* Current marker is a point */) {
 
@@ -409,6 +367,51 @@ MapView = (function() {
         map.setZoom(this.scrolledZoomLevel); 
       }
       */
+    },
+
+    resetCurrentMarker: function() {
+      var config = this.config;
+      //reset the old marker back to blue
+      if (config.currentMarker != null) {
+        var curr = config.currentMarker; 
+        if (config.eventMarkers[curr] != null /* Current marker is a point */) {
+          var icon = generateMarkerSVG(curr.toString())
+          config.eventMarkers[curr].setIcon(icon); 
+
+        } else if (config.eventAreas[curr] != null /* Current marker is an area */) {
+
+          var options = {
+            strokeColor: "#4479BA",
+            fillColor: "#4479BA"
+          }; 
+          config.eventAreas[curr].setOptions(options); 
+
+        } else if (config.eventLists[curr] != null /* Current marker is a list */) {
+          var scale = parseInt(self.model.getEventById(curr).participants[0]); 
+          var weight = 6; 
+          if (!isNaN(scale)) {
+            weight = 50 - 0.00051136 * (100000 - scale); 
+          }
+          var lineSymbol = {
+            path: 'M 0,-1 0,1',
+            strokeColor: '#4479BA',
+            strokeOpacity: 1,
+            scale: 4, 
+            strokeWeight: weight
+          };
+
+          var options = {
+            icons: [{
+              icon: lineSymbol,
+              offset: '0',
+              repeat: '15px'
+            }],
+          }
+
+          config.eventLists[curr].setOptions(options); 
+        }
+      }
+
     },
     
     clear: function() {
