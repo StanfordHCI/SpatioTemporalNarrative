@@ -107,7 +107,7 @@ MapView = (function() {
             position: latlng,
             map: map,
             animation: google.maps.Animation.DROP,
-            icon: "/marker?color=%234479BA&text=" + id
+            icon: "/svgmarker?text=" + id
           });
 
           config.eventMarkers[id] = marker; 
@@ -115,10 +115,10 @@ MapView = (function() {
           google.maps.event.addListener(marker, "click", function() {
             if (config.currentMarker != null) {
               var num = config.currentMarker; 
-              config.eventMarkers[num].setIcon("/marker?color=%234479BA&text=" + num)
+              config.eventMarkers[num].setIcon("/svgmarker?text=" + num); 
             }
 
-            marker.setIcon("/marker?color=%23ff0000&text=" + id); 
+            marker.setIcon("/svgmarker?text=" + id + "&color=red"); 
             config.currentMarker = id; 
             map.panTo(config.eventMarkers[id].getPosition()); 
             self.modelView.scrollHasReached(id); 
@@ -304,7 +304,7 @@ MapView = (function() {
       if (config.currentMarker != null) {
         var curr = config.currentMarker; 
         if (config.eventMarkers[curr] != null /* Current marker is a point */) {
-          var icon = "/marker?color=%234479BA&text=" + curr
+          var icon = "/svgmarker?text=" + curr
           config.eventMarkers[curr].setIcon(icon); 
 
         } else if (config.eventAreas[curr] != null /* Current marker is an area */) {
@@ -343,7 +343,7 @@ MapView = (function() {
 
       if (config.eventMarkers[id] != null /* Current marker is a point */) {
 
-        icon = "/marker?color=%23ff0000&text=" + id; 
+        icon = "/svgmarker?text=" + id + "&color=red"; 
         config.eventMarkers[id].setIcon(icon); 
         config.currentMarker = id; 
         map.panTo(config.eventMarkers[id].getPosition()); 
@@ -388,9 +388,11 @@ MapView = (function() {
       }
 
       //Zoom the map to the appropriate level
+      /*
       if (map.getZoom() != this.scrolledZoomLevel) {
         map.setZoom(this.scrolledZoomLevel); 
       }
+      */
     },
     
     clear: function() {

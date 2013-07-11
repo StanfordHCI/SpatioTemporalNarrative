@@ -31,10 +31,11 @@ var get_article = function(req, res, next) {
 var svgText = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'
 
 
-svgText += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="42">'
+svgText += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="50">'
 svgText += '<g>'
-svgText += '  <rect width="100%" height="100%" style="font-family:museo; fill:<%COLOR%>;stroke-width:0"/>'
-svgText += '  <text style="text-anchor:middle; baseline-shift:-33%;" x="50%" y="50%" fill="white"><%TEXT%></text>'
+svgText += '  <rect width="40" height="42" style="font-family:museo,serif; fill:<%COLOR%>;stroke-width:0"/>'
+svgText += '  <polygon points="14,42 26,42  20,50" style="fill:<%COLOR%>;stroke-width:0"/>'
+svgText += '  <text style="text-anchor:middle; font-size: 12pt; baseline-shift:-33%;" x="20" y="21" fill="white"><%TEXT%></text>'
 svgText += '</g>'
 svgText += '</svg>'
 
@@ -44,7 +45,7 @@ var svgmarker = function(req, res, next) {
     var text = req.query.text || "-"; 
     var dim = req.query.dim || "40x40"; 
 
-    var newText = svgText.replace("<%TEXT%>", text).replace("<%COLOR%>", color);
+    var newText = svgText.replace(/<%TEXT%>/g, text).replace(/<%COLOR%>/g, color);
 
 
     res.setHeader("Content-Type", "image/svg+xml");
