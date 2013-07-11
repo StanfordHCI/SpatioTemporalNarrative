@@ -109,7 +109,7 @@ MapView = (function() {
             position: latlng,
             map: map,
             animation: google.maps.Animation.NONE,
-            icon: generateMarkerSVG(id.toString())
+            icon: generateMarkerSVG(id.toString(), "rgb(68,121,186)", "red")
           });
 
           config.eventMarkers[id] = marker; 
@@ -433,18 +433,20 @@ MapView = (function() {
 
   var memoizeSVG = {};
   window.memoizeSVG = memoizeSVG;
-  function generateMarkerSVG(text, color) {
+  function generateMarkerSVG(text, color, alt_color) {
     var color = color || "rgb(68,121,186)"; 
+    var alt_color = alt_color || "red";
     var text = text || "-"; 
 
     var hash = color + "--HASH--" + text;
-    var alt_hash = "red--HASH--" + text;
+    var alt_hash = alt_color + "--HASH--" + text;
     if (memoizeSVG[hash]) {
+      console.log("MEMO")
       return memoizeSVG[hash];
     }
 
     var newText = svgText.replace("<%TEXT%>", text).replace("<%COLOR%>", color);
-    var altText = svgText.replace("<%TEXT%>", text).replace("<%COLOR%>", "red");
+    var altText = svgText.replace("<%TEXT%>", text).replace("<%COLOR%>", alt_color);
 
     var b64 = "data:image/svg+xml;base64," + Base64.encode(newText);
     var alt_b64 = "data:image/svg+xml;base64," + Base64.encode(altText);
