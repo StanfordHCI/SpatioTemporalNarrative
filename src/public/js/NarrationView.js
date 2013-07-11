@@ -141,7 +141,7 @@ function debug() {
 
     
 
-    return function(currentTop) {
+    return function(currentTop, isDone) {
 
       var effect, start, nextStart;
       for (var i = 0; i < effects.length; i++) {
@@ -159,10 +159,11 @@ function debug() {
 
         } else if (currentTop > start && currentTop < nextStart) {
             if (!effect.on) {
-              view.setScrollAt(effect.id);
               effect.on = true;
               effect.el.getElementsByClassName("eventButton")[0].style.background = "red";
             }
+            if (isDone)
+              view.setScrollAt(effect.id);
         } else {
           effect.on = false;
           effect.el.getElementsByClassName("eventButton")[0].style.background = "#4479BA";

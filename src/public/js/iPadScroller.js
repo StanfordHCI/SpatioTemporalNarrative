@@ -46,7 +46,7 @@ iPadScroller = (function() {
           currentY = newY;
 
       if (delegate)
-        newY = -delegate(-newY);  
+        newY = -delegate(-newY, isDone);  
 
       $scrollEl.css('-webkit-transform', 'translate(0, ' + newY + 'px)');
     }
