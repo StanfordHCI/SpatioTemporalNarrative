@@ -91,6 +91,12 @@ a {
 .hover {
   background-color: #ff0000;
 }
+#back_button {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 500;
+}
 #map_container {
   margin: 0;
   padding: 0;

@@ -40,6 +40,10 @@ $(document).ready(function(event) {
     el: $("#article_container")
   });
 
+  articleViewModel.on("navigate:index", function() {
+    router.navigate("/", { trigger:true });
+  });
+
   window.articleModel = articleModel;
   window.articleViewModel = articleViewModel; 
   

@@ -9,8 +9,8 @@ ArticleViewModel = (function() {
   function ArticleViewModel(options) {
     this.model = options.model;
     this.views = {};
-    this.initialize();
     this.$el = options.el;
+    this.initialize();
   }
 
   _.extend(ArticleViewModel.prototype, Backbone.Events, {
@@ -18,6 +18,7 @@ ArticleViewModel = (function() {
     //This is the constructor hook, where we initialize the object on creation.
     //This only creates the necessary objects, it does not display anything.
     initialize: function() {
+      var self = this;
       this.listenTo(this.model, "change", _.bind(this.setup, this));
 
       this.views = {
@@ -37,6 +38,12 @@ ArticleViewModel = (function() {
           modelView: this
         })
       }
+
+      var isTouch = "ontouchstart" in window;
+
+      $("#buttonBack").on(isTouch ? 'touchend' : 'mouseup', function(evt) {
+        self.trigger("navigate:index");
+      });
 
     },
 
