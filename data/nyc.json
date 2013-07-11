@@ -541,46 +541,39 @@
                 "lng": -73.9833413
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Maison Premiere",
-                "lat": 40.714269, 
-                "lng": -73.961715
+                "value": "298 Bedford Ave, Brooklyn, NY 11211"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Employees Only",
-                "lat": 40.733438, 
-                "lng": -74.006046
+                "value": "510 Hudson St, New York, NY 10014"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Washington Commons",
-                "lat": 40.675275, 
-                "lng": -73.969735
+                "value": "748 Washington Ave, New York, NY 11238"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Little Branch",
-                "lat": 40.737722, 
-                "lng": -74.000885
+                "value": "20 7th Ave S, New York, NY 10011"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Raines Law Room",
-                "lat": 40.738819, 
-                "lng": -73.994584
+                "value": "48 W 17th St, Manhattan, NY 10011"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Gran Electrica",
-                "lat": 40.705172, 
-                "lng": -73.998553
+                "value": "5 Front St, Brooklyn, NY 11201"
             },
             {
-                "type": "point",
+                "type": "address",
                 "name": "Washington Commons",
-                "lat": 40.678002, 
-                "lng": -73.968812
+                "value": "748 Washington Ave, New York, NY 11238"
             }
         ]
     }
