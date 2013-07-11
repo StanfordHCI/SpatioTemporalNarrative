@@ -315,7 +315,7 @@ MapView = (function() {
       if (config.currentMarker != null) {
         var curr = config.currentMarker; 
         if (config.eventMarkers[curr] != null /* Current marker is a point */) {
-          var icon = "/svgmarker?text=" + curr
+          var icon = generateMarkerSVG(curr.toString())
           config.eventMarkers[curr].setIcon(icon); 
 
         } else if (config.eventAreas[curr] != null /* Current marker is an area */) {
@@ -354,7 +354,7 @@ MapView = (function() {
 
       if (config.eventMarkers[id] != null /* Current marker is a point */) {
 
-        icon = "/svgmarker?text=" + id + "&color=red"; 
+        icon = generateMarkerSVG(id.toString(), "red"); 
         config.eventMarkers[id].setIcon(icon); 
         config.currentMarker = id; 
         map.panTo(config.eventMarkers[id].getPosition()); 
