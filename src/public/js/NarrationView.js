@@ -37,9 +37,9 @@ NarrationView = (function() {
       var events = this.model.get("events");
       var shortName = this.model.get("shortName");
 
-
       this.el.innerHTML = this.template({model: this.model, root:shortName, width:456});
 
+      //Spinlock to wait until all images have been loaded.
       function waitForAllImages() {
         var imgs = self.el.getElementsByTagName("img");
         for (var i = 0; i < imgs.length; i++) {
@@ -84,6 +84,13 @@ NarrationView = (function() {
     _delegateEvents: function() {
 
       var self = this;
+      var isTouch = "ontouchstart" in window;
+      
+      this.$el.on(isTouch ? 'touchend' : 'mouseup', '.eventButton', function(evt) {
+        
+        var id = this.getAttribute('data_id');
+        self.possiblyScrollTo(id);
+      });
 
     },
 

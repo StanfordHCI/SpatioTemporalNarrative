@@ -61,9 +61,11 @@ TimelineView = (function() {
         self.drawAllPoints();
       }
 
-      this.el.addEventListener("touchstart",  handleMove, false);
-      this.el.addEventListener("touchmove",   handleMove, false);
-      this.el.addEventListener("touchend",    handleLeave, false);
+      var isTouch = "ontouchstart" in window;
+
+      this.el.addEventListener(isTouch ? "touchstart" : "mouseover",  handleMove, false);
+      this.el.addEventListener(isTouch ? "touchmove"  : "mousemove",   handleMove, false);
+      this.el.addEventListener(isTouch ? "touchend"   : "click" ,    handleLeave, false);
       this.el.addEventListener("touchleave",  handleLeave, false);
       this.el.addEventListener("touchcancel", handleLeave, false);
     },
