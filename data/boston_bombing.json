@@ -160,47 +160,55 @@
         "type": "google",
         "poi": [
             {
-                "type": "address",
+                "type": "point",
                 "name": "Stata Center, MIT",
-                "value": "32 Vassar St Cambridge, MA 02139‎"
+                "lat": 42.361864,
+                "lng": -71.090563
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Allston",
-                "value": "Allston, Boston, MA 02134"
+                "lat": 42.353904,
+                "lng": -71.133711
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Memorial Drive Shell",
-                "value": "820 Memorial Drive, Cambridge, MA 02139"
+                "lat": 42.361759,
+                "lng": -71.115718
             },
             {
                 "type": "list",
                 "name": "Car Chase Area",
                 "value": [
                     {
-                        "type": "address",
-                        "value": "820 Memorial Drive, Cambridge, MA 02139"
+                        "type": "point",
+                        "lat": 42.361759,
+                        "lng": -71.115718
                     },
                     {
-                        "type": "address",
-                        "value": "Laurel St, Watertown, MA 02472"
+                        "type": "point",
+                        "lat": 42.366143,
+                        "lng": -71.163438
                     },
                     {
-                        "type": "address",
-                        "value": "Dexter St, Watertown, MA 02472"
+                        "type": "point",
+                        "lat": 42.366843,
+                        "lng": -71.162780
                     }
                 ]
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Dexter St Residential Area, Watertown",
-                "value": "Dexter St, Watertown, MA 02472"
+                "lat": 42.366843,
+                "lng": -71.162780
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Tsarnaev Found",
-                "value": "67 Franklin St, Watertown, MA 02472"
+                "lat": 42.366515,
+                "lng": -71.174262
             },
             {
                 "type": "area",

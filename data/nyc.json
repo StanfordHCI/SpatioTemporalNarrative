@@ -519,8 +519,8 @@
             {
                 "type": "point",
                 "name": "Caracas Arepa Bar",
-                "lat": 40.72691469999999, 
-                "lng": -73.9852995
+                "lat": 40.713201, 
+                "lng": -73.957399
             },
             {
                 "type": "point",
@@ -541,39 +541,46 @@
                 "lng": -73.9833413
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Maison Premiere",
-                "value": "298 Bedford Ave, Brooklyn, NY 11211"
+                "lat": 40.714269, 
+                "lng": -73.961715
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Employees Only",
-                "value": "510 Hudson St, New York, NY 10014"
+                "lat": 40.733438, 
+                "lng": -74.006046
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Washington Commons",
-                "value": "748 Washington Ave, New York, NY 11238"
+                "lat": 40.675275, 
+                "lng": -73.969735
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Little Branch",
-                "value": "20 7th Ave S, New York, NY 10011"
+                "lat": 40.737722, 
+                "lng": -74.000885
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Raines Law Room",
-                "value": "48 W 17th St, Manhattan, NY 10011"
+                "lat": 40.738819, 
+                "lng": -73.994584
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Gran Electrica",
-                "value": "5 Front St, Brooklyn, NY 11201"
+                "lat": 40.705172, 
+                "lng": -73.998553
             },
             {
-                "type": "address",
+                "type": "point",
                 "name": "Washington Commons",
-                "value": "748 Washington Ave, New York, NY 11238"
+                "lat": 40.678002, 
+                "lng": -73.968812
             }
         ]
     }
