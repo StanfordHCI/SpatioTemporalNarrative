@@ -3,9 +3,9 @@ SpatioTemporalNarrative
 
 Exploring stories based around movement through space and time. 
 
-## [Read the code](http://stanfordhci.github.io/SpatioTemporalNarrative/)
+## [Read the annotated code](http://stanfordhci.github.io/SpatioTemporalNarrative/)
 
-We extensively commented the code with explanations and elaborations. We suggest reading it from front-to-back in the order we wrote it - it isn't very much! - so kick it off with the server.js entrypoint!
+We extensively commented the code with explanations and elaborations. We suggest reading it from front-to-back in the order we wrote it - it isn't very much! - so kick it off with the server.js entrypoint! It's rendered in a literate programming style using [docco-husky](https://github.com/mbrevoort/docco-husky).
 
 - #### The node.js server entrypoint is [src/server.js](http://stanfordhci.github.io/SpatioTemporalNarrative/src/server.js.html)
 
