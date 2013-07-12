@@ -1,18 +1,26 @@
+// RawArticleProvider provides a database-like interface 
+// to the set of JSON files representing stories on disk.
+// It loads all .json files found in the `/data` directory, 
+// parses and checks them for consistency, and stores them in memory.
+// Three public methods provide access to the rest of the app: 
+//
+//  - `findById()` 
+//  - `findByTitle()`
+//  -  `getTitles()`
+//
+// They are all callback-based functions.
+
 var fs   = require('fs');
 var path = require('path');
 
-/*
- * This module parses a directory full of raw .json files
- * into a list of articles
- */
 
+// ### RawArticleProvider constructor
 function RawArticleProvider() {
   this.articles = [];
 };
 
-/*
- * Find an article by its id in the array
- */
+
+// Public method to find an article by its id in the array
 RawArticleProvider.prototype.findById = function(id, callback) {
   if (id < this.articles.length) {
     callback(null, this.articles[id]);
@@ -21,9 +29,8 @@ RawArticleProvider.prototype.findById = function(id, callback) {
   }
 }
 
-/*
- * Find an article by its title
- */
+
+// Public method to find an article by its title
 RawArticleProvider.prototype.findByTitle = function(title, callback) {
   var result = null;
   for (var i = 0; i < this.articles.length; i++) {
@@ -39,9 +46,8 @@ RawArticleProvider.prototype.findByTitle = function(title, callback) {
   }
 }
 
-/*
- * Get all the titles in this ArticleProvider
- */
+
+// Public method to get a list of all the titles in this ArticleProvider
 RawArticleProvider.prototype.getTitles = function(callback) {
   var result = [];
   for (var i = 0; i < this.articles.length; i++) {
@@ -50,40 +56,46 @@ RawArticleProvider.prototype.getTitles = function(callback) {
   callback(null, {"articles":result});
 }
 
-Array.prototype.removeRepeats = function() {
-  this.sort();
+// Helper function to mutate an array by removing any repeating values.
+var removeRepeats = function(arr) {
+  arr.sort();
   var prev = this[0];
   var i = 1;
-  while (this[i]) {
-    if (this[i] == this[i - 1]) {
-      this.splice(i, 1);
+  while (arr[i]) {
+    if (arr[i] == arr[i - 1]) {
+      arr.splice(i, 1);
     } else {
       i++;
     }
   }
 }
 
-/*
- * This loads a directory full of json files,
- * discarding those that doesn't conform to our format,
- * and filling in details as necessary.
- *
- * Potential Issues: If files are busy loading when a request gets made, 
- * only those loaded so far will be returned. Possibly notify the user?
- */
+//
+// This loads a directory full of json files,
+// discarding those that doesn't conform to our format,
+// and filling in details as necessary.
+//
+// Potential Issues: If files are busy loading when a request gets made, 
+// only those loaded so far will be returned. Possibly notify the user?
+//
 RawArticleProvider.prototype.loadDir = function(dirname) {
   console.log("Loading articles from", dirname);
 
+  //Save a reference to the current object in the closure of any helper functions
   var self = this;
 
+  //`loadFile()` is asynchronously called for every JSON file in the `/data` directory.
   function loadFile(err,data) {
-    //Here we parse the json
+    
     if (err) {
       console.log("Error Loading File");
       console.log(data);
     } else {
+      
+      //First we parse the JSON data from the file into a javascript object.
       var file = JSON.parse(data);
 
+      //We recursively generate IDs for all the events of the form "x.x.x" where each subevent gets a new .x appended.
       (function generateTreeIds() {
         
         var stack = [];
@@ -104,10 +116,11 @@ RawArticleProvider.prototype.loadDir = function(dirname) {
 
       })();
 
-
-      //checks to see if the file is an narrative file
+      //Checks to see if the file is an narrative file and has all the appropriate fields.
+      //If not, punt on this file completely.
       if (file.title != null && file.map != null && file.events != null && file.participants != null) {
 
+        //This helper object converts an array of time strings into an array of date objects.
         var convertToDate = function(timeArr) {
           if (timeArr) {
             var dateObjs = [];
@@ -119,7 +132,9 @@ RawArticleProvider.prototype.loadDir = function(dirname) {
         }
 
 
-        //*
+        //We check every event for its subevents,
+        //and fill out the participants field of an event 
+        //as the union of its subevents' participants.
         for (var i = 0; i < file.events.length; i++) {
           if (file.events[i].events) {
 
@@ -132,18 +147,19 @@ RawArticleProvider.prototype.loadDir = function(dirname) {
                   file.events[i].participants = file.events[i].participants.concat(file.events[i].events[j].participants);
                 }
               }
-              file.events[i].participants.removeRepeats();
+              removeRepeats(file.events[i].participants);
             }
 
+            //We convert time strings into Date objects
             for (var j = 0; j < subevents.length; j++) {
               if (subevents[j].time) {
                 file.events[i].events[j].time = convertToDate(subevents[j].time);
-
-                
               }
             } 
           }
 
+          //If an event does not have a time associated with it,
+          //we create a time range as an array of its first and last subevent's times.
           if (!file.events[i].time && file.events[i].events) {
               var subevents = file.events[i].events
               file.events[i].time = [];
@@ -156,12 +172,16 @@ RawArticleProvider.prototype.loadDir = function(dirname) {
         }
       }
 
+      //Lastly, we save the article into the RawArticleProvider's internal store.
       self.articles.push(file);
     }
     
   }
   
 
+  //This is the actual entrypoint for loading a directory of files.
+  //We iterate over the entire list of files, checking for .json extentions, 
+  //and calling `fs.readfile()` with our `loadFile()` function as its callback.
   fs.readdir(dirname, function(err, files) {
 
     for (i in files) {
@@ -174,4 +194,7 @@ RawArticleProvider.prototype.loadDir = function(dirname) {
   });
 } 
 
+//Finally, define this module's publicly available object as the RawArticleProvider constructor.
 module.exports = RawArticleProvider;
+
+// # That's it for the serverside! See [src/public/js/client.js](../public/js/client.js.html) next.

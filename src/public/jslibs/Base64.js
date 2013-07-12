@@ -1,3 +1,4 @@
+//This provides a low-level library for Base64 encoding.
 var Base64 = {
 
 // private property

@@ -1,13 +1,24 @@
-var RawArticleProvider = require('./../providers/RawArticleProvider.js');
+// Routes provides the endpoints for our serverside.
+// That is, it defines URLs that, when called on this server,
+// will run custom code of our own.
+// We use this for one purpose - to serve up JSON data about different stories to the client app.
 
+
+//Include our datasource, which loads up stories from disk, parses them, and provides database-like functions
+//to access them
+var RawArticleProvider = require('./../providers/RawArticleProvider.js');
 var articleProvider = new RawArticleProvider();
 
+// This function handles any `/articles` request to give a list of available articles.
+// It does this by calling the datastore, and provides a callback function that renders the titles as json for the client
 var list_articles = function(req, res, next) {
   articleProvider.getTitles(function(err,data) {
     res.json(data);    
   });
 };
 
+// This function handles any `/articles/:id` request to give all the data for a specific article.
+// If no article is found, it passes an error onto the next handler by calling `next()`
 var get_article = function(req, res, next) {
   var id = parseInt(req.params.id);
   if (isNaN(id)) {
@@ -28,31 +39,11 @@ var get_article = function(req, res, next) {
 }
 
 
-var svgText = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'
-
-
-svgText += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="30" height="38">'
-svgText += '  <polygon points="0,0 0,32 12,32 15,38 18,32 30,32 30,0" style="fill:<%COLOR%>;stroke-width:0.5;stroke:black;stroke-location:inside;"/>'
-svgText += '  <text style="font-family:museo,Helvetica; font-weight:100; text-anchor:middle; font-size: 10pt; baseline-shift:-33%;" x="15" y="16" fill="white"><%TEXT%></text>'
-svgText += '</svg>'
-
-var svgmarker = function(req, res, next) {
-
-    var color = req.query.color || "rgb(68,121,186)"; 
-    var text = req.query.text || "-"; 
-    var dim = req.query.dim || "40x40"; 
-
-    var newText = svgText.replace(/<%TEXT%>/g, text).replace(/<%COLOR%>/g, color);
-
-
-    res.setHeader("Content-Type", "image/svg+xml");
-    res.end(newText);
-
-}
-
-/*
- * ENTRYPOINT: Configure the routes:
- */
+//
+// ### ENTRYPOINT
+//
+// `.init(app)` is exposed as this module's only public function, 
+// 
 exports.init = function(app) {
 
   //Load up articles
@@ -60,9 +51,7 @@ exports.init = function(app) {
 
   app.get('/articles',    list_articles);
   app.get('/articles/:id', get_article);
-
-  app.get('/svgmarker', svgmarker);
-
-
   
 }
+
+// # See [src/providers/RawArticleProvider.js](../providers/RawArticleProvider.js.html) Next
