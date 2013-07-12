@@ -38,7 +38,7 @@ $(document).ready(function(event) {
   //The ArticleModel stores the data for a single story.
   var articleModel = new Models.ArticleModel();
 
-  //The ArticleViewModel has two pruposes:
+  //The ArticleViewModel has two purposes:
   //
   // - **Container** for the three subviews that make up an article
   // - **Event Aggregator** for the three subviews to communicate in a decoupled manner.

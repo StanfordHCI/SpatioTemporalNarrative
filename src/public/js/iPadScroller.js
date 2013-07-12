@@ -127,3 +127,5 @@ iPadScroller = (function() {
   }
 
 })();
+
+// ## Back to [NarrationView.js](NarrationView.js.html) 

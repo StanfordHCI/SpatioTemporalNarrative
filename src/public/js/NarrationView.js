@@ -1,3 +1,10 @@
+// The NarrationView renders the text and images associated with every event into 
+// the left half of the iPad screen. It has the following responsibilities:
+// 
+// - It supports scrolling the display up and down using our iPadScroller.js library,
+// - It binds itself to the ArticleModel to rerender if a new article is requested.
+// - It listens for events from the ArticleViewModel to update itself if other views change
+// - It emits events to the ArticleViewModel when it scrolls to a new part of the story.
 NarrationView = (function() {
 
   function NarrationView(options) {
@@ -9,8 +16,10 @@ NarrationView = (function() {
     this._delegateEvents();
   }
 
+  //The NarrationView extends backbone's Events stream so that it can emit events from itself
   _.extend(NarrationView.prototype, Backbone.Events, {
 
+    //Simply checks that we have a valid HTML element to render into.
     setElement: function(el) {
       if (!el)
         throw new Errpr("View requires a container element");
@@ -18,9 +27,15 @@ NarrationView = (function() {
       this.$el = el instanceof $ ? el : $(el);
     },
 
+    //Here we bind ourselves to:
+    // - events for new data arriving from the Model (through ArticleViewModel); and
+    // - events for scrolling to different parts of the text when the user interacts with other views.
     initialize: function() {
       this.listenTo(this.modelView, "setup", _.bind(this.renderFromScratch, this)); 
       this.listenTo(this.modelView, "scroll:at", _.bind(this.possiblyScrollTo, this));
+
+      //We have to disable the native scrolling to have the iPad not pause JS execution during scrolls.
+      //We use our fancy iPadScroller library instead.
       iPadScroller.disableDefaultScrolling();
 
       this.options.idToPos = {};
@@ -29,6 +44,8 @@ NarrationView = (function() {
 
     },
 
+    // Render from scratch is called in response to a `setup` event from the ArticleViewModel.
+    // It clears any old data, and renders all the text and images into the HTML DOM.
     renderFromScratch: function() {
       var self = this;
       
@@ -37,9 +54,14 @@ NarrationView = (function() {
       var events = this.model.get("events");
       var shortName = this.model.get("shortName");
 
+      //We use underscore.js's simple templating system to generate raw HTML, which we insert
+      //into the DOM here. To see the template we render, check index.html. It is a simple
+      //HTML snippet that gets generated for every event in the model.
       this.el.innerHTML = this.template({model: this.model, root:shortName, width:456});
 
-      //Spinlock to wait until all images have been loaded.
+      //A simple spinlock to wait until all images have been loaded.
+      //This is necessary for the iPadScroller to be able to calculate appropriate places
+      //to switch between events as the user moves the narrative up and down.
       function waitForAllImages() {
         var imgs = self.el.getElementsByTagName("img");
         for (var i = 0; i < imgs.length; i++) {
@@ -48,14 +70,21 @@ NarrationView = (function() {
             return;
           }
         }
+
+        //Here we create the iPad scroller, which is responsible for moving this view.
+        //We also create a delegate function which will allow us to emit events and change our appearance
+        //as the user moves around. This delegate is further down in this file.
         self.options.scroller = iPadScroller.createScroller(self.el, self.el, makeScrollDelegate(self.el, self.modelView, self));
       }
       setTimeout(waitForAllImages, 50);
 
-
       return this;
     }, 
 
+    // This function is bound to the `scroll:at` event from the ArticleViewModel, so that other views
+    // can cause our narrative view to scroll to a new event.
+    // We have to prevent an infinite loop of us asking ourselves to move by checking whether
+    // we're already at the appropriate event.
     possiblyScrollTo: function(id) {
       if (this.scrollAt === id) {
         return;
@@ -81,13 +110,14 @@ NarrationView = (function() {
       this.modelView.scrollHasReached(id);
     },
 
+    //Here we register for user interaction with the
+    //buttons we draw in our template.
     _delegateEvents: function() {
 
       var self = this;
       var isTouch = "ontouchstart" in window;
       
       this.$el.on(isTouch ? 'touchend' : 'mouseup', '.eventButton', function(evt) {
-        
         var id = this.getAttribute('data_id');
         self.possiblyScrollTo(id);
       });
@@ -98,24 +128,15 @@ NarrationView = (function() {
 
   });
 
-var debug_el = document.getElementById("debug_container");
-function debug() {
-  //*
-  var str = "";
-  for (var i in arguments) {
-    str += JSON.stringify(arguments[i]) + " ";
-  }
-  debug_el.innerHTML = str + "<br\>" + debug_el.innerHTML;
-  // */
-}
-
   //**************************************************
-  // Here we have the scroll delegate 
+  // Here we have the scroll delegate .
   //**************************************************
   
+  // ### See [iPadScroller.js](iPadScroller.js.html)
   function makeScrollDelegate(container_el, modelView, view) {
 
 
+    //First we precompute all the boundaries in between the divs that represent individual events.
     var effects = (function() {
       var result = [];
 
@@ -152,6 +173,12 @@ function debug() {
       return (Math.abs(two - one) < dist);
     }
 
+    //This is the actual delegate function we return.
+    //When a scroll is performed, we check through the list of events we know about
+    //to find the currently visible one, and if we just entered it, we highlight its button.
+    //This is pretty shoddy coding to have the actual colors embedded into our JS, but this was a fast hack.
+    //
+    //Once the scroll finishes (aka the user lifts his finger), we emit an event by calling setScrollAt() on our view.
     return function(currentTop, isDone) {
 
       var currentEffect;
@@ -199,3 +226,4 @@ function debug() {
 
 })();
 
+// ## Next see [MapView.js](MapView.js.html), [TimelineView.js](TimelineView.js.html) or [NarrationView.js](NarrationView.js.html). Or you're done!

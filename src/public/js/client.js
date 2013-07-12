@@ -99,7 +99,6 @@ requireScript('/js/TimelineView.js');
 // Our very last script to load is the app's initialization module, where everything is started.
 requireScript('/js/app.js');
 
-//Kick off loading the scripts one by one.
 loadAll();
 
 // # See [app.js](app.js.html) Next

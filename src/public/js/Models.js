@@ -1,5 +1,17 @@
+// Models contain two different models:
+// 
+// - *ArticleModel* that stores an individual article
+// - *ArticleIndexModel* that stores the list of available articles.
+//
+// They both emit events when they update themselves, 
+// allowing views to bind to their change events.
 Models = (function() {
 
+
+  // ###A rticleModel
+  //Constructor function for the storage of individual articles
+  // It only populates itself once `fetch()` is called.
+  //*************************************************************
   function ArticleModel(options) {
     this.options = options || {};
     this.data = [];
@@ -7,28 +19,21 @@ Models = (function() {
 
   _.extend(ArticleModel.prototype, Backbone.Events, {
 
-    // This returns data from our internal store.
     get: function(key) {
       return this.data[key];
     },
 
-    // This updates our internal store, and triggers a "change" event.
-    set: function(key) {
-      this.data[key];
-      this.trigger('change:'+key);
-    },
-
-    // This initializes our internal store.
+    // This requests a specific article from the server,
+    // and once the asynchronous callback comes back,
+    // triggers a "change" event to update any listening views.
     fetchById: function(id) {
 
       var self = this;
       $.ajax("/articles/" + id, {
 
         success: function(data) {
-
           self.data = data;
           self.trigger('change', self);
-
         }
 
       });
@@ -36,9 +41,8 @@ Models = (function() {
     },
 
     // This is an iterator function that calls the passed in function
-    // funce for every event on every event (includiding subevents) 
+    // func for every event on every event (including subevents) 
     // in the current model.
-
     forAllEvents: function(func) {
       
       var events = this.data.events;
@@ -90,7 +94,11 @@ Models = (function() {
 
   })
 
-  // This initializes the ArticleIndexModel based on the passed in options
+  // ### ArticleIndexModel
+  // The constructor for the ArticleIndexModel,
+  // which stores the list of available articles.
+  // It only populates itself once `fetch()` is called.
+  //*************************************************************
   function ArticleIndexModel(options) {
     this.options = options || {};
     this.data = [];
@@ -103,24 +111,21 @@ Models = (function() {
       return this.data;
     },
 
+    // This function requests the list of articles from the server,
+    // and triggers a `change` event once the asynchronous callback comes back successfully.
     fetch: function() {
 
       var self = this;
       $.ajax("/articles/", {
 
         success: function(data) {
-
           self.data = data;
           self.trigger('change', self);
-
         }
 
       })
-
     }
-
   })
-
 
   return {
     ArticleModel: ArticleModel,
@@ -129,3 +134,5 @@ Models = (function() {
 
 
 })();
+
+// ## Next see [ArticleIndexView.js](ArticleIndexView.js.html)
