@@ -1,0 +1,202 @@
+<!DOCTYPE html><html><head><title>NarrationView.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../../../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../../../index.html" class="source"><span class="file_name">README</span></a><a href="../../../src/providers/RawArticleProvider.js.html" class="source "><span class="base_path">src / providers / </span><span class="file_name">RawArticleProvider.js</span></a><a href="../../../src/public/js/app.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">app.js</span></a><a href="../../../src/public/js/ArticleIndexView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">ArticleIndexView.js</span></a><a href="../../../src/public/js/ArticleViewModel.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">ArticleViewModel.js</span></a><a href="../../../src/public/js/client.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">client.js</span></a><a href="../../../src/public/js/iPadScroller.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">iPadScroller.js</span></a><a href="../../../src/public/js/MapView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">MapView.js</span></a><a href="../../../src/public/js/Models.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">Models.js</span></a><a href="../../../src/public/js/NarrationView.js.html" class="source selected"><span class="base_path">src / public / js / </span><span class="file_name">NarrationView.js</span></a><a href="../../../src/public/js/TimelineView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">TimelineView.js</span></a><a href="../../../src/routes/routes.js.html" class="source "><span class="base_path">src / routes / </span><span class="file_name">routes.js</span></a><a href="../../../src/server.js.html" class="source "><span class="base_path">src / </span><span class="file_name">server.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>NarrationView.js</h1><div class="filepath">src/public/js/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div><p>The NarrationView renders the text and images associated with every event into 
+the left half of the iPad screen. It has the following responsibilities:</p>
+
+<ul>
+<li>It supports scrolling the display up and down using our iPadScroller.js library,</li>
+<li>It binds itself to the ArticleModel to rerender if a new article is requested.</li>
+<li>It listens for events from the ArticleViewModel to update itself if other views change</li>
+<li>It emits events to the ArticleViewModel when it scrolls to a new part of the story.</li>
+</ul>
+</td><td class="code"><div class="highlight"><pre><span class="nx">NarrationView</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+  <span class="kd">function</span> <span class="nx">NarrationView</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span> 
+    <span class="k">this</span><span class="p">.</span><span class="nx">model</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">model</span> <span class="o">||</span> <span class="kc">undefined</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">modelView</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">modelView</span> <span class="o">||</span> <span class="kc">undefined</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setElement</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span> 
+    <span class="k">this</span><span class="p">.</span><span class="nx">initialize</span><span class="p">();</span> 
+    <span class="k">this</span><span class="p">.</span><span class="nx">_delegateEvents</span><span class="p">();</span>
+  <span class="p">}</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><p>The NarrationView extends backbone's Events stream so that it can emit events from itself</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">NarrationView</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span> <span class="p">{</span></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>Simply checks that we have a valid HTML element to render into.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">setElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">Errpr</span><span class="p">(</span><span class="s2">&quot;View requires a container element&quot;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">$</span> <span class="o">?</span> <span class="nx">el</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">:</span> <span class="nx">el</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$el</span> <span class="o">=</span> <span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">$</span> <span class="o">?</span> <span class="nx">el</span> <span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+    <span class="p">},</span></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>Here we bind ourselves to:
+- events for new data arriving from the Model (through ArticleViewModel); and
+- events for scrolling to different parts of the text when the user interacts with other views.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">modelView</span><span class="p">,</span> <span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="nx">_</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">renderFromScratch</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span> 
+      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">modelView</span><span class="p">,</span> <span class="s2">&quot;scroll:at&quot;</span><span class="p">,</span> <span class="nx">_</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">possiblyScrollTo</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>We have to disable the native scrolling to have the iPad not pause JS execution during scrolls.
+We use our fancy iPadScroller library instead.</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">iPadScroller</span><span class="p">.</span><span class="nx">disableDefaultScrolling</span><span class="p">();</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">idToPos</span> <span class="o">=</span> <span class="p">{};</span>
+      
+      <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">snapTo</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+    <span class="p">},</span></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><p>Render from scratch is called in response to a <code>setup</code> event from the ArticleViewModel.
+It clears any old data, and renders all the text and images into the HTML DOM.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">renderFromScratch</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      
+      <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+
+      <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;events&quot;</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">shortName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;shortName&quot;</span><span class="p">);</span></pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><p>We use underscore.js's simple templating system to generate raw HTML, which we insert
+into the DOM here. To see the template we render, check index.html. It is a simple
+HTML snippet that gets generated for every event in the model.</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">({</span><span class="nx">model</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span> <span class="nx">root</span><span class="o">:</span><span class="nx">shortName</span><span class="p">,</span> <span class="nx">width</span><span class="o">:</span><span class="mi">456</span><span class="p">});</span></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><p>A simple spinlock to wait until all images have been loaded.
+This is necessary for the iPadScroller to be able to calculate appropriate places
+to switch between events as the user moves the narrative up and down.</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">waitForAllImages</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">imgs</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;img&quot;</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">imgs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">imgs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">complete</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">waitForAllImages</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+          <span class="p">}</span>
+        <span class="p">}</span></pre></div></td></tr><tr id="section-9"><td class="docs"><div class="pilwrap"><a href="#section-9" class="pilcrow">&#182;</a></div><p>Here we create the iPad scroller, which is responsible for moving this view.
+We also create a delegate function which will allow us to emit events and change our appearance
+as the user moves around. This delegate is further down in this file.</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nx">self</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">scroller</span> <span class="o">=</span> <span class="nx">iPadScroller</span><span class="p">.</span><span class="nx">createScroller</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">el</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">el</span><span class="p">,</span> <span class="nx">makeScrollDelegate</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">el</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">modelView</span><span class="p">,</span> <span class="nx">self</span><span class="p">));</span>
+      <span class="p">}</span>
+      <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">waitForAllImages</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span> </pre></div></td></tr><tr id="section-10"><td class="docs"><div class="pilwrap"><a href="#section-10" class="pilcrow">&#182;</a></div><p>This function is bound to the <code>scroll:at</code> event from the ArticleViewModel, so that other views
+can cause our narrative view to scroll to a new event.
+We have to prevent an infinite loop of us asking ourselves to move by checking whether
+we're already at the appropriate event.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">possiblyScrollTo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">scrollAt</span> <span class="o">===</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">setScrollAt</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>    
+      <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">scroller</span><span class="p">.</span><span class="nx">scrollTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">idToPos</span><span class="p">[</span><span class="nx">id</span><span class="p">]);</span>
+    <span class="p">},</span>
+    
+    <span class="nx">clear</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">scroller</span><span class="p">)</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">scroller</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">scrollAt</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">idToPos</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">setScrollAt</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">scrollAt</span> <span class="o">===</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">scrollAt</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">modelView</span><span class="p">.</span><span class="nx">scrollHasReached</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+    <span class="p">},</span></pre></div></td></tr><tr id="section-11"><td class="docs"><div class="pilwrap"><a href="#section-11" class="pilcrow">&#182;</a></div><p>Here we register for user interaction with the
+buttons we draw in our template.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">_delegateEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">isTouch</span> <span class="o">=</span> <span class="s2">&quot;ontouchstart&quot;</span> <span class="k">in</span> <span class="nb">window</span><span class="p">;</span>
+      
+      <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">isTouch</span> <span class="o">?</span> <span class="s1">&#39;touchend&#39;</span> <span class="o">:</span> <span class="s1">&#39;mouseup&#39;</span><span class="p">,</span> <span class="s1">&#39;.eventButton&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;data_id&#39;</span><span class="p">);</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">possiblyScrollTo</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+      <span class="p">});</span>
+
+    <span class="p">},</span>
+
+    <span class="nx">template</span><span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;tmpl-event&#39;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="p">)</span>
+
+  <span class="p">});</span></pre></div></td></tr><tr id="section-12"><td class="docs"><div class="pilwrap"><a href="#section-12" class="pilcrow">&#182;</a></div><hr />
+
+<p>Here we have the scroll delegate .</p>
+
+<hr />
+</td><td class="code"><div class="highlight"><pre>  </pre></div></td></tr><tr id="section-13"><td class="docs"><div class="pilwrap"><a href="#section-13" class="pilcrow">&#182;</a></div><h3>See <a href="iPadScroller.js.html">iPadScroller.js</a></h3>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">makeScrollDelegate</span><span class="p">(</span><span class="nx">container_el</span><span class="p">,</span> <span class="nx">modelView</span><span class="p">,</span> <span class="nx">view</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-14"><td class="docs"><div class="pilwrap"><a href="#section-14" class="pilcrow">&#182;</a></div><p>First we precompute all the boundaries in between the divs that represent individual events.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">effects</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+      <span class="kd">var</span> <span class="nx">amountVisible</span> <span class="o">=</span> <span class="nx">screen</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">c_el</span> <span class="o">=</span> <span class="nx">container_el</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+
+      <span class="kd">var</span> <span class="nx">children_els</span> <span class="o">=</span> <span class="nx">c_el</span><span class="p">.</span><span class="nx">children</span><span class="p">;</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">children_els</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">child</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">children_els</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+
+        <span class="kd">var</span> <span class="nx">myMarginTop</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#myBlock&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;marginTop&quot;</span><span class="p">)</span> <span class="p">);</span></pre></div></td></tr><tr id="section-15"><td class="docs"><div class="pilwrap"><a href="#section-15" class="pilcrow">&#182;</a></div><p>start fading in when it becomes visible</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">start</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">offset</span><span class="p">().</span><span class="nx">top</span> <span class="o">-</span> <span class="mi">50</span><span class="p">;</span>
+
+        <span class="nx">view</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">idToPos</span><span class="p">[</span><span class="nx">children_els</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">offset</span><span class="p">().</span><span class="nx">top</span><span class="p">;</span>
+
+        <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+          <span class="nx">start</span><span class="o">:</span> <span class="nx">start</span><span class="p">,</span>
+          <span class="nx">el</span><span class="o">:</span> <span class="nx">children_els</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span>
+          <span class="nx">on</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="nx">id</span><span class="o">:</span> <span class="nx">children_els</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">)</span>
+        <span class="p">});</span>
+
+      <span class="p">}</span>
+
+      <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">})();</span>
+
+    
+    <span class="kd">function</span> <span class="nx">within</span><span class="p">(</span><span class="nx">one</span><span class="p">,</span> <span class="nx">two</span><span class="p">,</span> <span class="nx">dist</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">two</span> <span class="o">-</span> <span class="nx">one</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nx">dist</span><span class="p">);</span>
+    <span class="p">}</span></pre></div></td></tr><tr id="section-16"><td class="docs"><div class="pilwrap"><a href="#section-16" class="pilcrow">&#182;</a></div><p>This is the actual delegate function we return.
+When a scroll is performed, we check through the list of events we know about
+to find the currently visible one, and if we just entered it, we highlight its button.
+This is pretty shoddy coding to have the actual colors embedded into our JS, but this was a fast hack.</p>
+
+<p>Once the scroll finishes (aka the user lifts his finger), we emit an event by calling setScrollAt() on our view.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">currentTop</span><span class="p">,</span> <span class="nx">isDone</span><span class="p">)</span> <span class="p">{</span>
+
+      <span class="kd">var</span> <span class="nx">currentEffect</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">effect</span><span class="p">,</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">nextStart</span><span class="p">;</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">effects</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">effect</span> <span class="o">=</span> <span class="nx">effects</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="nx">start</span> <span class="o">=</span> <span class="nx">effect</span><span class="p">.</span><span class="nx">start</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">effects</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+          <span class="nx">nextStart</span> <span class="o">=</span> <span class="nx">effects</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="nx">start</span><span class="p">;</span>
+        <span class="k">else</span>
+          <span class="nx">nextStart</span> <span class="o">=</span> <span class="nx">start</span> <span class="o">+</span> <span class="mi">200</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">currentTop</span> <span class="o">&lt;</span> <span class="nx">effect</span><span class="p">.</span><span class="nx">start</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">effect</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+          <span class="nx">effect</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">&quot;eventButton&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s2">&quot;#4479BA&quot;</span><span class="p">;</span>
+
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">currentTop</span> <span class="o">&gt;</span> <span class="nx">start</span> <span class="o">&amp;&amp;</span> <span class="nx">currentTop</span> <span class="o">&lt;</span> <span class="nx">nextStart</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">effect</span><span class="p">.</span><span class="nx">on</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">effect</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+              <span class="nx">effect</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">&quot;eventButton&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">currentEffect</span> <span class="o">=</span> <span class="nx">effect</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isDone</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">view</span><span class="p">.</span><span class="nx">setScrollAt</span><span class="p">(</span><span class="nx">effect</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nx">effect</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+          <span class="nx">effect</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s2">&quot;eventButton&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s2">&quot;#4479BA&quot;</span><span class="p">;</span>
+
+        <span class="p">}</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">isDone</span> <span class="o">&amp;&amp;</span> <span class="nx">view</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">snapTo</span> <span class="o">&amp;&amp;</span> <span class="nx">within</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">idToPos</span><span class="p">[</span><span class="nx">currentEffect</span><span class="p">.</span><span class="nx">id</span><span class="p">],</span> <span class="nx">currentTop</span><span class="p">,</span> <span class="mi">150</span><span class="p">))</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">view</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">idToPos</span><span class="p">[</span><span class="nx">currentEffect</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
+
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">currentTop</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">NarrationView</span><span class="p">;</span>
+
+
+
+<span class="p">})();</span></pre></div></td></tr><tr id="section-17"><td class="docs"><div class="pilwrap"><a href="#section-17" class="pilcrow">&#182;</a></div><h2>Next see <a href="MapView.js.html">MapView.js</a>, <a href="TimelineView.js.html">TimelineView.js</a> or <a href="NarrationView.js.html">NarrationView.js</a>. Or you're done!</h2>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr></tbody></table><div id="generated">generated Fri Jul 12 2013 03:39:11 GMT-0700 (PDT)  </div></div></body></html>

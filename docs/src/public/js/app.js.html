@@ -1,0 +1,73 @@
+<!DOCTYPE html><html><head><title>app.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../../../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../../../index.html" class="source"><span class="file_name">README</span></a><a href="../../../src/providers/RawArticleProvider.js.html" class="source "><span class="base_path">src / providers / </span><span class="file_name">RawArticleProvider.js</span></a><a href="../../../src/public/js/app.js.html" class="source selected"><span class="base_path">src / public / js / </span><span class="file_name">app.js</span></a><a href="../../../src/public/js/ArticleIndexView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">ArticleIndexView.js</span></a><a href="../../../src/public/js/ArticleViewModel.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">ArticleViewModel.js</span></a><a href="../../../src/public/js/client.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">client.js</span></a><a href="../../../src/public/js/iPadScroller.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">iPadScroller.js</span></a><a href="../../../src/public/js/MapView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">MapView.js</span></a><a href="../../../src/public/js/Models.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">Models.js</span></a><a href="../../../src/public/js/NarrationView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">NarrationView.js</span></a><a href="../../../src/public/js/TimelineView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">TimelineView.js</span></a><a href="../../../src/routes/routes.js.html" class="source "><span class="base_path">src / routes / </span><span class="file_name">routes.js</span></a><a href="../../../src/server.js.html" class="source "><span class="base_path">src / </span><span class="file_name">server.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>app.js</h1><div class="filepath">src/public/js/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><h2>App Design</h2>
+
+<p>We follow a variant of the Model-View-ViewModel pattern:</p>
+
+<ul>
+<li>Our client-side router either requests loading the list of articles, or loading a specific article.</li>
+<li>Our model retrieves articles from the server, and emits <strong>events</strong> when a request is completed.</li>
+<li>Our views use the <strong>data binding</strong> pattern by listening to these events and updating themselves as necessary.</li>
+</ul>
+
+<p>Initialization of the entire app happens here.
+This is loaded from client.js, which handles all the loading,
+and runs when all the DOM is loaded.</p>
+
+<p>We are focusing on using events, including for initialization.</p>
+</td><td class="code"><div class="highlight"><pre><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><h3>Setting up the index models and views</h3>
+
+<hr />
+</td><td class="code"><div class="highlight"><pre>  </pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>The ArticleIndexModel contains the list of articles on the server.</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">articleIndexModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Models</span><span class="p">.</span><span class="nx">ArticleIndexModel</span><span class="p">();</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>The IndexView shows just the list as clickable article names to the user.
+It binds itself to the given model, and will update when data comes in.</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">articleIndexView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ArticleIndexView</span><span class="p">({</span> 
+    <span class="nx">el</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#index_container&quot;</span><span class="p">),</span> 
+    <span class="nx">model</span><span class="o">:</span> <span class="nx">articleIndexModel</span><span class="p">,</span>
+  <span class="p">});</span></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><p>We use the <strong>observer</strong> pattern to listen for events coming from the articleIndexView when it wants to navigate to an article</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="nx">articleIndexView</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;navigate:article&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span><span class="p">(</span><span class="s2">&quot;article/&quot;</span><span class="o">+</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span> <span class="nx">trigger</span><span class="o">:</span><span class="kc">true</span> <span class="p">});</span>
+  <span class="p">});</span></pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><h3>Setting up the article models and views</h3>
+
+<hr />
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><p>The ArticleModel stores the data for a single story.</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">articleModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Models</span><span class="p">.</span><span class="nx">ArticleModel</span><span class="p">();</span></pre></div></td></tr><tr id="section-9"><td class="docs"><div class="pilwrap"><a href="#section-9" class="pilcrow">&#182;</a></div><p>The ArticleViewModel has two purposes:</p>
+
+<ul>
+<li><strong>Container</strong> for the three subviews that make up an article</li>
+<li><strong>Event Aggregator</strong> for the three subviews to communicate in a decoupled manner.</li>
+</ul>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">articleViewModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ArticleViewModel</span><span class="p">({</span>
+    <span class="nx">model</span><span class="o">:</span> <span class="nx">articleModel</span><span class="p">,</span>
+    <span class="nx">el</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#article_container&quot;</span><span class="p">)</span>
+  <span class="p">});</span></pre></div></td></tr><tr id="section-10"><td class="docs"><div class="pilwrap"><a href="#section-10" class="pilcrow">&#182;</a></div><p>Use the <strong>observer</strong> pattern to listen for navigation requests from the ViewModel.</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="nx">articleViewModel</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;navigate:index&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">router</span><span class="p">.</span><span class="nx">navigate</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">trigger</span><span class="o">:</span><span class="kc">true</span> <span class="p">});</span>
+  <span class="p">});</span>
+
+  </pre></div></td></tr><tr id="section-11"><td class="docs"><div class="pilwrap"><a href="#section-11" class="pilcrow">&#182;</a></div><p>Here we configure out two routes: either displaying an index or displaying an article's three subviews using the ViewModel.</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">AppRouter</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+
+    <span class="nx">routes</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;article/:id&quot;</span><span class="o">:</span> <span class="s2">&quot;article&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;*default&quot;</span><span class="o">:</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+
+    <span class="nx">index</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div></td></tr><tr id="section-12"><td class="docs"><div class="pilwrap"><a href="#section-12" class="pilcrow">&#182;</a></div><p>Request the data for the index view.
+That starts off the entire process to build the interface and make it visible.</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">articleIndexModel</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span></pre></div></td></tr><tr id="section-13"><td class="docs"><div class="pilwrap"><a href="#section-13" class="pilcrow">&#182;</a></div><p>Hide the rest of the UI</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">articleViewModel</span><span class="p">.</span><span class="nx">hide</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">article</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span></pre></div></td></tr><tr id="section-14"><td class="docs"><div class="pilwrap"><a href="#section-14" class="pilcrow">&#182;</a></div><p>Request the data for the specific id's article view.
+That starts off the entire process to build the interface and make it visible.</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">articleModel</span><span class="p">.</span><span class="nx">fetchById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span></pre></div></td></tr><tr id="section-15"><td class="docs"><div class="pilwrap"><a href="#section-15" class="pilcrow">&#182;</a></div><p>Hide the rest of the UI</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">articleIndexView</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+    <span class="p">},</span>
+
+  <span class="p">});</span>
+
+  <span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AppRouter</span><span class="p">();</span>
+  <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+
+<span class="p">});</span></pre></div></td></tr><tr id="section-16"><td class="docs"><div class="pilwrap"><a href="#section-16" class="pilcrow">&#182;</a></div><h2>Next see <a href="Models.js.html">Models.js</a></h2>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr></tbody></table><div id="generated">generated Fri Jul 12 2013 03:39:09 GMT-0700 (PDT)  </div></div></body></html>

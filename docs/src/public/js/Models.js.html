@@ -1,0 +1,124 @@
+<!DOCTYPE html><html><head><title>Models.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../../../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../../../index.html" class="source"><span class="file_name">README</span></a><a href="../../../src/providers/RawArticleProvider.js.html" class="source "><span class="base_path">src / providers / </span><span class="file_name">RawArticleProvider.js</span></a><a href="../../../src/public/js/app.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">app.js</span></a><a href="../../../src/public/js/ArticleIndexView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">ArticleIndexView.js</span></a><a href="../../../src/public/js/ArticleViewModel.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">ArticleViewModel.js</span></a><a href="../../../src/public/js/client.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">client.js</span></a><a href="../../../src/public/js/iPadScroller.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">iPadScroller.js</span></a><a href="../../../src/public/js/MapView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">MapView.js</span></a><a href="../../../src/public/js/Models.js.html" class="source selected"><span class="base_path">src / public / js / </span><span class="file_name">Models.js</span></a><a href="../../../src/public/js/NarrationView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">NarrationView.js</span></a><a href="../../../src/public/js/TimelineView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">TimelineView.js</span></a><a href="../../../src/routes/routes.js.html" class="source "><span class="base_path">src / routes / </span><span class="file_name">routes.js</span></a><a href="../../../src/server.js.html" class="source "><span class="base_path">src / </span><span class="file_name">server.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>Models.js</h1><div class="filepath">src/public/js/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div><p>Models contain two different models:</p>
+
+<ul>
+<li><em>ArticleModel</em> that stores an individual article</li>
+<li><em>ArticleIndexModel</em> that stores the list of available articles.</li>
+</ul>
+
+<p>They both emit events when they update themselves, 
+allowing views to bind to their change events.</p>
+</td><td class="code"><div class="highlight"><pre><span class="nx">Models</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><h3>A rticleModel</h3>
+
+<p>Constructor function for the storage of individual articles
+It only populates itself once <code>fetch()</code> is called.</p>
+
+<hr />
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">ArticleModel</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="p">};</span>
+
+  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">ArticleModel</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span> <span class="p">{</span>
+
+    <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+    <span class="p">},</span></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>This requests a specific article from the server,
+and once the asynchronous callback comes back,
+triggers a "change" event to update any listening views.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">fetchById</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s2">&quot;/articles/&quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">,</span> <span class="p">{</span>
+
+        <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="nx">self</span><span class="p">);</span>
+        <span class="p">}</span>
+
+      <span class="p">});</span>
+
+    <span class="p">},</span></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>This is an iterator function that calls the passed in function
+func for every event on every event (including subevents) 
+in the current model.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">forAllEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+      
+      <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>This function calls the func on all events. If an event has
+subevents, this function recursively calls itself to call
+func on all those subevents as well</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">callOnMeAndMyChildren</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">func</span><span class="p">(</span><span class="nx">evt</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">events</span><span class="p">)</span>
+          <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">evt</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">callOnMeAndMyChildren</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+          <span class="p">}</span>
+      <span class="p">}</span>      
+      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">callOnMeAndMyChildren</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+      <span class="p">}</span>
+
+    <span class="p">},</span></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><p>Returns an event or subevent based on its unique id. IDs 
+are in the represented by numbers where each subevent id 
+is the combination of its parent events' id and its own index, 
+seperated by a "." (for example 1.2 is a subevent ID)</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">getEventById</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">id</span> <span class="o">==</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+      <span class="p">}</span>
+      <span class="nx">idList</span> <span class="o">=</span> <span class="nx">id</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">evt</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">idList</span><span class="p">[</span><span class="mi">0</span><span class="p">]];</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">idList</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">evt</span> <span class="o">=</span> <span class="nx">evt</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">idList</span><span class="p">[</span><span class="nx">i</span><span class="p">]];</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">evt</span><span class="p">;</span>
+    <span class="p">},</span></pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><p>If the event corresponding to the passed in ID is a nested one,
+return its parent event. Otherwise, return undefined.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">getEventParent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">id</span> <span class="o">!=</span> <span class="s1">&#39;number&#39;</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">splits</span> <span class="o">=</span> <span class="nx">id</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">splits</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">splits</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+          <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">getEventById</span><span class="p">(</span><span class="nx">splits</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">));</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="kc">undefined</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="p">})</span></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><h3>ArticleIndexModel</h3>
+
+<p>The constructor for the ArticleIndexModel,
+which stores the list of available articles.
+It only populates itself once <code>fetch()</code> is called.</p>
+
+<hr />
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">ArticleIndexModel</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="p">}</span>
+
+  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">ArticleIndexModel</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span> <span class="p">{</span></pre></div></td></tr><tr id="section-9"><td class="docs"><div class="pilwrap"><a href="#section-9" class="pilcrow">&#182;</a></div><p>This function returns the ArticleIndexModel</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+    <span class="p">},</span></pre></div></td></tr><tr id="section-10"><td class="docs"><div class="pilwrap"><a href="#section-10" class="pilcrow">&#182;</a></div><p>This function requests the list of articles from the server,
+and triggers a <code>change</code> event once the asynchronous callback comes back successfully.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">fetch</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="s2">&quot;/articles/&quot;</span><span class="p">,</span> <span class="p">{</span>
+
+        <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="nx">self</span><span class="p">);</span>
+        <span class="p">}</span>
+
+      <span class="p">})</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">ArticleModel</span><span class="o">:</span> <span class="nx">ArticleModel</span><span class="p">,</span>
+    <span class="nx">ArticleIndexModel</span><span class="o">:</span> <span class="nx">ArticleIndexModel</span>
+  <span class="p">}</span>
+
+
+<span class="p">})();</span></pre></div></td></tr><tr id="section-11"><td class="docs"><div class="pilwrap"><a href="#section-11" class="pilcrow">&#182;</a></div><h2>Next see <a href="ArticleIndexView.js.html">ArticleIndexView.js</a></h2>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr></tbody></table><div id="generated">generated Fri Jul 12 2013 03:39:10 GMT-0700 (PDT)  </div></div></body></html>
