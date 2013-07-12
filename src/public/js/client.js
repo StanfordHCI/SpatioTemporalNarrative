@@ -65,14 +65,14 @@ var loadAll = function() {
 
 // ### Libaries
 
+//jQuery simplifies working with the DOM
+requireScript("/jslibs/jquery-2.0.2.min.js",   false);
+
 //Underscore provides functional programming for javascript
 requireScript('/jslibs/underscore-min.js',     false);
 
 //Backbone provides a simple router, event, model and view system
 requireScript('/jslibs/backbone-min.js',       false);
-
-//jQuery simplifies working with the DOM
-requireScript("/jslibs/jquery-2.0.2.min.js",   false);
 
 //Raphael provides a library over SVG graphics, used for our timeline.
 requireScript('/jslibs/raphael-min.js',        false);
@@ -80,10 +80,11 @@ requireScript('/jslibs/raphael-min.js',        false);
 //Async provides functional programming abstractions to work with asynchronous calls
 requireScript('/jslibs/async.js',              false);
 
+//Base64 provides methods useful for doing data-uri encoding.
+requireScript('/jslibs/Base64.js',             false);
+
 // ### App modules
 
-requireScript('/js/Base64.js');
-requireScript('/js/Events.js');
 requireScript('/js/iPadScroller.js');
 
 requireScript('/js/Models.js');
