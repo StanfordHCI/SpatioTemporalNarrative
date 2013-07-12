@@ -1,0 +1,77 @@
+<!DOCTYPE html><html><head><title>ArticleViewModel.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../../../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../../../index.html" class="source"><span class="file_name">README</span></a><a href="../../../src/providers/RawArticleProvider.js.html" class="source "><span class="base_path">src / providers / </span><span class="file_name">RawArticleProvider.js</span></a><a href="../../../src/public/js/app.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">app.js</span></a><a href="../../../src/public/js/ArticleIndexView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">ArticleIndexView.js</span></a><a href="../../../src/public/js/ArticleViewModel.js.html" class="source selected"><span class="base_path">src / public / js / </span><span class="file_name">ArticleViewModel.js</span></a><a href="../../../src/public/js/client.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">client.js</span></a><a href="../../../src/public/js/iPadScroller.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">iPadScroller.js</span></a><a href="../../../src/public/js/MapView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">MapView.js</span></a><a href="../../../src/public/js/Models.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">Models.js</span></a><a href="../../../src/public/js/NarrationView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">NarrationView.js</span></a><a href="../../../src/public/js/TimelineView.js.html" class="source "><span class="base_path">src / public / js / </span><span class="file_name">TimelineView.js</span></a><a href="../../../src/routes/routes.js.html" class="source "><span class="base_path">src / routes / </span><span class="file_name">routes.js</span></a><a href="../../../src/server.js.html" class="source "><span class="base_path">src / </span><span class="file_name">server.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>ArticleViewModel.js</h1><div class="filepath">src/public/js/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div><p>The function of the ViewModel is:
+ - provide <strong>event aggregation</strong> between views
+ - provide <strong>container</strong> for all the views
+ - initiate the <strong>setup</strong> of all the views </p>
+</td><td class="code"><div class="highlight"><pre><span class="nx">ArticleViewModel</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><p>Hook up the ArticleViewModel to a backend model in its initialization, 
+and keep track of the main element to make visible or hide as the user navigates between the index and an article view.</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">ArticleViewModel</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">model</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">views</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">el</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">initialize</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">ArticleViewModel</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span> <span class="p">{</span></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>This is the constructor hook, where we initialize the object on creation.
+This only creates the necessary objects, it does not display anything.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="nx">_</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">views</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;narrationView&quot;</span><span class="o">:</span> <span class="k">new</span> <span class="nx">NarrationView</span><span class="p">({</span>
+          <span class="nx">el</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#narrative_container&quot;</span><span class="p">),</span>
+          <span class="nx">model</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+          <span class="nx">modelView</span><span class="o">:</span> <span class="k">this</span>
+        <span class="p">}),</span>
+        <span class="s2">&quot;mapView&quot;</span><span class="o">:</span> <span class="k">new</span> <span class="nx">MapView</span><span class="p">({</span>
+          <span class="nx">el</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#map_container&quot;</span><span class="p">),</span>
+          <span class="nx">model</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+          <span class="nx">modelView</span><span class="o">:</span> <span class="k">this</span>
+        <span class="p">}),</span>
+        <span class="s2">&quot;timelineView&quot;</span><span class="o">:</span> <span class="k">new</span> <span class="nx">TimelineView</span><span class="p">({</span>
+          <span class="nx">el</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#timeline_container&quot;</span><span class="p">),</span>
+          <span class="nx">model</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">,</span>
+          <span class="nx">modelView</span><span class="o">:</span> <span class="k">this</span>
+        <span class="p">})</span>
+      <span class="p">}</span>
+
+      <span class="kd">var</span> <span class="nx">isTouch</span> <span class="o">=</span> <span class="s2">&quot;ontouchstart&quot;</span> <span class="k">in</span> <span class="nb">window</span><span class="p">;</span></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>Lisen for touch events on the back button, and trigger an event on the viewmodel. 
+The app can listen for this and respond to navigation events, in the style of the <strong>observer</strong> pattern.</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#buttonBack&quot;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="nx">isTouch</span> <span class="o">?</span> <span class="s1">&#39;touchend&#39;</span> <span class="o">:</span> <span class="s1">&#39;mouseup&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;navigate:index&quot;</span><span class="p">);</span>
+      <span class="p">});</span>
+
+    <span class="p">},</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>When new data arrives we start fresh by firing setup.
+We also emit the "setup" event to notify all the child views.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">setup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">show</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+    <span class="p">},</span>
+    
+    <span class="nx">hide</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">hide</span><span class="p">();</span>
+    <span class="p">}</span> <span class="p">,</span></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><hr />
+
+<p>API for Views to update internal state:</p>
+
+<hr />
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><p>Notified that the user's scroll has reached an event;
+This is the main <strong>event aggregation</strong> function all the views use to communicate with one another.
+As the scroll reaches specific events, the subviews call this function to fire the scroll:at event,
+and other views can respond by updating themselves for this event.
+In other words, this is an <em>all-to-all</em> message stream for the three views, which allows us to do fancy linked displays.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">scrollHasReached</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;scroll:at&quot;</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+    <span class="p">}</span>
+
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">ArticleViewModel</span><span class="p">;</span>
+
+
+<span class="p">})();</span></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><h2>Next see <a href="MapView.js.html">MapView.js</a>, <a href="TimelineView.js.html">TimelineView.js</a> or <a href="NarrationView.js.html">NarrationView.js</a>.</h2>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr></tbody></table><div id="generated">generated Fri Jul 12 2013 03:39:10 GMT-0700 (PDT)  </div></div></body></html>
