@@ -1,6 +1,6 @@
 {
   "name": "SpatioTemporalNarrative",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "main": "index",
   "description": "Exploring stories based around movement through space and time.",
   "keywords": ["narrative"],
