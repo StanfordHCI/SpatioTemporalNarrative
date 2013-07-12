@@ -1,5 +1,14 @@
 TimelineView = (function() {
 
+  // TIMELINEVIEW
+
+  // The function of the TimelineView is to: 
+  //  - Represents the narrative's events temporally in the order in which they occured.
+  //  - Render, maintain the current state of, and update the view for the timeline object, 
+  // located on the lefthand side of the narrative.
+
+  
+
   function TimelineView(options) {
 
     this.options = options || {}; 
