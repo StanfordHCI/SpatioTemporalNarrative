@@ -1,0 +1,349 @@
+<!DOCTYPE html><html><head><title>TimelineView.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../../../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../../../index.html" class="source"><span class="file_name">README</span></a><a href="../../../src/public/js/TimelineView.js.html" class="source selected"><span class="base_path">src / public / js / </span><span class="file_name">TimelineView.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>TimelineView.js</h1><div class="filepath">src/public/js/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">TimelineView</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+  <span class="kd">function</span> <span class="nx">TimelineView</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span> 
+    <span class="k">this</span><span class="p">.</span><span class="nx">model</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">model</span> <span class="o">||</span> <span class="kc">undefined</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">modelView</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">modelView</span> <span class="o">||</span> <span class="kc">undefined</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setElement</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span> 
+    <span class="k">this</span><span class="p">.</span><span class="nx">initialize</span><span class="p">();</span> 
+    <span class="k">this</span><span class="p">.</span><span class="nx">_delegateEvents</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">TimelineView</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span> <span class="p">{</span>
+
+    <span class="nx">setElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;View requires a container element&quot;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">$</span> <span class="o">?</span> <span class="nx">el</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">:</span> <span class="nx">el</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$el</span> <span class="o">=</span> <span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">$</span> <span class="o">?</span> <span class="nx">el</span> <span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">modelView</span><span class="p">,</span> <span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="nx">_</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">renderFromScratch</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span> 
+      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">modelView</span><span class="p">,</span> <span class="s2">&quot;scroll:at&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">renderScrolled</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">getEventById</span><span class="p">(</span><span class="nx">id</span><span class="p">));</span>  
+      <span class="p">});</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">paper</span> <span class="o">=</span> <span class="nx">Raphael</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">700</span><span class="p">);</span>
+
+       </pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><p>Handler function for touchstart and touchmove events. The timelineView stores a 
+currentHoverMarker object that keeps track of the last peg on the timeline hit in the case of 
+a finger drag event on the timeline. If the touch event occured over an SVG
+object, this function sets the currentHoverMarker object that SVG object and 
+calls drawAllPoints to redraw the timeline for the event.</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">handleMove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+
+        <span class="kd">var</span> <span class="nx">yPos</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">currEvt</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">paper</span><span class="p">.</span><span class="nx">getElementByPoint</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">xOffset</span> <span class="o">-</span> <span class="mi">30</span><span class="p">,</span> <span class="nx">yPos</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">currEvt</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">currentHoverMarker</span> <span class="o">=</span> <span class="nx">currEvt</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">self</span><span class="p">.</span><span class="nx">drawAllPoints</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      </pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>Handler function for touchend, leave, or cancel events. Following the
+end of a touch event over the timeline, this function checks to see
+if the currentHoverMarker was set as a result of that event, and if it was,
+updates the currentMarker (represents the marker of the time that should currently
+be represented by the three views) to be  the currentHoverMarker, sets the 
+currentHoverMarker to null to signify that the drag event has ended, 
+and calls scrollHasReached to notify the views to rerender themselves based
+on the update. It then calls drawAllPoints to update the timeline to 
+reflect the end of the drag event</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">handleLeave</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">currentHoverMarker</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">currentMarker</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">currentHoverMarker</span><span class="p">;</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">currentHoverMarker</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">modelView</span><span class="p">.</span><span class="nx">scrollHasReached</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">currentMarker</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">));</span>
+        <span class="p">}</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">drawAllPoints</span><span class="p">();</span>
+      <span class="p">}</span>
+
+      <span class="kd">var</span> <span class="nx">isTouch</span> <span class="o">=</span> <span class="s2">&quot;ontouchstart&quot;</span> <span class="k">in</span> <span class="nb">window</span><span class="p">;</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="nx">isTouch</span> <span class="o">?</span> <span class="s2">&quot;touchstart&quot;</span> <span class="o">:</span> <span class="s2">&quot;mouseover&quot;</span><span class="p">,</span>  <span class="nx">handleMove</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="nx">isTouch</span> <span class="o">?</span> <span class="s2">&quot;touchmove&quot;</span>  <span class="o">:</span> <span class="s2">&quot;mousemove&quot;</span><span class="p">,</span>   <span class="nx">handleMove</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="nx">isTouch</span> <span class="o">?</span> <span class="s2">&quot;touchend&quot;</span>   <span class="o">:</span> <span class="s2">&quot;click&quot;</span> <span class="p">,</span>    <span class="nx">handleLeave</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;touchleave&quot;</span><span class="p">,</span>  <span class="nx">handleLeave</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;touchcancel&quot;</span><span class="p">,</span> <span class="nx">handleLeave</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+    <span class="p">},</span></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>Sets up the properties of the timeline, draws all the objects, and calls an external
+transformation function to set the markers in place.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">renderFromScratch</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">currentMarker</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+      <span class="kd">var</span> <span class="nx">timeline</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timeline</span> <span class="o">=</span> <span class="p">{};</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>this.timeline.events is an array that keeps track of the all 
+the times for each event and their corresponding SVG marker objects</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">timeline</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="p">[];</span>  </pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><p>timeline.pageLen signifies the maximum amount of height in pixels that the 
+timeline has to render itself             </p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">timeline</span><span class="p">.</span><span class="nx">pageLen</span> <span class="o">=</span> <span class="mi">585</span><span class="p">;</span>   </pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><p>timeline.xOffset and timeline.yOffset represents the position of the start
+of the timeline in pixels from the top left of the page       </p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">timeline</span><span class="p">.</span><span class="nx">xOffset</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
+      <span class="nx">timeline</span><span class="p">.</span><span class="nx">yOffset</span> <span class="o">=</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">yStart</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><p>timeline.markerWidth and markerHeight represent the normal dimensions of each
+marker peg on the timeline</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">timeline</span><span class="p">.</span><span class="nx">markerWidth</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+      <span class="nx">timeline</span><span class="p">.</span><span class="nx">markerHeight</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+
+      <span class="kd">var</span> <span class="nx">paper</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">paper</span><span class="p">;</span>
+      <span class="nx">paper</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+
+      <span class="kd">var</span> <span class="nx">evts</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;events&quot;</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">modelView</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">modelView</span><span class="p">;</span>
+
+      <span class="nx">timeline</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">evts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+      <span class="kd">var</span> <span class="nx">last_evt</span> <span class="o">=</span> <span class="nx">evts</span><span class="p">[</span><span class="nx">evts</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+      <span class="kd">var</span> <span class="nx">tlEnd</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">last_evt</span><span class="p">.</span><span class="nx">time</span><span class="p">[</span><span class="nx">last_evt</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]);</span></pre></div></td></tr><tr id="section-9"><td class="docs"><div class="pilwrap"><a href="#section-9" class="pilcrow">&#182;</a></div><p>timeline.range signifies the range of time from the start of the timeline to the end
+of the timeline in milliseconds</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">timeline</span><span class="p">.</span><span class="nx">range</span> <span class="o">=</span> <span class="nx">tlEnd</span> <span class="o">-</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">start</span><span class="p">;</span> </pre></div></td></tr><tr id="section-10"><td class="docs"><div class="pilwrap"><a href="#section-10" class="pilcrow">&#182;</a></div><p>Calculates scaling factors and parameters for gaussian and laplacian transformations</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">timeline</span><span class="p">.</span><span class="nx">spread</span> <span class="o">=</span> <span class="mf">0.12</span><span class="p">;</span>
+      <span class="nx">timeline</span><span class="p">.</span><span class="nx">scale</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
+
+      <span class="nx">timeline</span><span class="p">.</span><span class="nx">sigmaSq</span> <span class="o">=</span> <span class="nx">calculateSigmaSq</span><span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">pageLen</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">spread</span><span class="p">);</span>
+      <span class="nx">timeline</span><span class="p">.</span><span class="nx">beta</span> <span class="o">=</span> <span class="nx">calculateBeta</span><span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">pageLen</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">spread</span><span class="p">);</span>
+      
+      <span class="kd">var</span> <span class="nx">expansionAmount</span> <span class="o">=</span> <span class="nx">laplacianExpansionAmount</span><span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">pageLen</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">scale</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">beta</span><span class="p">);</span></pre></div></td></tr><tr id="section-11"><td class="docs"><div class="pilwrap"><a href="#section-11" class="pilcrow">&#182;</a></div><p>timeline.absLen signifies the actual length of the timeline rendered</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">timeline</span><span class="p">.</span><span class="nx">absLen</span> <span class="o">=</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">pageLen</span> <span class="o">-</span> <span class="nx">expansionAmount</span><span class="p">;</span>
+      <span class="nx">timeline</span><span class="p">.</span><span class="nx">yOffset</span> <span class="o">+=</span> <span class="nx">expansionAmount</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+
+       <span class="nx">timeline</span><span class="p">.</span><span class="nx">rightBorder</span> <span class="o">=</span> <span class="nx">paper</span><span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="s2">&quot;M&quot;</span> <span class="o">+</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">xOffset</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">yStart</span> <span class="o">+</span> <span class="s2">&quot;V&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">yStart</span> <span class="o">+</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">pageLen</span><span class="p">));</span>
+      </pre></div></td></tr><tr id="section-12"><td class="docs"><div class="pilwrap"><a href="#section-12" class="pilcrow">&#182;</a></div><p>This block iterates over all events in the model and creates corresponding timeline markers 
+for all events and pushes those markers as well as their corresponding times into the 
+this.timeline.events array. All markers are initially drawn in one location at the start of 
+the timeline.</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">forAllEvents</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">currEvt</span><span class="p">){</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">currEvt</span><span class="p">.</span><span class="nx">time</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">start_time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">currEvt</span><span class="p">.</span><span class="nx">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+
+          <span class="nx">paper</span><span class="p">.</span><span class="nx">setStart</span><span class="p">();</span>
+          <span class="kd">var</span> <span class="nx">rect</span> <span class="o">=</span> <span class="nx">paper</span><span class="p">.</span><span class="nx">rect</span><span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">xOffset</span> <span class="o">-</span> <span class="mi">30</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">yOffset</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">markerWidth</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">markerHeight</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+          <span class="nx">rect</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">,</span> <span class="s2">&quot;#fff&quot;</span><span class="p">);</span></pre></div></td></tr><tr id="section-13"><td class="docs"><div class="pilwrap"><a href="#section-13" class="pilcrow">&#182;</a></div><p>In the case that there is more than one object in the event's time array, thus signifying that
+this event actually occured over a range of time, an associated path is drawn to represent that
+range in addition to the start peg</p>
+</td><td class="code"><div class="highlight"><pre>          <span class="k">if</span> <span class="p">(</span><span class="nx">currEvt</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">pathStr</span> <span class="o">=</span> <span class="s2">&quot;M&quot;</span> <span class="o">+</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">xOffset</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">yOffset</span> <span class="o">+</span> <span class="s2">&quot;V&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">yOffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">paper</span><span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="nx">pathStr</span><span class="p">)</span>
+          <span class="p">}</span>
+
+          <span class="kd">var</span> <span class="nx">markerSet</span> <span class="o">=</span> <span class="nx">paper</span><span class="p">.</span><span class="nx">setFinish</span><span class="p">();</span>
+
+          <span class="nx">markerSet</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;stroke&quot;</span><span class="p">,</span> <span class="s2">&quot;#4479BA&quot;</span><span class="p">);</span>
+          <span class="nx">markerSet</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nx">currEvt</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+
+          <span class="nx">timeline</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">id</span><span class="o">:</span> <span class="nx">currEvt</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">marker</span><span class="o">:</span> <span class="nx">markerSet</span><span class="p">,</span> <span class="nx">time</span><span class="o">:</span> <span class="nx">currEvt</span><span class="p">.</span><span class="nx">time</span><span class="p">});</span>
+        <span class="p">}</span>
+      <span class="p">});</span></pre></div></td></tr><tr id="section-14"><td class="docs"><div class="pilwrap"><a href="#section-14" class="pilcrow">&#182;</a></div><p>Moves all the timeline markers from the positions they were initially drawn in 
+to new positions with that represent the linearly interpolated point of their 
+occurance over the entire length of the narrative </p>
+</td><td class="code"><div class="highlight"><pre>      <span class="nx">linearTransform</span><span class="p">(</span><span class="nx">timeline</span><span class="p">);</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span> 
+
+    </pre></div></td></tr><tr id="section-15"><td class="docs"><div class="pilwrap"><a href="#section-15" class="pilcrow">&#182;</a></div><p>Handler for the call:at event. Finds the event's corresponding
+SVG object, updates the currentMarker as that object, and
+calls drawAllPoints to rerender the view.</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">renderScrolled</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">currentMarker</span> <span class="o">=</span> <span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">marker</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+          <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">drawAllPoints</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    </pre></div></td></tr><tr id="section-16"><td class="docs"><div class="pilwrap"><a href="#section-16" class="pilcrow">&#182;</a></div><p>Takes in an optional touch event evt and iterator function. If the
+ timeline view is being interacted, drawAllPoint redraws the
+ timeline based on the marker that was last hovered over. If there is
+ no event passed in, it redraws the timeline based on the currentMarker</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">drawAllPoints</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">,</span> <span class="nx">iterFunc</span><span class="p">)</span> <span class="p">{</span>
+
+      <span class="kd">var</span> <span class="nx">timeline</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timeline</span><span class="p">;</span></pre></div></td></tr><tr id="section-17"><td class="docs"><div class="pilwrap"><a href="#section-17" class="pilcrow">&#182;</a></div><p>maxMarkerWidth represents the maximum width to which a marker can expand</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">maxMarkerWidth</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+ </pre></div></td></tr><tr id="section-18"><td class="docs"><div class="pilwrap"><a href="#section-18" class="pilcrow">&#182;</a></div><p>This block sets the yPos, y position that will serve as the mean or peak point for the laplacian transform.
+If an event has been passed in, the yPos will be the y position of the event. If there is no event and 
+there is a currentMarker, the yPos is the initial y poisition of the currentMarker. Otherwise, yPos retains its
+intialized value of 0.</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">yPos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">yPos</span> <span class="o">=</span> <span class="nx">evt</span><span class="p">.</span><span class="nx">pageY</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentMarker</span><span class="p">)</span> <span class="p">{</span>  
+        <span class="nx">yPos</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentMarker</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="kd">var</span> <span class="nx">newW</span> <span class="o">=</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">markerWidth</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">newY</span><span class="p">;</span>
+      
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div></td></tr><tr id="section-19"><td class="docs"><div class="pilwrap"><a href="#section-19" class="pilcrow">&#182;</a></div><p>For each set of objects in the timeline.events array, this block assigns new 
+attributes to each SVG marker object based on the current state</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="nx">timeline</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">marker</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">){</span>
+
+          <span class="kd">var</span> <span class="nx">currY</span> <span class="o">=</span> <span class="nx">newY</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">);</span></pre></div></td></tr><tr id="section-20"><td class="docs"><div class="pilwrap"><a href="#section-20" class="pilcrow">&#182;</a></div><p>If drawAllPoints is being called in response to a touchstart or touchmove event,
+this block calculates and applies the laplacian transformation to the marker's position
+and width</p>
+</td><td class="code"><div class="highlight"><pre>          <span class="k">if</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">transformFactor</span> <span class="o">=</span> <span class="nx">laplacian</span><span class="p">(</span><span class="nx">currY</span><span class="p">,</span> <span class="nx">yPos</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">beta</span><span class="p">);</span>
+
+            <span class="nx">newW</span> <span class="o">=</span> <span class="nx">maxMarkerWidth</span> <span class="o">*</span> <span class="nx">transformFactor</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">newW</span> <span class="o">&lt;</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">markerWidth</span><span class="p">)</span> <span class="nx">newW</span> <span class="o">=</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">markerWidth</span><span class="p">;</span>
+            <span class="nx">newY</span> <span class="o">=</span> <span class="nx">offsetByLaplacian</span><span class="p">(</span><span class="nx">currY</span><span class="p">,</span> <span class="nx">yPos</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">beta</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">scale</span><span class="p">);</span>
+
+          <span class="p">}</span>
+
+
+          <span class="kd">var</span> <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">y</span><span class="o">:</span> <span class="nx">newY</span><span class="p">,</span>
+            <span class="nx">width</span><span class="o">:</span> <span class="nx">newW</span><span class="p">,</span>
+            <span class="nx">x</span><span class="o">:</span> <span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">xOffset</span> <span class="o">-</span> <span class="nx">newW</span><span class="p">),</span>
+            <span class="nx">fill</span><span class="o">:</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+            <span class="nx">stroke</span><span class="o">:</span> <span class="s2">&quot;#4479BA&quot;</span>
+          <span class="p">};</span>
+          </pre></div></td></tr><tr id="section-21"><td class="docs"><div class="pilwrap"><a href="#section-21" class="pilcrow">&#182;</a></div><p>If a currentMarker is set, make the set the marker's fill and stroke to red. Else,
+If a currentHoverMarker is set, make it's stroke red, but keep its fill the same</p>
+</td><td class="code"><div class="highlight"><pre>          <span class="k">if</span> <span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">currentMarker</span> <span class="o">&amp;&amp;</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span> <span class="o">===</span> <span class="nx">self</span><span class="p">.</span><span class="nx">currentMarker</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">properties</span><span class="p">.</span><span class="nx">fill</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span><span class="p">;</span>
+            <span class="nx">properties</span><span class="p">.</span><span class="nx">stroke</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span><span class="p">;</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">currentHoverMarker</span> <span class="o">&amp;&amp;</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span> <span class="o">===</span> <span class="nx">self</span><span class="p">.</span><span class="nx">currentHoverMarker</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">properties</span><span class="p">.</span><span class="nx">stroke</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span><span class="p">;</span>
+
+          <span class="p">}</span> 
+            
+          <span class="nx">obj</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="nx">properties</span><span class="p">);</span>
+
+        <span class="p">});</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    
+    <span class="nx">clear</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">_delegateEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div></td></tr><tr id="section-22"><td class="docs"><div class="pilwrap"><a href="#section-22" class="pilcrow">&#182;</a></div><p>Where we hook up UI event handlers</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+    <span class="p">},</span>
+
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">TimelineView</span><span class="p">;</span>
+
+  </pre></div></td></tr><tr id="section-23"><td class="docs"><div class="pilwrap"><a href="#section-23" class="pilcrow">&#182;</a></div><p>Takes in all parameters needed to calculate a laplacian transformation
+ factor as well as a scale value, calculates the laplacian, and multiplies
+ it by the scale value to return the offset</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">offsetByLaplacian</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">mu</span><span class="p">,</span> <span class="nx">beta</span><span class="p">,</span> <span class="nx">scale</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">transformFactor</span> <span class="o">=</span> <span class="nx">scale</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">laplacian</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">mu</span><span class="p">,</span> <span class="nx">beta</span><span class="p">));</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">mu</span><span class="p">)</span>
+      <span class="k">return</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">transformFactor</span>
+    <span class="k">else</span> 
+      <span class="k">return</span> <span class="nx">x</span> <span class="o">-</span> <span class="nx">transformFactor</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  </pre></div></td></tr><tr id="section-24"><td class="docs"><div class="pilwrap"><a href="#section-24" class="pilcrow">&#182;</a></div><p>Takes in the length of the available space of the timeline, the
+ timeline's constant scaling factor, and a beta value to calculate
+ the laplacian displacement factor. It returns the amount that the
+ timeline would need to expand by on both sides to accomodate all of
+ the points when they are displaced by the laplacian at any given time</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">laplacianExpansionAmount</span><span class="p">(</span><span class="nx">availableSize</span><span class="p">,</span> <span class="nx">scale</span><span class="p">,</span> <span class="nx">beta</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="nx">scale</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">laplacian</span><span class="p">(</span><span class="nx">availableSize</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">beta</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  </pre></div></td></tr><tr id="section-25"><td class="docs"><div class="pilwrap"><a href="#section-25" class="pilcrow">&#182;</a></div><p>Calculates and returns a gaussian transformation factor based for a given point
+ x, based on the spread center at mu, and a beta value to control the spread</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">laplacian</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">mu</span><span class="p">,</span> <span class="nx">beta</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">exp</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">mu</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="nx">beta</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  </pre></div></td></tr><tr id="section-26"><td class="docs"><div class="pilwrap"><a href="#section-26" class="pilcrow">&#182;</a></div><p>Calculates and returns a gaussian transformation factor based for a given point
+x, based on the spread center at mu, and a sigma squared value, sigmasq,
+to control the spread</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">gaussian</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">mu</span><span class="p">,</span> <span class="nx">sigmasq</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">exp</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">((</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">mu</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nx">sigmasq</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  </pre></div></td></tr><tr id="section-27"><td class="docs"><div class="pilwrap"><a href="#section-27" class="pilcrow">&#182;</a></div><p>Takes in the maximum length that the timeline can be rendered in in pixels 
+and the desired pixel spread. Teturns the sigma squared value for a gaussian 
+function based on those values</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">calculateSigmaSq</span><span class="p">(</span><span class="nx">totalLen</span><span class="p">,</span> <span class="nx">spread</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">lengthSpread</span> <span class="o">=</span> <span class="nx">totalLen</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">sigmaSq</span> <span class="o">=</span> <span class="p">(</span><span class="nx">lengthSpread</span> <span class="o">*</span> <span class="nx">lengthSpread</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">spread</span><span class="p">));</span>
+    <span class="k">return</span> <span class="nx">sigmaSq</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  </pre></div></td></tr><tr id="section-28"><td class="docs"><div class="pilwrap"><a href="#section-28" class="pilcrow">&#182;</a></div><p>Takes in the maximum length that the timeline can be rendered in in pixels 
+and the desired pixel spread. returns beta for a laplacian function based 
+on those values</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">calculateBeta</span><span class="p">(</span><span class="nx">totalLen</span><span class="p">,</span> <span class="nx">spread</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">lengthSpread</span> <span class="o">=</span> <span class="nx">totalLen</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">beta</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">lengthSpread</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">spread</span><span class="p">));</span>
+    <span class="k">return</span> <span class="nx">beta</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td></tr><tr id="section-29"><td class="docs"><div class="pilwrap"><a href="#section-29" class="pilcrow">&#182;</a></div><p>Takes in the timeline object and updates the position of its markers to
+display a linear representation of the times in which the events occured</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">linearTransform</span><span class="p">(</span><span class="nx">timeline</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span></pre></div></td></tr><tr id="section-30"><td class="docs"><div class="pilwrap"><a href="#section-30" class="pilcrow">&#182;</a></div><p>for each event in the timeline.events array, this block linearly interpolates 
+from the time the event occured relative to the start of the narrative to its
+according pixel position on the timeline object and updates that objects' attributes</p>
+</td><td class="code"><div class="highlight"><pre>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">currStart</span> <span class="o">=</span> <span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">time</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+      <span class="kd">var</span> <span class="nx">offsetFromStart</span> <span class="o">=</span> <span class="nx">lerp</span><span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">range</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">absLen</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">start</span><span class="p">,</span> <span class="nx">currStart</span><span class="p">);</span>
+
+      <span class="kd">var</span> <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">x</span><span class="o">:</span> <span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">xOffset</span> <span class="o">-</span> <span class="mi">30</span><span class="p">),</span>
+        <span class="nx">y</span><span class="o">:</span> <span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">yOffset</span> <span class="o">+</span> <span class="nx">offsetFromStart</span><span class="p">)</span>
+      <span class="p">}</span></pre></div></td></tr><tr id="section-31"><td class="docs"><div class="pilwrap"><a href="#section-31" class="pilcrow">&#182;</a></div><p>If the event occurs over a range of time, modify the properites for that
+representative path as well</p>
+</td><td class="code"><div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">time</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">currEnd</span> <span class="o">=</span> <span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">time</span><span class="p">[</span><span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">time</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">segmentLen</span> <span class="o">=</span> <span class="nx">lerp</span><span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">range</span><span class="p">,</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">absLen</span><span class="p">,</span> <span class="nx">currStart</span><span class="p">,</span> <span class="nx">currEnd</span><span class="p">);</span>
+        <span class="nx">properties</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="s2">&quot;M&quot;</span> <span class="o">+</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">xOffset</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">properties</span><span class="p">.</span><span class="nx">y</span> <span class="o">+</span> <span class="s2">&quot;V&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">properties</span><span class="p">.</span><span class="nx">y</span> <span class="o">+</span> <span class="nx">segmentLen</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">marker</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="nx">properties</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
+      <span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">marker</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="nx">properties</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+   </pre></div></td></tr><tr id="section-32"><td class="docs"><div class="pilwrap"><a href="#section-32" class="pilcrow">&#182;</a></div><p>Takes in the timeline object and updates the positions of its markers to 
+ display an evenly spaced, non-linear representation</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">nonlinearTransform</span><span class="p">(</span><span class="nx">timeline</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">spacing</span> <span class="o">=</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">absLen</span> <span class="o">/</span> <span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="nx">timeline</span><span class="p">.</span><span class="nx">sd</span> <span class="o">=</span> <span class="nx">spacing</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">offsetFromStart</span> <span class="o">=</span> <span class="nx">spacing</span> <span class="o">*</span> <span class="nx">i</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">y</span><span class="o">:</span> <span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">yOffset</span> <span class="o">+</span> <span class="nx">offsetFromStart</span><span class="p">)</span>
+      <span class="p">};</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">time</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">properties</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="s2">&quot;M&quot;</span> <span class="o">+</span> <span class="nx">timeline</span><span class="p">.</span><span class="nx">xOffset</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">yOffset</span> <span class="o">+</span> <span class="nx">offsetFromStart</span><span class="p">)</span><span class="o">+</span> <span class="s2">&quot;V&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">timeline</span><span class="p">.</span><span class="nx">yOffset</span> <span class="o">+</span> <span class="nx">offsetFromStart</span> <span class="o">+</span> <span class="nx">spacing</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">marker</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="nx">properties</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
+      <span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">marker</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="nx">properties</span><span class="p">);</span>
+    <span class="p">}</span>
+
+  <span class="p">}</span></pre></div></td></tr><tr id="section-33"><td class="docs"><div class="pilwrap"><a href="#section-33" class="pilcrow">&#182;</a></div><p>Takes in a timeline range in milliseconds since 1970, the absolute length of
+the timeline in pixels, and two points on the timeline. Returns the pixel point
+of the second point's displacement from the first on the timeline.</p>
+</td><td class="code"><div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">lerp</span><span class="p">(</span><span class="nx">tlRange</span><span class="p">,</span> <span class="nx">tlLen</span><span class="p">,</span> <span class="nx">point1</span><span class="p">,</span> <span class="nx">point2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">date1</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">point1</span><span class="p">);</span>
+    <span class="nx">date2</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">point2</span><span class="p">);</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">tlLen</span> <span class="o">*</span> <span class="p">(</span><span class="nx">date2</span> <span class="o">-</span> <span class="nx">date1</span><span class="p">)</span><span class="o">/</span><span class="nx">tlRange</span><span class="p">);</span>
+  <span class="p">}</span>
+
+
+
+<span class="p">})();</span>
+
+</pre></div></td></tr></tbody></table><div id="generated">generated Thu Jul 11 2013 18:15:48 GMT-0700 (PDT)  </div></div></body></html>
