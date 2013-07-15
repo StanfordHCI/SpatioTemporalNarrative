@@ -1,7 +1,7 @@
 SpatioTemporalNarrative
 =======================
 
-Exploring stories based around movement through space and time. 
+Exploring stories based around movement through space and time on the iPad.
 
 ## [Read the annotated code](http://stanfordhci.github.io/SpatioTemporalNarrative/)
 
@@ -11,13 +11,29 @@ We extensively commented the code with explanations and elaborations. We suggest
 
 - #### The client entrypoint is [src/public/client.js](http://stanfordhci.github.io/SpatioTemporalNarrative/src/public/js/client.js.html)
 
-## The Interface
+## The Interface for the iPad
 
-When you open the app, you see a list of stories, each incorporating events over time and space:
+All the text in this comes from the NYT boston bomber aticle. It is reproduced here purely for educational purposes to demonstrate a system.
+
+#### When you open the app, you see a list of stories, each incorporating events over time and space:
 
 ![Opening page](https://github.com/StanfordHCI/SpatioTemporalNarrative/blob/master/images/photo%201.PNG?raw=true)
 
+#### Touching a story title loads the timeline, text and map showing the events.
 
+![Opening page](https://github.com/StanfordHCI/SpatioTemporalNarrative/blob/master/images/photo%202.PNG?raw=true)
+
+#### Scrolling the text highlights the current event on the map and the timeline
+
+![Opening page](https://github.com/StanfordHCI/SpatioTemporalNarrative/blob/master/images/photo%203.PNG?raw=true)
+
+#### Scrolling further moves the map and the timeline to new events
+
+![Opening page](https://github.com/StanfordHCI/SpatioTemporalNarrative/blob/master/images/photo%204.PNG?raw=true)
+
+#### Touching locations on the map or events on the timeline updates the text accordingly
+
+![Opening page](https://github.com/StanfordHCI/SpatioTemporalNarrative/blob/master/images/photo%205.PNG?raw=true)
 
 
 ## Example Narratives:
