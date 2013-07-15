@@ -16,3 +16,5 @@ We extensively commented the code with explanations and elaborations. We suggest
 
 - [Hunt for the Boston Marathon Bomber Suspects](http://www.nytimes.com/interactive/2013/04/19/us/boston-marathon-manhunt.html?_r=1&)
 - [Snowfall, the avalanche](http://www.nytimes.com/projects/2012/snow-fall/#/?part=descent-begins)
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/c5208b051863537ad70f70fc614a71f7 "githalytics.com")](http://githalytics.com/StanfordHCI/SpatioTemporalNarrative)
