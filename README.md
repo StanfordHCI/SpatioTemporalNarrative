@@ -11,6 +11,14 @@ We extensively commented the code with explanations and elaborations. We suggest
 
 - #### The client entrypoint is [src/public/client.js](http://stanfordhci.github.io/SpatioTemporalNarrative/src/public/js/client.js.html)
 
+## The Interface
+
+When you open the app, you see a list of stories, each incorporating events over time and space:
+
+![Opening page](https://github.com/StanfordHCI/SpatioTemporalNarrative/blob/master/images/photo%201.PNG?raw=true)
+
+
+
 
 ## Example Narratives:
 
