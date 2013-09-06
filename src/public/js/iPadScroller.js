@@ -90,7 +90,7 @@ iPadScroller = (function() {
       if (isDone)
         currentY = newY;
 
-      scrollEl.style.webkitTransform = 'translate(0, ' + newY + 'px)';
+      scrollEl.style.webkitTransform = 'translate3d(0, ' + newY + 'px, 0)';
     }
 
     //Register all the touch-based event listeners.
