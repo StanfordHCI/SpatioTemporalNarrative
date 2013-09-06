@@ -16,6 +16,26 @@ iPadScroller = (function() {
     };
   }
 
+  /* IMPORTANT HACKS TO BE AWARE OF! */
+
+
+  //3D ACCELERATION ONLY WORKS WHEN USING TRANSLATE3D!
+
+  //TO AVOID FLICKERING, ADD THIS TO THE ELEMENT BEING SCROLLED:
+  //   -webkit-backface-visibility: hidden;
+  //   
+
+  // This forces the iPad to enable 3d acceleration
+  // HACK from: http://www.youtube.com/watch?v=IKl78ZgJzm4
+  function force3dHardwareAcceleration() {
+    document.getElementsByTagName("body")[0].style.webkitTransform = "translate3d(0,0,0)";
+  }
+
+  function forceBackfaceHidden(el) {
+    el.style.webkitBackfaceVisibility = "hidden";
+  }
+
+
   // This implemented an approach to do scrolling while doing JavaScript computation on the iPad
   // by doing a CSS transform as a touch moves, rather than invoking
   // the browser's default scroll behavior.
@@ -26,6 +46,9 @@ iPadScroller = (function() {
   //  @delegate - fn(int,isDone) - a hook to interrupt scrolling and capture scroll progress
   // 
   function createScroller(listenEl, scrollEl, delegate) {
+
+    //Ensure that we don't get flickering:
+    forceBackfaceHidden(scrollEl);
 
     //Variables to help during scroll operations
     var startY = 0;  
@@ -123,7 +146,8 @@ iPadScroller = (function() {
   //Expose the two public methods of this module
   return {
     createScroller: createScroller,
-    disableDefaultScrolling: disableDefaultScrolling
+    disableDefaultScrolling: disableDefaultScrolling,
+    force3dHardwareAcceleration: force3dHardwareAcceleration
   }
 
 })();
