@@ -1,7 +1,7 @@
 SpatioTemporalNarrative
 =======================
 
-Exploring stories based around movement through space and time on the iPad.
+Exploring stories based around movement through space and time on the iPad
 
 ## [Read the annotated code](http://stanfordhci.github.io/SpatioTemporalNarrative/)
 
