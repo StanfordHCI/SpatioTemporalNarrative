@@ -1,7 +1,9 @@
 SpatioTemporalNarrative
 =======================
 
-Exploring stories based around movement through space and time on the iPad
+This project enables storytelling in the style of the NYT "Snow Fall: The Avalanche at Tunnel Creek" article. We visualize and provide interaction along space, time and narrative structures. This was a warmup project for Niels Joubert's 2013 CURIS Students, teaching them a JavaScript stack (NodeJS with Backbone), Literate Programming, and Github etiquette.
+
+Spatio-Temporal Narratives explore stories based around movement through space and time on the iPad
 
 ## [Read the annotated code](http://stanfordhci.github.io/SpatioTemporalNarrative/)
 
